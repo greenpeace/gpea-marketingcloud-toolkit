@@ -1,0 +1,163 @@
+const axios = require('axios');
+const logger = require('../../lib/logger');
+const _ = require("lodash")
+
+class Journey {
+  /**
+   * Retriebe the full journey list
+   * @return {array}
+   */
+  async getAll () {
+    let page = 1
+    let items = []
+
+    while (true) {
+      let url = `${this.parent.restEndpoint}/interaction/v1/interactions?$page=${page}`
+      let response = await axios.get(url, {
+        headers: {"authorization": `Bearer ${this.parent.accessToken}`}
+      })
+
+      // concate the found journeys
+      let data = response.data
+      items = items.concat(data.items)
+      logger.debug(`Fetched ${data.items.length} journeys for page ${page}`)
+
+      // determine should we run next
+      if (data.page*data.pageSize>=data.count) {
+        break
+      } else if (page>=50) {
+        break // to prevent anything wrong to fallinto infinite loops
+      } else {
+        page += 1
+      }
+    }
+
+    logger.debug(`found ${items.length} journeys`)
+    return items
+  }
+
+  /**
+   * Fetch the journey details.
+   * 
+   * @param {string} journeyId THe GUID style journeyId. 
+   * @return {object} 
+   *  {
+   *   count: 1,
+   *   page: 1,
+   *   pageSize: 50,
+   *   links: {},
+   *   summary: {
+   *     totalInteractions: 128,
+   *     totalRunningVersionsWithDefinedGoal: 1,
+   *     totalRunningVersionsMeetingGoal: 1,
+   *     cumulativePopulation: 2367130
+   *   },
+   *   items: [
+   *     {
+   *       id: '622caa5c-d493-4d42-9623-f1b317fddc04',
+   *       key: 'c91c140d-318e-5ad3-f195-9a392b763a05',
+   *       name: 'tw-reactivation-automd-lapsed_donors',
+   *       lastPublishedDate: '2021-09-07T03:58:29',
+   *       description: '',
+   *       version: 14,
+   *       workflowApiVersion: 1,
+   *       createdDate: '2021-09-07T03:49:56.13',
+   *       modifiedDate: '2021-09-07T03:58:29.967',
+   *       activities: [Array],
+   *       triggers: [
+   *         {metaData: {eventDefinitionId}}
+   *       ],
+   *       goals: [],
+   *       exits: [],
+   *       notifiers: [],
+   *       stats: [Object],
+   *       healthStats: {
+   *          currentlyInCount, 
+   *       },
+   *       tags: [Array],
+   *       entryMode: 'SingleEntryAcrossAllVersions',
+   *       definitionType: 'Multistep',
+   *       channel: '',
+   *       defaults: [Object],
+   *       metaData: [Object],
+   *       executionMode: 'Production',
+   *       categoryId: 1045,
+   *       status: 'Published',
+   *       definitionId: '6a6d1ca2-877b-441c-986f-9f6ea383a107',
+   *       scheduledStatus: 'Draft'
+   *     }
+   *   ]
+   * }
+   */
+  async find(journeyId) {
+    let url = `${this.parent.restEndpoint}/interaction/v1/interactions?id=${journeyId}&mostRecentVersionOnly=true&extras=all`
+    let response = await axios.get(url, {
+      headers: { "authorization": `Bearer ${this.parent.accessToken}` }
+    })
+
+    return response.data
+  }
+
+  /** 
+   * Retrieve the Contacts Evaluated and Contacts Accepted for
+   * entring into the Journey in last 30 days
+   *
+   * @param {string} eventDefinitionId The trigger eventId.You can find it at journey response: j["items"][0]["triggers"][0]["metaData"]["eventDefinitionId"]
+   * @return Array
+   * [
+   *   { "eventType": "MetCriteria", "category": "success", "count": 9518 }, # Contacts Evaluated
+   *   { "eventType": "ContactAttempted", "category": "information", "count": 9518 }, # Contacts Accepted
+   *   { "eventType": "Failed", "category": "failure", "count": 5 }, # Rejected Contacts
+   *   { "eventType": "ContactsWaiting", "category": "information", "count": 2861 } # People In Data Extension
+   * ]
+   * 
+   */
+  async getTriggerstats(eventDefinitionId) {
+    let url = `${this.parent.restEndpoint}/interaction/v1/triggerstats/${eventDefinitionId}`
+    let response = await axios.get(url, {
+      headers: { "authorization": `Bearer ${this.parent.accessToken}` }
+    })
+
+    return response.data.statuses
+  }
+
+  /**
+   * A helper function to quickly get the number contacts for journeys
+   * 
+   * @param {string} journeyName The full journey name to find
+   * @returns { cumulativePopulation, numContactsCurrentlyInJourney, numContactsAcceptedIn30Days}
+   */
+  async getJourneyStatByName(journeyName) {
+    // search the journey by name
+    let url = `${this.parent.restEndpoint}/interaction/v1/interactions?name=${journeyName}&mostRecentVersionOnly=true&extras=all`
+    let response = await axios.get(url, {
+      headers: { "authorization": `Bearer ${this.parent.accessToken}` }
+    })
+
+    let foundJourney = response.data.items.find(j => j.name === journeyName)
+
+    if ( !foundJourney) {
+      throw new Error(`Cannot find the given journey by name ${journeyName}`)
+    } else {
+      logger.debug(`Found journey with name ${journeyName}`)
+    }
+
+    // get numContactsCurrentlyInJourney
+    let cumulativePopulation = _.get(foundJourney, "stats.cumulativePopulation", 0)
+    let numContactsCurrentlyInJourney = _.get(foundJourney, "healthStats.currentlyInCount", 0)
+
+    // get numContactsAcceptedIn30Days in 30 days
+    let eventDefId = _.get(foundJourney, "triggers.0.metaData.eventDefinitionId")
+    let triggerstats = await this.getTriggerstats(eventDefId)
+    let metCriteriaSuccessRow = triggerstats.find(row => row.eventType === 'MetCriteria' && row.category ==='success')
+    let numContactsAcceptedIn30Days = metCriteriaSuccessRow ? metCriteriaSuccessRow.count : 0
+
+    return { 
+      cumulativePopulation, 
+      numContactsCurrentlyInJourney, 
+      numContactsAcceptedIn30Days,
+      journey: foundJourney }
+  }
+}
+
+module.exports = Journey

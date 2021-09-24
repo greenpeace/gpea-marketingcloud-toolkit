@@ -1,0 +1,10 @@
+version: "3"
+services:
+  web:
+    restart: always
+    build: .
+    ports:
+      - "41095:3000"
+
+    environment:
+      - NODE_ENV=production
