@@ -6,7 +6,10 @@ cron.schedule('* * * * *', async () => {
   console.log('cron running', new Date())
 })
 
-cron.schedule('0 10,16 * * *', async () => {
+// Note. The server would treat this as UTC time. 
+// 02:00 UTC = 10:00+800
+// 08:00 UTC = 14:00+800
+cron.schedule('0 2,8 * * *', async () => {
   logger.info(`Run All Checks at ${new Date()}`)
   await AllChecks()
 });
