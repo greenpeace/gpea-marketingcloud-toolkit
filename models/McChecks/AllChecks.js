@@ -64,7 +64,7 @@ async function main() {
       allErros.unshift({ message: `\n　\n🙈🙈🙈 ${market}: *${allErros.length}* errors on *${format(new Date(), "yyyy-MM-dd'T'HH:mm:ssxxx")}*\n` })
       Notifier.sendToSlack(allErros.map(e => e.message).join("\n"))
     } else {
-      Notifier.sendToSlack("👍👍👍 No Errors today")
+      Notifier.sendToSlack(`👍👍👍 ${market}: No Errors today`)
     }
   }
 }

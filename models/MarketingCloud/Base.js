@@ -77,6 +77,14 @@ class MCBase {
       return _.get(retrieveResponseMsg, "Results", [])
     }
 
+    if (deleteResponse) {
+      if (deleteResponse.Results.StatusCode!=="OK") {
+        throw new Error(deleteResponse.Results.StatusMessage)
+      }
+      
+      return _.get(deleteResponse, "Results.Object", [])
+    }
+
     throw new Error("Unhandle sopa response")
   }
 }

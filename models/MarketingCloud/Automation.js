@@ -19,7 +19,7 @@ const logger = require('../../lib/logger');
 8 	InactiveTrigger 	Program trigger inactive
  */
 class Automation {
-  async findBy (criteria) {
+  async findBy(criteria) {
     let rbody = `<?xml version="1.0" encoding="UTF-8"?>
       <s:Envelope
         xmlns:s = "http://www.w3.org/2003/05/soap-envelope"
@@ -35,6 +35,7 @@ class Automation {
             <RetrieveRequest>
               <ObjectType>Automation</ObjectType>
 
+              <Properties>ObjectID</Properties>
               <Properties>Name</Properties>
               <Properties>CustomerKey</Properties>
               <Properties>Status</Properties>
@@ -58,7 +59,44 @@ class Automation {
     let response = await axios.post(this.parent.soapEndpoint, rbody, {
       headers: { 'Content-Type': 'application/soap+xml' }
     })
-    
+
+    return await this.parent.handleSoapResponse(response)
+  }
+
+  /**
+   * To delete an automation
+   * 
+   * @param {string} customerKey The customer Key of the automation
+   * @returns Throw exception if not found or something wrong
+   */
+  async delete(customerKey) {
+    let rbody = `<?xml version="1.0" encoding="UTF-8"?>
+    <s:Envelope
+      xmlns:s = "http://www.w3.org/2003/05/soap-envelope"
+      xmlns:a = "http://schemas.xmlsoap.org/ws/2004/08/addressing"
+      xmlns:u = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" >
+      <s:Header>
+        <a:Action s:mustUnderstand="1">Delete</a:Action>
+        <a:To s:mustUnderstand="1">https://${this.parent.subDomain}.soap.marketingcloudapis.com/Service.asmx</a:To>
+        <fueloauth xmlns="http://exacttarget.com">${this.parent.accessToken}</fueloauth>
+      </s:Header>
+      <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <DeleteRequest xmlns="http://exacttarget.com/wsdl/partnerAPI">
+          <Options></Options>
+          <Objects xsi:type="Automation">
+            <PartnerKey xsi:nil="true"></PartnerKey>
+            <ObjectID xsi:nil="true"></ObjectID>
+            <CustomerKey>${customerKey}</CustomerKey>
+          </Objects>
+        </DeleteRequest>
+      </s:Body>
+    </s:Envelope>
+    `
+    // console.log('rbody', rbody)
+    let response = await axios.post(this.parent.soapEndpoint, rbody, {
+      headers: { 'Content-Type': 'application/soap+xml' }
+    })
+
     return await this.parent.handleSoapResponse(response)
   }
 }

@@ -170,6 +170,17 @@ class Journey {
 
   /**
    * To pause a journey
+   * 
+   * Usage:
+   *   res = await mcJourney.pause(journeyId, {
+    ExtendWaitEndDates: true,
+    PausedDays: 14,
+    GuardrailAction: "Stop",
+    RetainContactInjectionWhileJourneyPaused: true,
+    AllVersions: true
+  })
+   * 
+   * 
    * @param {UIUD} journeyId The journey journeyId UUID string (The ID on the URL)
    * @param {dict} options @see Offical Document https://developer.salesforce.com/docs/atlas.en-us.noversion.mc-apis.meta/mc-apis/JourneyPauseByDefinitionId.htm
    * @returns 
