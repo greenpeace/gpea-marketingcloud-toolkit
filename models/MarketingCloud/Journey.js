@@ -89,8 +89,17 @@ class Journey {
    *   ]
    * }
    */
-  async find(journeyId) {
+  async findById(journeyId) {
     let url = `${this.parent.restEndpoint}/interaction/v1/interactions?id=${journeyId}&mostRecentVersionOnly=true&extras=all`
+    let response = await axios.get(url, {
+      headers: { "authorization": `Bearer ${this.parent.accessToken}` }
+    })
+
+    return response.data
+  }
+
+  async findByName(journeyName) {
+    let url = `${this.parent.restEndpoint}/interaction/v1/interactions?name=${journeyName}&mostRecentVersionOnly=true&extras=all`
     let response = await axios.get(url, {
       headers: { "authorization": `Bearer ${this.parent.accessToken}` }
     })
@@ -157,6 +166,30 @@ class Journey {
       numContactsCurrentlyInJourney, 
       numContactsAcceptedIn30Days,
       journey: foundJourney }
+  }
+
+  /**
+   * To pause a journey
+   * @param {UIUD} journeyId The journey journeyId UUID string (The ID on the URL)
+   * @param {dict} options @see Offical Document https://developer.salesforce.com/docs/atlas.en-us.noversion.mc-apis.meta/mc-apis/JourneyPauseByDefinitionId.htm
+   * @returns 
+   */
+  async pause (journeyId, options) {
+    // search the journey by name
+    let url = `${this.parent.restEndpoint}/interaction/v1/interactions/pause/${journeyId}`
+
+    // add the version.
+    if (options.versionNumber) {
+      url += `?VersionNumber={options.versionNumber}`
+    } else {
+      url += `?AllVersions=true`
+    }
+
+    let response = await axios.post(url, options, {
+      headers: { "authorization": `Bearer ${this.parent.accessToken}` }
+    })
+
+    return response.data
   }
 }
 
