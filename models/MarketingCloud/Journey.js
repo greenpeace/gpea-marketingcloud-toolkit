@@ -186,8 +186,31 @@ class Journey {
    * @returns 
    */
   async pause (journeyId, options) {
-    // search the journey by name
     let url = `${this.parent.restEndpoint}/interaction/v1/interactions/pause/${journeyId}`
+
+    // add the version.
+    if (options.versionNumber) {
+      url += `?VersionNumber={options.versionNumber}`
+    } else {
+      url += `?AllVersions=true`
+    }
+
+    let response = await axios.post(url, options, {
+      headers: { "authorization": `Bearer ${this.parent.accessToken}` }
+    })
+
+    return response.data
+  }
+
+  /**
+   * To resume a paused journey
+   * 
+   * @param {string} journeyId The journey GUID which show on the URL
+   * @param {*} options @see https://developer.salesforce.com/docs/atlas.en-us.noversion.mc-apis.meta/mc-apis/JourneyResumeByDefinitionId.htm
+   * @returns 
+   */
+  async resume (journeyId, options={}) {
+    let url = `${this.parent.restEndpoint}/interaction/v1/interactions/resume/${journeyId}`
 
     // add the version.
     if (options.versionNumber) {
