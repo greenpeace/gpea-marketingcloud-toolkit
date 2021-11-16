@@ -225,6 +225,23 @@ class Journey {
 
     return response.data
   }
+
+  async ejectContact(journeyCustomerKey, contactKey) {
+    let url = `${this.parent.restEndpoint}/interaction/v1/interactions/contactexit`
+
+    let response = await axios.post(url, [{
+      "ContactKey": contactKey,
+      "DefinitionKey": journeyCustomerKey
+    }], {
+      headers: { "authorization": `Bearer ${this.parent.accessToken}` }
+    })
+
+    if (response.data.errors && response.data.errors.length>0) {
+      logger.error(JSON.stringify(response.data.errors))
+    }
+
+    return response.data
+  }
 }
 
 module.exports = Journey
