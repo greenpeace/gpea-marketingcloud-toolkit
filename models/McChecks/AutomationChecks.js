@@ -13,7 +13,9 @@ const check = async (mcbase) => {
   automations.forEach(a => {
     // 1. All the automation with `automd` should have schedule time
     // This is to prevent someone accidently stop the schedule
-    if (a.Name.indexOf('automd')>=0 && a.Status!=='6') {
+    if (a.Name.indexOf('automd')>=0 
+      && ['3','6'].indexOf(a.Status)<0 // 3 running, 6 Scheduled
+      && a.Description!='Event Definition Automation') {
       let message = `:mc-automation: Automation \`${a.Name}\` should have a schedule activated.`
 
       logger.info(message)

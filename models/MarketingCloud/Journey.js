@@ -107,6 +107,15 @@ class Journey {
     return response.data
   }
 
+  async findByKey(journeyKey) {
+    let url = `${this.parent.restEndpoint}/interaction/v1/interactions/key:${journeyKey}`
+    let response = await axios.get(url, {
+      headers: { "authorization": `Bearer ${this.parent.accessToken}` }
+    })
+
+    return response.data
+  }
+
   /** 
    * Retrieve the Contacts Evaluated and Contacts Accepted for
    * entring into the Journey in last 30 days
@@ -233,6 +242,29 @@ class Journey {
       "ContactKey": contactKey,
       "DefinitionKey": journeyCustomerKey
     }], {
+      headers: { "authorization": `Bearer ${this.parent.accessToken}` }
+    })
+
+    if (response.data.errors && response.data.errors.length>0) {
+      logger.error(JSON.stringify(response.data.errors))
+    }
+
+    return response.data
+  }
+
+  /**
+   * Find contacts is in which journeys.
+   * 
+   * @see https://developer.salesforce.com/docs/marketing/marketing-cloud/guide/contactMembershipRequest.html
+   * @param {array} contactKeys 
+   * @returns {Object}
+   */
+  async contactInWhichJourneys(contactKeys) {
+    let url = `${this.parent.restEndpoint}/interaction/v1/interactions/contactMembership`
+
+    let response = await axios.post(url, {
+      "ContactKeyList": contactKeys
+    }, {
       headers: { "authorization": `Bearer ${this.parent.accessToken}` }
     })
 

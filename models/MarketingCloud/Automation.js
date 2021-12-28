@@ -44,6 +44,9 @@ class Automation {
               <Properties>ObjectState</Properties>
               <Properties>Owner</Properties>
               <Properties>Schedule</Properties>
+              <Properties>CreatedDate</Properties>
+              <Properties>ModifiedDate</Properties>
+              <Properties>Description</Properties>
 
               <Filter xsi:type="SimpleFilterPart">
                 <Property>${criteria["field"]}</Property>

@@ -5,6 +5,8 @@ const logger = require('../../lib/logger');
 
 const Automation = require("./Automation")
 const Journey = require("./Journey")
+const Messaging = require("./Messaging")
+const Send = require("./Send")
 
 class MCBase {
   constructor(options) {
@@ -47,6 +49,10 @@ class MCBase {
       obj = new Automation()
     } else if (instanceName==="Journey") {
       obj = new Journey()
+    } else if (instanceName==="Messaging") {
+      obj = new Messaging()
+    } else if (instanceName==="Send") {
+      obj = new Send()
     } else {
       logger.warn(`Cannot find the instanceName ${instanceName}`)
     }

@@ -1,6 +1,7 @@
 const MCBase = require('../MarketingCloud/Base')
 const AutomationCheck = require("./AutomationChecks")
 const JourneyCheck = require("./JourneyChecks")
+const SingleSendEmailChecks = require("./SingleSendEmailChecks")
 const logger = require('../../lib/logger');
 const Notifier = require('../../lib/Notifier.js')
 const format = require('date-fns/format')
@@ -52,13 +53,16 @@ async function main() {
     let allErros = []
     let rs;
 
-    rs = await AutomationCheck(mcbase)
-    allErros = allErros.concat(rs.errors)
+    // rs = await AutomationCheck(mcbase)
+    // allErros = allErros.concat(rs.errors)
 
-    rs = await JourneyCheck(mcbase, journeyRules)
+    // rs = await JourneyCheck(mcbase, journeyRules)
+    // allErros = allErros.concat(rs.errors)
+    // // console.log('journey errors', errors)
+    
+    rs = await SingleSendEmailChecks(mcbase)
     allErros = allErros.concat(rs.errors)
-    // console.log('journey errors', errors)
-
+    // console.log('send errors', rs.errors)
 
     if (allErros.length) {
       allErros.unshift({ message: `\n　\n🙈🙈🙈 ${market}: *${allErros.length}* errors on *${format(new Date(), "yyyy-MM-dd'T'HH:mm:ssxxx")}*\n` })
@@ -70,8 +74,8 @@ async function main() {
 }
 
 
-// (async () => {
-//   var text = await main();
-// })()
+(async () => {
+  var text = await main();
+})()
 
 module.exports = main
