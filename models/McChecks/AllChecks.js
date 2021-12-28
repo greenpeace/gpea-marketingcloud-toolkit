@@ -73,9 +73,8 @@ async function main() {
   }
 }
 
-
-(async () => {
-  var text = await main();
-})()
+// (async () => {
+//   var text = await main(); 
+// })()
 
 module.exports = main
