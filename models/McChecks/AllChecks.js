@@ -53,12 +53,12 @@ async function main() {
     let allErros = []
     let rs;
 
-    // rs = await AutomationCheck(mcbase)
-    // allErros = allErros.concat(rs.errors)
+    rs = await AutomationCheck(mcbase)
+    allErros = allErros.concat(rs.errors)
 
-    // rs = await JourneyCheck(mcbase, journeyRules)
-    // allErros = allErros.concat(rs.errors)
-    // // console.log('journey errors', errors)
+    rs = await JourneyCheck(mcbase, journeyRules)
+    allErros = allErros.concat(rs.errors)
+    // console.log('journey errors', errors)
     
     rs = await SingleSendEmailChecks(mcbase)
     allErros = allErros.concat(rs.errors)

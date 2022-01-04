@@ -13,7 +13,7 @@ const check = async (mcbase) => {
   // start to check
   let errors = []
   r.forEach(a => {
-    if (['Complete', 'Scheduled'].indexOf(a.Status) < 0) {
+    if (['Complete', 'Scheduled', 'Sending'].indexOf(a.Status) < 0) {
       let message = `:mc-send: Email \`${_.trim(a.EmailName)}\` *${a.Status}*. (SendDate: ${a.SentDate} Title: ${_.trim(a.Subject)} )`
 
       logger.info(message)
