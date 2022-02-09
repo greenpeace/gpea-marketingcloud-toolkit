@@ -1,6 +1,8 @@
 const axios = require('axios');
 const logger = require('../../lib/logger');
 const _ = require("lodash")
+const format = require('date-fns/format')
+const subDays = require('date-fns/subDays')
 
 class Journey {
   /**
@@ -274,6 +276,46 @@ class Journey {
 
     return response.data
   }
+
+  async getJourneyErrorHistory (inDays=1) {
+    let findAfterDate = subDays(new Date(), inDays);
+
+    let url = `${this.parent.restEndpoint}/interaction/v1/interactions/journeyhistory/search?$page=1&$pageSize=1000`
+    let response = await axios.post(url, {
+      "start": format(findAfterDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"),
+      "end": null,
+      "statuses": [
+        "Failed",
+        "Unknown",
+        "ErrorProcessingWaitActivity",
+        "ErrorOccuredInProcessing",
+        "ErrorValidatingContact",
+        "WaitActivityAlreadyProcessed",
+        "CouldNotParseInteractionId",
+        "InteractionNotPublished",
+        "NotEvaluatingEntryCriteria",
+        "ErrorDeterminingInitialActivity",
+        "InvalidInteractionId",
+        "DidNotMeetEntryCriteria",
+        "ContactNotFound",
+        // "CurrentlyWaitingInSameInteraction",
+        "ContactAlreadyInInteraction",
+        "ContactPreviouslyInSameInteraction",
+        "ContactObjectNull",
+        "ContactIsDeleted",
+        "ContactIsRestricted"
+      ]
+    }, {
+      headers: { "authorization": `Bearer ${this.parent.accessToken}` }
+    })
+
+    if (response.data.errors && response.data.errors.length>0) {
+      logger.error(JSON.stringify(response.data.errors))
+    }
+
+    return response.data
+  }
+
 }
 
 module.exports = Journey

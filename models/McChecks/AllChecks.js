@@ -1,6 +1,7 @@
 const MCBase = require('../MarketingCloud/Base')
 const AutomationCheck = require("./AutomationChecks")
-const JourneyCheck = require("./JourneyChecks")
+const JourneyNumAudiencesChecks = require("./JourneyNumAudiencesChecks")
+const JourneyStageErrorChecks = require("./JourneyStageErrorChecks")
 const SingleSendEmailChecks = require("./SingleSendEmailChecks")
 const logger = require('../../lib/logger');
 const Notifier = require('../../lib/Notifier.js')
@@ -56,7 +57,7 @@ async function main() {
     rs = await AutomationCheck(mcbase)
     allErros = allErros.concat(rs.errors)
 
-    rs = await JourneyCheck(mcbase, journeyRules)
+    rs = await JourneyNumAudiencesChecks(mcbase, journeyRules)
     allErros = allErros.concat(rs.errors)
     // console.log('journey errors', errors)
     
@@ -69,6 +70,16 @@ async function main() {
       Notifier.sendToSlack(allErros.map(e => e.message).join("\n"))
     } else {
       Notifier.sendToSlack(`👍👍👍 ${market}: No Errors today`)
+    }
+
+    let allWarnings = []
+    rs = await JourneyStageErrorChecks(mcbase)
+    allWarnings = allWarnings.concat(rs.errors)
+    // console.log('journey stage errors', rs.errors)
+
+    if (allWarnings.length) {
+      allWarnings.unshift({ message: `\n　\n 🙋🙋🙋 ${market}: *${allWarnings.length}* warnings on *${format(new Date(), "yyyy-MM-dd'T'HH:mm:ssxxx")}*\n` })
+      Notifier.sendToSlack(allWarnings.map(e => e.message).join("\n"))
     }
   }
 }
