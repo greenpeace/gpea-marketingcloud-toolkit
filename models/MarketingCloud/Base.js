@@ -76,7 +76,7 @@ class MCBase {
     let deleteResponse = _.get(jsonResponse, "soap:Envelope.soap:Body.DeleteResponse")
 
     if (retrieveResponseMsg) {
-      if (retrieveResponseMsg.OverallStatus!=="OK") {
+      if (['OK', 'MoreDataAvailable'].indexOf(retrieveResponseMsg.OverallStatus)<0) {
         throw new Error(retrieveResponseMsg.OverallStatus)
       }
       

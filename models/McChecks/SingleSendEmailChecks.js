@@ -6,7 +6,7 @@ const check = async (mcbase) => {
   let mcJourney = mcbase.factory('Journey')
   let mcSend = mcbase.factory('Send')
 
-  let daysToCheck = 2
+  let daysToCheck = 1
   logger.debug(`Retrieving failed Single Sends in last ${daysToCheck} days ...`)
   let r = await mcSend.getSends(daysToCheck)
 
