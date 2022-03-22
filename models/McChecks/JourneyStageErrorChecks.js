@@ -13,13 +13,13 @@ const format = require('date-fns/format')
  */
 const genItemErrorMsg = (item) => {
   let errMsgs = []
-  console.log('------')
-  console.log('item', item)
+  // console.log('------')
+  // console.log('item', item)
 
   let resultMessages = _.get(item, 'result.messages', [])
   for (let messageIdx = 0; messageIdx < resultMessages.length; messageIdx++) {
     const aMessage = resultMessages[messageIdx];
-    console.log('aMessage', aMessage)
+    // console.log('aMessage', aMessage)
 
     // format the message string
     let sMessage = aMessage.message
@@ -33,7 +33,7 @@ const genItemErrorMsg = (item) => {
       errMsgs.push(`contactKey:${item.contactKey} ${item.activityName || ""}: \`${sMessage}\``)
     // }
   }
-  console.log(`errMsgs`, errMsgs)
+  // console.log(`errMsgs`, errMsgs)
 
   return errMsgs.join("\n")
 }
@@ -58,18 +58,28 @@ const check = async (mcbase, rules) => {
     let errorTypeGroups = {
       'ListDetective': [],
       'SuppressionLogic': [],
+      'InvalidEmail': [],
+      'MetExitCriteria': [],
+      'CurrentlyWaitingInSameInteraction': [],
       'Others': [],
     }
 
     for (let i = 0; i < items.length; i++) {
       const item = items[i]
       
-      console.log('item', item)
       let resultMessages = _.get(item, 'result.messages', [])
-      if (resultMessages.some(m => m.message.indexOf('excluded by List Detective') > 0)) {
+      // console.log('resultMessages', resultMessages)
+
+      if (resultMessages.some(m => m.message.indexOf('excluded by List Detective') >=0)) {
         errorTypeGroups.ListDetective.push(item)
-      } else if (resultMessages.some(m => m.message.indexOf('excluded by Suppression logic') > 0)) {
+      } else if (resultMessages.some(m => m.message.indexOf('excluded by Suppression logic') >=0)) {
         errorTypeGroups.SuppressionLogic.push(item)
+      } else if (resultMessages.some(m => m.errorCode.indexOf('InvalidDefaultEmail') >=0)) {
+        errorTypeGroups.InvalidEmail.push(item)
+      } else if (resultMessages.some(m => m.message.indexOf('MetExitCriteria') >=0)) {
+        errorTypeGroups.MetExitCriteria.push(item)
+      } else if (resultMessages.some(m => m.errorCode.indexOf('CurrentlyWaitingInSameInteraction') >=0)) {
+        errorTypeGroups.CurrentlyWaitingInSameInteraction.push(item)
       } else {
         errorTypeGroups.Others.push(item)
       }
@@ -77,23 +87,29 @@ const check = async (mcbase, rules) => {
 
     
     let countsMsgs = []
-    let candidateErrTypes = ['Others', 'ListDetective', 'SuppressionLogic']
+    // let candidateErrTypes = ['Others', 'ListDetective', 'SuppressionLogic', 'InvalidEmail', 'MetExitCriteria', 'CurrentlyWaitingInSameInteraction']
+    let candidateErrTypes = ['Others'] // only show specific errors
+    let warningCounts = 0
     candidateErrTypes.forEach(k => {
       if (errorTypeGroups[k].length) {
         countsMsgs.push(`${errorTypeGroups[k].length} ${k}`)
+        warningCounts += 1
       }
     })
-    thisErrMsg += `- *${journeyName}* *${items.length}* errors (${countsMsgs.join(", ")})`
 
-    let itemErrMsgs = []
-    for (let i = 0; i < errorTypeGroups.Others.length && i < 10; i++) {
-      itemErrMsgs.push("\t- "+genItemErrorMsg(errorTypeGroups.Others[i]))
-    } 
-    if (itemErrMsgs.length) {
-      thisErrMsg += "\n"+itemErrMsgs.join("\n")  
+    if (warningCounts) {
+      thisErrMsg += `- *${journeyName}* *${warningCounts}* warnings (${countsMsgs.join(", ")})`
+
+      let itemErrMsgs = []
+      for (let i = 0; i < errorTypeGroups.Others.length && i < 10; i++) {
+        itemErrMsgs.push("\t- "+genItemErrorMsg(errorTypeGroups.Others[i]))
+      } 
+      if (itemErrMsgs.length) {
+        thisErrMsg += "\n"+itemErrMsgs.join("\n")  
+      }
+      
+      errors.push({journeyName: journeyName, items:items, message:thisErrMsg})
     }
-    
-    errors.push({journeyName: journeyName, items:items, message:thisErrMsg})
   })
 
   return { errors }
