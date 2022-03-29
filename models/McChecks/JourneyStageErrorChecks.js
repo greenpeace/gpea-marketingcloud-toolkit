@@ -56,6 +56,7 @@ const check = async (mcbase, rules) => {
   _.forEach(journeyErrorGroup, (items, journeyName) => {
     let thisErrMsg = ''
     let errorTypeGroups = {
+      'ContactPreviouslyInSameInteraction': [],
       'ListDetective': [],
       'SuppressionLogic': [],
       'InvalidEmail': [],
@@ -80,6 +81,8 @@ const check = async (mcbase, rules) => {
         errorTypeGroups.MetExitCriteria.push(item)
       } else if (resultMessages.some(m => m.errorCode.indexOf('CurrentlyWaitingInSameInteraction') >=0)) {
         errorTypeGroups.CurrentlyWaitingInSameInteraction.push(item)
+      } else if (item.status==='ContactPreviouslyInSameInteraction') {
+        errorTypeGroups.ContactPreviouslyInSameInteraction.push(item)
       } else {
         errorTypeGroups.Others.push(item)
       }
@@ -87,18 +90,18 @@ const check = async (mcbase, rules) => {
 
     
     let countsMsgs = []
-    // let candidateErrTypes = ['Others', 'ListDetective', 'SuppressionLogic', 'InvalidEmail', 'MetExitCriteria', 'CurrentlyWaitingInSameInteraction']
-    let candidateErrTypes = ['Others'] // only show specific errors
+    // let candidateErrTypes = ['Others', 'ListDetective', 'SuppressionLogic', 'InvalidEmail', 'MetExitCriteria', 'CurrentlyWaitingInSameInteraction', 'ContactPreviouslyInSameInteraction']
+    let candidateErrTypes = ['Others', 'ContactPreviouslyInSameInteraction'] // only show specific errors
     let warningCounts = 0
     candidateErrTypes.forEach(k => {
       if (errorTypeGroups[k].length) {
         countsMsgs.push(`${errorTypeGroups[k].length} ${k}`)
-        warningCounts += 1
+        warningCounts += k
       }
     })
 
     if (warningCounts) {
-      thisErrMsg += `- *${journeyName}* *${warningCounts}* warnings (${countsMsgs.join(", ")})`
+      thisErrMsg += `- *${journeyName}* ${countsMsgs.join(", ")}`
 
       let itemErrMsgs = []
       for (let i = 0; i < errorTypeGroups.Others.length && i < 10; i++) {
