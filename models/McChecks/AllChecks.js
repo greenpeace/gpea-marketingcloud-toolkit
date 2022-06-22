@@ -10,7 +10,7 @@ const axios = require('axios');
 require('dotenv').config()
 
 async function main() {
-  let markets = ["TW", "HK"]
+  let markets = ["TW", "HK", "KR"]
 
   for (let i = 0; i < markets.length; i++) {
     const market = markets[i];
@@ -35,6 +35,14 @@ async function main() {
         subDomain: process.env.MC_HK_SUBDOMAIN,
         accountId: process.env.MC_HK_ACCOUNTID,
       })
+    } else if (market === "KR") {
+      // init marketing cloud settings
+      mcbase = new MCBase({
+        clientId: process.env.MC_KR_CLIENTID,
+        clientSecret: process.env.MC_KR_CLIENTSECRET,
+        subDomain: process.env.MC_KR_SUBDOMAIN,
+        accountId: process.env.MC_KR_ACCOUNTID,
+      })
     }
 
     if (!mcbase) {
@@ -46,7 +54,7 @@ async function main() {
     logger.debug(`Retrieving the journey settings for ${market}: ${url}`)
     let response = await axios.get(url)
     journeyRules = response.data.records ? response.data.records : [];
-    logger.debug(`Use journey ruels ${JSON.stringify(journeyRules, null, 2)}`)
+    // logger.debug(`Use journey ruels ${JSON.stringify(journeyRules, null, 2)}`)
 
     // auth with marketing cloud
     await mcbase.doAuth()
@@ -76,6 +84,8 @@ async function main() {
     rs = await JourneyStageErrorChecks(mcbase)
     allWarnings = allWarnings.concat(rs.errors)
     // console.log('journey stage errors', rs.errors)
+
+    // console.log(JSON.stringify(rs.errors, null, 4));
 
     if (allWarnings.length) {
       allWarnings.unshift({ message: `\n　\n 🙋🙋🙋 ${market}: *${allWarnings.length}* warnings on *${format(new Date(), "yyyy-MM-dd'T'HH:mm:ssxxx")}*\n` })
