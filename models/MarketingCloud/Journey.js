@@ -100,8 +100,15 @@ class Journey {
     return response.data
   }
 
-  async findByName(journeyName) {
-    let url = `${this.parent.restEndpoint}/interaction/v1/interactions?name=${journeyName}&mostRecentVersionOnly=true&extras=all`
+  /**
+   * 
+   * @param {string} journeyName 
+   * @param {dict} options 
+   *     options.mostRecentVersionOnly bool
+   * @returns 
+   */
+  async findByName(journeyName, options={}) {
+    let url = `${this.parent.restEndpoint}/interaction/v1/interactions?name=${journeyName}&mostRecentVersionOnly=${options.mostRecentVersionOnly ? 'true':'false'}&extras=all`
     let response = await axios.get(url, {
       headers: { "authorization": `Bearer ${this.parent.accessToken}` }
     })
@@ -201,7 +208,7 @@ class Journey {
 
     // add the version.
     if (options.versionNumber) {
-      url += `?VersionNumber={options.versionNumber}`
+      url += `?VersionNumber=${options.versionNumber}`
     } else {
       url += `?AllVersions=true`
     }
@@ -225,7 +232,49 @@ class Journey {
 
     // add the version.
     if (options.versionNumber) {
-      url += `?VersionNumber={options.versionNumber}`
+      url += `?VersionNumber=${options.versionNumber}`
+    } else {
+      url += `?AllVersions=true`
+    }
+
+    let response = await axios.post(url, options, {
+      headers: { "authorization": `Bearer ${this.parent.accessToken}` }
+    })
+
+    return response.data
+  }
+
+  async ejectContact(journeyCustomerKey, contactKey) {
+    let url = `${this.parent.restEndpoint}/interaction/v1/interactions/contactexit`
+
+    let response = await axios.post(url, [{
+      "ContactKey": contactKey,
+      "DefinitionKey": journeyCustomerKey
+    }], {
+      headers: { "authorization": `Bearer ${this.parent.accessToken}` }
+    })
+
+    if (response.data.errors && response.data.errors.length>0) {
+      logger.error(JSON.stringify(response.data.errors))
+    }
+
+    return response.data
+  }
+
+ /**
+   * To stop a paused journey
+   * 
+   * @param {string} journeyId The journey GUID which show on the URL
+   * @param {*} options @see https://developer.salesforce.com/docs/atlas.en-us.noversion.mc-apis.meta/mc-apis/JourneyResumeByDefinitionId.htm
+   *  options.versionNumber is required.
+   * @returns 
+   */
+  async stop (journeyId, options={}) {
+    let url = `${this.parent.restEndpoint}/interaction/v1/interactions/stop/${journeyId}`
+
+    // add the version.
+    if (options.versionNumber) {
+      url += `?VersionNumber=${options.versionNumber}`
     } else {
       url += `?AllVersions=true`
     }
@@ -316,6 +365,49 @@ class Journey {
     return response.data
   }
 
+
+  /**
+   * Get the contact in journey status. ex, entered? completed?
+   * 
+   * @param {string} journeyDefinitionId 
+   * @param {string} contactKey 
+   * @returns 
+   */
+  async getContactJourneyStatus (journeyDefinitionId, contactKey) {
+    let url = `${this.parent.restEndpoint}/interaction/v1/interactions/journeyhistory/contactkey?$page=1&$pageSize=1000`
+    let response = await axios.post(url, {
+      "definitionIds": [journeyDefinitionId],
+      "queryString": `${contactKey}*`
+    }, {
+      headers: { "authorization": `Bearer ${this.parent.accessToken}` }
+    })
+
+    if (response.data.errors && response.data.errors.length>0) {
+      logger.error(JSON.stringify(response.data.errors))
+    }
+
+    return _.get(response.data, 'items.0')
+  }
+
+  /**
+   * To update the journey
+   * 
+   * @param {*} journeyDetails 
+   * @returns 
+   */
+  async updateJourney (journeyDetails) {
+    let url = `${this.parent.restEndpoint}/interaction/v1/interactions`
+
+    let response = await axios.put(url, journeyDetails, {
+      headers: { "authorization": `Bearer ${this.parent.accessToken}` }
+    })
+
+    if (response.data.errors && response.data.errors.length>0) {
+      logger.error(JSON.stringify(response.data.errors))
+    }
+
+    return response.data
+  }
 }
 
 module.exports = Journey

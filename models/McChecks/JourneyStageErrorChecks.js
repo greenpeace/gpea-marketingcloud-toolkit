@@ -67,9 +67,7 @@ const check = async (mcbase, rules) => {
 
     for (let i = 0; i < items.length; i++) {
       const item = items[i]
-      
       let resultMessages = _.get(item, 'result.messages', [])
-      // console.log('resultMessages', resultMessages)
 
       if (resultMessages.some(m => m.message.indexOf('excluded by List Detective') >=0)) {
         errorTypeGroups.ListDetective.push(item)
@@ -88,7 +86,6 @@ const check = async (mcbase, rules) => {
       }
     }
 
-    
     let countsMsgs = []
     // let candidateErrTypes = ['Others', 'ListDetective', 'SuppressionLogic', 'InvalidEmail', 'MetExitCriteria', 'CurrentlyWaitingInSameInteraction', 'ContactPreviouslyInSameInteraction']
     let candidateErrTypes = ['Others', 'ContactPreviouslyInSameInteraction'] // only show specific errors
