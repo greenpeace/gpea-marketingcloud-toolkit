@@ -8,6 +8,8 @@ const Journey = require("./Journey")
 const JourneyBuilder = require("./JourneyBuilder/JourneyBuilder")
 const Messaging = require("./Messaging")
 const Send = require("./Send")
+const Email = require("./Email")
+const DataExtension = require("./DataExtension")
 
 class MCBase {
   constructor(options) {
@@ -56,6 +58,10 @@ class MCBase {
       obj = new Send()
     } else if (instanceName==="JourneyBuilder") {
       obj = new JourneyBuilder()
+    } else if (instanceName==="Email") {
+      obj = new Email()
+    } else if (instanceName==="DataExtension") {
+      obj = new DataExtension()
     } else {
       logger.warn(`Cannot find the instanceName ${instanceName}`)
     }

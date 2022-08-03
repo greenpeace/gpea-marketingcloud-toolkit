@@ -22,6 +22,11 @@ const DECISION_SPLIT_RULES_BY_SYNC_DE = {
     criteria: ""
   },
 
+  IN_OTHER_JOURNEY: {
+    description: "In_Petition_Journey_MC is True",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"In_Petition_Journey_MC_LC_Management.In_Petition_Journey_MC\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[true]]></Value></Condition></ConditionSet></FilterDefinition>"
+  },
+
   EMAIL_OPT_OUT: {
     "description": "HasOptedOutOfEmail is True OR Fundraising_Appeals_Opt_Out__c is True",
     "criteria": `
