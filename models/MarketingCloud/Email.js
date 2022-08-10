@@ -10,23 +10,101 @@ const format = require('date-fns/format')
  * @see https://gortonington.com/email-send-preview-and-test-sends-via-rest-api/
  */
 class Email {
-  async generatePreviewHtmlByDeContactId(emailId, deId, contactId) {
+  init () {
+    this.sendManagement = {}
+    if (this.parent.market==="tw") {
+      this.sendManagement = {
+        sendClassificationID: process.env.MC_TW_sendClassificationID,
+        senderProfileID: process.env.MC_TW_senderProfileID,
+        deliveryProfileID: process.env.MC_TW_deliveryProfileID,
+      }
+    } else {
+      throw new Error("Un-support market: ", this.parent.market)
+    }
+  }
 
-    // let url = `${this.parent.restEndpoint}/guide/v1/emails/${emailId}/dataExtension/${deId}/row/${rowIdx}/preview`
-    // let url = `${this.parent.restEndpoint}/guide/v1/emails/preview/send`
-    // let url = `${this.parent.restEndpoint}/guide/v1/emails/${emailId}/dataExtension/${deId}/row/${rowIdx}/preview` // GetEmailPreviewByID
-    // let url = `${this.parent.restEndpoint}/guide/v1/emails/${emailId}/dataExtension/${deId}/contacts/0032u00000ENwJlAAL/preview` // GetEmailPreviewByID
-    // let url = `${this.parent.restEndpoint}/guide/v1/emails/${emailId}/dataExtension/38c76ffa-b40f-ec11-b85c-b883035b8991/row/5000/preview` // GetEmailPreviewByID
-    // let url = `${this.parent.restEndpoint}/guide/v1/emails/${emailId}/dataExtension/38c76ffa-b40f-ec11-b85c-b883035b8991/contacts/4950192/preview` // OK GetEmailPreviewByID
-    let url = `${this.parent.restEndpoint}/guide/v1/emails/${emailId}/dataExtension/${deId}/contacts/${contactId}/preview` // OK GetEmailPreviewByID
+  /**
+   * Find the email object bu the given emailId
+   * 
+   * @param {int} emailId ex. 8484
+   * @returns 
+   */
+  async findEmailByLegacyEmailId (emailId) {
+    let url = `${this.parent.restEndpoint}/asset/v1/content/assets/query`
 
     let response = await axios.post(url, {
-
+      "query": {
+        "property": "data.email.legacy.legacyId",
+        "simpleOperator": "equal",
+        "value": emailId
+      }
     }, {
       headers: { "authorization": `Bearer ${this.parent.accessToken}` }
     })
 
+    return _.get(response.data, 'items')
+  }
+
+  /**
+   * Get a preview for an email by id using a specific data extension and data extension row.
+   * 
+   * @param {int} emailId ex. 8484
+   * @param {string} deId Data Extension Id (ObjectId): ex 38c76ffa-b40f-ec11-b85c-b883035b8991
+   * @param {int} rowId Row _CustomObjectKey. Note, it's not the table index, it's a row Id. ex. 39679
+   * @returns 
+   */
+  async generatePreviewHtmlByDeRowId(emailId, deId, rowId) {
+    let url = `${this.parent.restEndpoint}/guide/v1/emails/${emailId}/dataExtension/${deId}/row/${rowId}/preview`
+
+    let response = await axios.post(url, {}, {
+      headers: { "authorization": `Bearer ${this.parent.accessToken}` }
+    })
+
     return this._extractHtmlBodyFromPreviewResponseData(response.data)
+  }
+
+  /**
+   * Sends a preview of an email.
+   * 
+   * @param {int} emailId 
+   * @param {string} deId 
+   * @param {int} rowId 
+   * @param {mixed} recipients Array of Emails OR a email string
+   * @returns 
+   */
+  async postEmailPreviewSend({emailId, deId, rowId, recipients, subjectPrefix, senderProfileId, deliveryProfileId}) {
+    // resolve the sender settings
+    let sendManagement = Object.assign({}, this.sendManagement)
+    if (senderProfileId) {
+      sendManagement.senderProfileId = senderProfileId
+    }
+    if (deliveryProfileId) {
+      sendManagement.deliveryProfileId = deliveryProfileId
+    }
+
+    // send the email
+    let url = `${this.parent.restEndpoint}/guide/v1/emails/preview/send`
+    let response = await axios.post(url, {
+      "emailID": emailId,
+      "subjectPrefix": subjectPrefix ? subjectPrefix : `[Test] `,
+      "trackLinks": true,
+      "suppressTracking": true,
+      "options": {
+        "EnableETURLs": "true"
+      },
+      "recipients": Array.isArray(recipients) ? recipients : [recipients],
+      "isMultipart": true,
+      "dataSource": {
+        "type": "DataExtension",
+        "id": deId,
+        "row": rowId
+      },
+      "sendManagement": Object.assign({}, this.sendManagement, {senderProfileId, deliveryProfileId})
+    }, {
+      headers: { "authorization": `Bearer ${this.parent.accessToken}` }
+    })
+
+    return response.data
   }
 
   /**

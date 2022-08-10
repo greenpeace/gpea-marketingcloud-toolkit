@@ -10,6 +10,8 @@ const Messaging = require("./Messaging")
 const Send = require("./Send")
 const Email = require("./Email")
 const DataExtension = require("./DataExtension")
+const SMS = require("./SMS")
+require('dotenv').config()
 
 class MCBase {
   constructor(options) {
@@ -17,6 +19,11 @@ class MCBase {
     this.clientSecret = options.clientSecret
     this.subDomain = options.subDomain
     this.accountId = options.accountId
+
+    if (options.market) {
+      this.market = this.setMarket(options.market)  
+      this._loadMarketVariable()
+    }
 
     if ( !this.clientId || !this.clientSecret || !this.subDomain || !this.accountId) {
       throw new Error('clientId, clientSecret, subDomain are accountId required.')
@@ -28,6 +35,37 @@ class MCBase {
 
     this.accessToken = null
     this.soapClient = null
+  }
+
+  setMarket (market) {
+    market = market.toLowerCase()
+    
+    if (["tw","hk","kr"].indexOf(market)<0) {
+      throw new Error("The market should be one of tw, hk or kr")
+    }
+
+    this.market = market
+    return this.market
+  }
+
+  _loadMarketVariable ()  {
+    if ( !this.market) {
+      throw new Error("Load Market variable without market defined.")
+    }
+
+    if (this.market==="tw") {
+      this.clientId = process.env.MC_TW_CLIENTID
+      this.clientSecret = process.env.MC_TW_CLIENTSECRET
+      this.subDomain = process.env.MC_TW_SUBDOMAIN
+      this.accountId = process.env.MC_TW_ACCOUNTID
+    } else if (this.market==="hk") {
+      this.clientId = process.env.MC_HK_CLIENTID
+      this.clientSecret = process.env.MC_HK_CLIENTSECRET
+      this.subDomain = process.env.MC_HK_SUBDOMAIN
+      this.accountId = process.env.MC_HK_ACCOUNTID
+    } else {
+      throw new Error("un-supported market: "+this.market)
+    }
   }
 
   async doAuth() {
@@ -62,12 +100,18 @@ class MCBase {
       obj = new Email()
     } else if (instanceName==="DataExtension") {
       obj = new DataExtension()
+    } else if (instanceName==="SMS") {
+      obj = new SMS()
     } else {
       logger.warn(`Cannot find the instanceName ${instanceName}`)
     }
 
     if (obj) {
       obj.parent = this
+    }
+
+    if (typeof obj.init ==="function") {
+      obj.init()
     }
 
     return obj

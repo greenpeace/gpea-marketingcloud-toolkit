@@ -408,6 +408,46 @@ class Journey {
 
     return response.data
   }
+
+  /**
+   * Find the journey trigger event definitions.
+   * 
+   * @param {string} jName Journey Name
+   * @returns object
+   */
+  async getJourneyEventDefinitionsByJourneyName (jName) {
+    let r = await this.findByName(jName)
+    let j = _.get(r, 'items.0', null)
+  
+    if ( !j) {
+      throw new Error("Cannot find the journey with name: "+j)
+    }
+
+    let triggerEventDefId = _.get(j, 'triggers.0.metaData.eventDefinitionId', null)
+    if ( !triggerEventDefId) {
+      throw new Error("Cannot find the eventId from journey "+jName)
+    }
+
+    let def = await this.getEventDefinitions(triggerEventDefId)
+
+    return def
+  }
+
+  /**
+   * Get the journey entry event definitions
+   * 
+   * @param {string} eventDefId ex. 67e6d2d0-b102-4ba9-9b8c-cd14e7c2cbc6
+   * @returns dict
+   */
+  async getEventDefinitions (eventDefId) {
+    let url = `${this.parent.restEndpoint}/interaction/v1/eventDefinitions/${eventDefId}`
+
+    let response = await axios.get(url, {
+      headers: { "authorization": `Bearer ${this.parent.accessToken}` }
+    })
+
+    return response.data
+  }
 }
 
 module.exports = Journey

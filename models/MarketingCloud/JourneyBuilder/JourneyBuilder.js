@@ -49,6 +49,8 @@ class JourneyBuilder {
   }
 
   setMarket (market) {
+    market = market.toLowerCase()
+    
     if (["tw","hk","kr"].indexOf(market)<0) {
       throw new Error("The market should be one of tw, hk or kr")
     }
