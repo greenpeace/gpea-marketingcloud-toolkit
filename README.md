@@ -71,3 +71,14 @@ let recipients = ['uchen@greenpeace.org']
 let market = "hk"
 ```
 2. Run the script `node cli/SendJourneyEmailPreviews.js`
+
+### What if I need to use a specific data extension?
+
+Replace this line
+```
+let deName = _.get(eventDef, 'dataExtensionName', null)
+```
+with
+```
+let deName = 'YOUR_TARGET_DATAEXTENSION_NAME'
+```
