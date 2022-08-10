@@ -9,10 +9,10 @@ const format = require('date-fns/format')
  */
 async function main() {
   // EDIT HERE!
-  let targetJourneyName = 'tw-reactivation-automd-new_lapsed'
-  let emailPrefix = `[new_lapsed]`
+  let targetJourneyName = 'hk-lead_conversion-automd-plastic-dpt-policy'
+  let emailPrefix = ``
   let recipients = ['uchen@greenpeace.org']
-  let market = "tw"
+  let market = "hk"
 
   // main
   let mcbase = new MCBase({market})
@@ -79,8 +79,13 @@ async function main() {
     let emailObj = await mcEmail.findEmailByLegacyEmailId(emailId)
     let emailName = _.get(emailObj, '0.name')
 
+    // send the email
+    let logMsg = `${prefix}${emailSubject}`
+    if (logMsg.indexOf(emailName)<0) {
+      logMsg = `${emailName}: ${logMsg}`
+    } 
 
-    logger.info(`  ${emailName}: ${prefix}${emailSubject}`)
+    logger.info("  "+logMsg)
     let r = await mcEmail.postEmailPreviewSend({
       emailId: emailId, 
       deId: deId, 
