@@ -24,6 +24,12 @@ class Email {
         senderProfileID: process.env.MC_HK_senderProfileID,
         deliveryProfileID: process.env.MC_HK_deliveryProfileID,
       }
+    } else if (this.parent.market==="kr") {
+      this.sendManagement = {
+        sendClassificationID: process.env.MC_KR_sendClassificationID,
+        senderProfileID: process.env.MC_KR_senderProfileID,
+        deliveryProfileID: process.env.MC_KR_deliveryProfileID,
+      }
     } else {
       throw new Error("Un-support market: ", this.parent.market)
     }

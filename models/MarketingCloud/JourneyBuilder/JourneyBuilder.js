@@ -59,6 +59,9 @@ class JourneyBuilder {
     return this.market
   }
 
+  /**
+   * Prepare the pre-defined decision split criteria which will be used to replace the rules.
+   */
   pathDecisionSplitCriteria () {
     if ( !this.market) { throw new Error("You must setMarket before using this function.") }
 
@@ -70,6 +73,9 @@ class JourneyBuilder {
     }
   }
 
+  /**
+   * Replace the UiMetada value used for the decision split fields.
+   */
   patchRule_UIMETADATA () {
     let rule = this.decisionSplitRulesBySyncDe
 
@@ -82,6 +88,9 @@ class JourneyBuilder {
     this.decisionSplitRulesBySyncDe = rule
   }
 
+  /**
+   * Replace the Data Extension RelationId which used for the decision split rules
+   */
   patchRule_DeRelationIds () {
     let rule = this.decisionSplitRulesBySyncDe
 
@@ -101,6 +110,9 @@ class JourneyBuilder {
     this.decisionSplitRulesBySyncDe = rule
   }
 
+  /**
+   * 
+   */
   patchRule_TriggeredDe () {
     let rule = this.decisionSplitRulesByEntryDe
 
@@ -127,6 +139,7 @@ class JourneyBuilder {
 
       criteria = criteria.replace(new RegExp(`_ENTRY_EVENT_`, 'g'), eventPlaceholder)
       criteria = criteria.replace(new RegExp(`_ENTRY_OEJECT_`, 'g'), objectApiName)
+      criteria = criteria.replace(new RegExp(`\.Contact:Contact:`, 'g'), '.Contact:') // special case for Contact EntryObject 
     
       rule[pathName].criteria = criteria
     })
@@ -138,9 +151,11 @@ class JourneyBuilder {
    * Remove icons which added by this script
    */
   _cleanCriteriaPathName (pathName) {
-    pathName = pathName.replace(new RegExp(ICON_RULE_FROM_SYNC_DE, 'g'), "")
-    pathName = pathName.replace(new RegExp(ICON_RULE_FROM_TRIGGERED_DE, 'g'), "")
-
+    if (pathName) {
+      pathName = pathName.replace(new RegExp(ICON_RULE_FROM_SYNC_DE, 'g'), "")
+      pathName = pathName.replace(new RegExp(ICON_RULE_FROM_TRIGGERED_DE, 'g'), "")
+    }
+    
     return pathName
   }
 
@@ -307,6 +322,8 @@ class JourneyBuilder {
             } else {
               logger.debug(`Skip ${originalLabel}`)
             }
+          } else {
+            // console.log(`Cannot find criteria for ${actOutcomeMetaDataLabel}`)
           }
         }
       }
@@ -319,6 +336,29 @@ class JourneyBuilder {
     }
 
     this.nextJ = nextJ
+  }
+
+  pathJourneyWaitTimeToMinute () {
+    let nextJ = this.nextJ
+
+    // patch decision splits
+    for (let i = 0; i < nextJ.activities.length; i++) {
+      const act = nextJ.activities[i];
+      
+      if (act.type==='WAIT' && act.metaData.uiType==="WAITBYDURATION") {
+        nextJ.activities[i].configurationArguments.waitUnit = "MINUTES"
+        logger.debug(`Replace ${act.key} from ${act.name} to ${act.configurationArguments.waitDuration} ${nextJ.activities[i].configurationArguments.waitUnit}`)
+      }
+    }
+
+    this.nextJ = nextJ
+  }
+
+  /**
+   * Trim the journey to only the main pathes. (Decision splits and wait times)
+   */
+  trimJourneyOnlyStructure () {
+
   }
 }
 

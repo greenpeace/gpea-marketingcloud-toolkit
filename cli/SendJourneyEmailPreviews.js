@@ -9,10 +9,14 @@ const format = require('date-fns/format')
  */
 async function main() {
   // EDIT HERE!
-  let targetJourneyName = 'hk-lead_conversion-automd-plastic-dpt-policy'
-  let emailPrefix = ``
-  let recipients = ['uchen@greenpeace.org']
+  let targetJourneyName = 'hk-annual_reactivation-adhoc-20220930'
+  let emailPrefix = `[annual_reactivation]`
+  let recipients = ['uchen+20220922@greenpeace.org']
   let market = "hk"
+
+  let deFilter
+  // let deFilter = {property:"Recurring Donation Status", simpleOperator:"notEquals", value:"Active"}
+  
 
   // main
   let mcbase = new MCBase({market})
@@ -37,12 +41,17 @@ async function main() {
   
   // fetch rows
   logger.info(`Fetching DE rows [${deName}], deId: ${deId} …`)
-  r = await mcDE.fetchDeRows(deName)
+  r = await mcDE.fetchDeRows(deName, {filter: deFilter})
   logger.info(`Found ${r.length} rows`)
 
+  // random show some candidate rows
+  let sampleSize = 3
+  let sampleRows = _.sampleSize(r, sampleSize)
+  logger.info(`Sample ${sampleSize} rows:`)
+  logger.info(sampleRows)
+  
   // resolve using which row to preview
-  let previewRowIdx = r.length-1
-  let previewRow = r[previewRowIdx] // [{ Name: '_CustomObjectKey', Value: '39681' }, ...]
+  let previewRow = _.sample(sampleRows)  // [{ Name: '_CustomObjectKey', Value: '39681' }, ...]
 
   // convert into {Name:Value, ...}
   previewRow = previewRow.reduce((accumlator, currentRow) => {
@@ -52,7 +61,7 @@ async function main() {
 
   let previewRowId = previewRow['_CustomObjectKey']
 
-  logger.info(`Using rowIdx #${previewRowIdx} (rowId: ${previewRowId}) to preview email`)
+  logger.info(`Using rowId: ${previewRowId}) to preview email`)
   logger.info(JSON.stringify(previewRow, null, 4))
 
   // find the email activities of the journey
@@ -96,6 +105,7 @@ async function main() {
       senderProfileId,
       deliveryProfileId
     })
+    // logger.debug(r)
   }
 
   // prepare the SMS content previews

@@ -11,7 +11,16 @@ const MARKET_RELATED_DEFS = {
     UI_METADATA: "{&quot;groupToSetRelationshipId&quot;:&quot;a7355944-4bca-ea11-b83a-b883035bd8a1&quot;}",
     SYNCED_DE_RELATIONID_MAP: {
       'Donation__c_Salesforce_1': '753a5944-4bca-ea11-b83a-b883035bd8a1',
-      'Recurring_Donation__c_Salesforce_1': 'TODO'
+      'Recurring_Donation__c_Salesforce_1': 'fd3a5944-4bca-ea11-b83a-b883035bd8a1',
+      'Case_Salesforce_1': '8b375944-4bca-ea11-b83a-b883035bd8a1'
+    }
+  },
+  kr: {
+    UI_METADATA: "{&quot;groupToSetRelationshipId&quot;:&quot;97f7e836-4dca-ea11-b83a-b883035bd8a1&quot;}",
+    SYNCED_DE_RELATIONID_MAP: {
+      'Donation__c_Salesforce_1': '65fce836-4dca-ea11-b83a-b883035bd8a1',
+      'Recurring_Donation__c_Salesforce_1': 'TODO',
+      'Case_Salesforce_1': '7bf9e836-4dca-ea11-b83a-b883035bd8a1'
     }
   }
 }
@@ -28,45 +37,43 @@ const DECISION_SPLIT_RULES_BY_SYNC_DE = {
   },
 
   EMAIL_OPT_OUT: {
-    "description": "HasOptedOutOfEmail is True OR Fundraising_Appeals_Opt_Out__c is True",
-    "criteria": `
-      <FilterDefinition> <ConditionSet Operator="OR" ConditionSetName="Individual Filter Grouping"> <Condition Key="Contact_Salesforce_1.HasOptedOutOfEmail" Operator="Is" UiMetaData="_UI_METADATA_"> <Value> <![CDATA[true]]> </Value> </Condition> <Condition Key="Contact_Salesforce_1.Fundraising_Appeals_Opt_Out__c" Operator="Is" UiMetaData="_UI_METADATA_"> <Value> <![CDATA[true]]> </Value> </Condition> </ConditionSet> </FilterDefinition>
-    `
+    "description": "HasOptedOutOfEmail is True OR Fundraising_Appeals_Opt_Out__c is True OR Marketing_Opt_Out__c is True",
+    "criteria": "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.HasOptedOutOfEmail\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[true]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.Fundraising_Appeals_Opt_Out__c\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[true]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.Marketing_Opt_Out__c\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[true]]></Value></Condition></ConditionSet></FilterDefinition>"
   },
   
-  EMAIL_IS_VALID: {
-    description: "Email contains @ AND Email does not contain noaddress",
-    criteria: `<FilterDefinition><ConditionSet Operator="AND" ConditionSetName="Individual Filter Grouping"><Condition Key="Contact_Salesforce_1.Email" Operator="Contains" UiMetaData="_UI_METADATA_"><Value><![CDATA[@]]></Value></Condition><Condition Key="Contact_Salesforce_1.Email" Operator="NotContains" UiMetaData="_UI_METADATA_"><Value><![CDATA[noaddress]]></Value></Condition></ConditionSet></FilterDefinition>`
-  },
-
   EMAIL_NOT_VALID: {
-    description: "Email is null  OR Email does not contain @ OR Email contains noaddress",
+    description: "Email is null OR Email does not contain @ OR Email contains noaddress",
     criteria: "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.Email\" Operator=\"IsNull\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.Email\" Operator=\"NotContains\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[@]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.Email\" Operator=\"Contains\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[noaddress]]></Value></Condition></ConditionSet></FilterDefinition>"
   },
 
   CALL_OPT_OUT: {
-    description: "DoNotCall is True OR Fundraising_Appeals_Opt_Out__c is True",
-    criteria: "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.DoNotCall\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[true]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.Fundraising_Appeals_Opt_Out__c\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[true]]></Value></Condition></ConditionSet></FilterDefinition>"
+    description: "DoNotCall is True OR Fundraising_Appeals_Opt_Out__c is True OR Marketing_Opt_Out__c is True",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.DoNotCall\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[true]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.Fundraising_Appeals_Opt_Out__c\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[true]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.Marketing_Opt_Out__c\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[true]]></Value></Condition></ConditionSet></FilterDefinition>"
   },
 
-  PHONE_IS_VALID_TW: {
-    description: "MobilePhone contains +886 AND MobilePhone does not contain 0000000 AND MobilePhone does not contain 1234567 AND MobilePhone does not contain 28548338",
-    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.MobilePhone\" Operator=\"Contains\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[+886]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.MobilePhone\" Operator=\"NotContains\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[0000000]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.MobilePhone\" Operator=\"NotContains\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[1234567]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.MobilePhone\" Operator=\"NotContains\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[28548338]]></Value></Condition></ConditionSet></FilterDefinition>"
-  },
-
-  PHONE_IS_VALID_HK: {
-    description: "MobilePhone contains +852 AND MobilePhone does not contain 0000000 AND MobilePhone does not contain 1234567 AND MobilePhone does not contain 28548338",
-    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.MobilePhone\" Operator=\"Contains\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[+852]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.MobilePhone\" Operator=\"NotContains\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[0000000]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.MobilePhone\" Operator=\"NotContains\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[1234567]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.MobilePhone\" Operator=\"NotContains\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[28548338]]></Value></Condition></ConditionSet></FilterDefinition>"
+  SMS_OPT_OUT: {
+    description: "et4ae5__HasOptedOutOfMobile__c is True OR Fundraising_Appeals_Opt_Out__c is True OR Marketing_Opt_Out__c is True",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.et4ae5__HasOptedOutOfMobile__c\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[true]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.Fundraising_Appeals_Opt_Out__c\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[true]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.Marketing_Opt_Out__c\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[true]]></Value></Condition></ConditionSet></FilterDefinition>"
   },
 
   PHONE_NOT_VALID_TW: {
-    description: "MobilePhone is null  OR MobilePhone does not contain +886 OR MobilePhone contains 0000000 OR MobilePhone contains 1234567 OR MobilePhone contains 28548338",
+    description: "MobilePhone is null OR MobilePhone does not contain +886 OR MobilePhone contains 0000000 OR MobilePhone contains 1234567 OR MobilePhone contains 28548338",
     criteria: "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.MobilePhone\" Operator=\"IsNull\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.MobilePhone\" Operator=\"NotContains\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[+886]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.MobilePhone\" Operator=\"Contains\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[0000000]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.MobilePhone\" Operator=\"Contains\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[1234567]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.MobilePhone\" Operator=\"Contains\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[28548338]]></Value></Condition></ConditionSet></FilterDefinition>"
   },
 
   PHONE_NOT_VALID_HK: {
-    description: "MobilePhone is null  OR MobilePhone does not contain +852 OR MobilePhone contains 0000000 OR MobilePhone contains 1234567 OR MobilePhone contains 28548338",
+    description: "MobilePhone is null OR MobilePhone does not contain +852 OR MobilePhone contains 0000000 OR MobilePhone contains 1234567 OR MobilePhone contains 28548338",
     criteria: "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.MobilePhone\" Operator=\"IsNull\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.MobilePhone\" Operator=\"NotContains\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[+852]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.MobilePhone\" Operator=\"Contains\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[0000000]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.MobilePhone\" Operator=\"Contains\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[1234567]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.MobilePhone\" Operator=\"Contains\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[28548338]]></Value></Condition></ConditionSet></FilterDefinition>"
+  },
+
+  PHONE_NOT_VALID_KR: {
+    description: "MobilePhone is null OR MobilePhone contains 0000000 OR MobilePhone contains 1234567 OR TFR_Call_Outcome__c contains Invalid Data",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.MobilePhone\" Operator=\"IsNull\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.MobilePhone\" Operator=\"Contains\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[0000000]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.MobilePhone\" Operator=\"Contains\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[1234567]]></Value></Condition><Condition Key=\"Case_Salesforce_1.TFR_Call_Outcome__c\" Operator=\"Contains\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"7bf9e836-4dca-ea11-b83a-b883035bd8a1\"><Value><![CDATA[Invalid Data]]></Value></AttributePath></Condition></ConditionSet></FilterDefinition>"
+  },
+
+  ADDR_NOT_VALID: {
+    description: "MailingStreet is null  OR Invalid_Address__c is True",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.MailingStreet\" Operator=\"IsNull\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.Invalid_Address__c\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[true]]></Value></Condition></ConditionSet></FilterDefinition>"
   },
 
   IN_OTHER_JOURNEY: {
@@ -80,13 +87,18 @@ const DECISION_SPLIT_RULES_BY_SYNC_DE = {
   },
 
   DONATED_RECENTLY: {
-    description: "Date__c is on or after Today Minus 14 days andStatus__c equal Processed",
+    description: "Date__c is on or after Today Minus 14 days and Status__c equal Processed",
     criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Donation__c_Salesforce_1.Date__c\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"><Value><![CDATA[;-;14;days]]></Value></AttributePath></Condition><Condition Key=\"Donation__c_Salesforce_1.Status__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"><Value><![CDATA[Processed]]></Value></AttributePath></Condition></ConditionSet></FilterDefinition>"
   },
 
   DONATED_SG_RECENTLY: {
-    description: "Date__c is on or after Today Minus 14 days andStatus__c equal Processed andIs_Recurring_Donation__c is False",
-    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Donation__c_Salesforce_1.Date__c\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"><Value><![CDATA[;-;14;days]]></Value></AttributePath></Condition><Condition Key=\"Donation__c_Salesforce_1.Status__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"><Value><![CDATA[Processed]]></Value></AttributePath></Condition><Condition Key=\"Donation__c_Salesforce_1.Is_Recurring_Donation__c\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"><Value><![CDATA[false]]></Value></AttributePath></Condition></ConditionSet></FilterDefinition>"
+    description: "Date__c is on or after Today Minus 14 days and Status__c equal Processed and (Is_Recurring_Donation__c is False OR Is_Recurring_Donation__c is null)",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Donation__c_Salesforce_1.Date__c\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"><Value><![CDATA[;-;14;days]]></Value></AttributePath></Condition><Condition Key=\"Donation__c_Salesforce_1.Status__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"><Value><![CDATA[Processed]]></Value></AttributePath></Condition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"> <Condition Key=\"Donation__c_Salesforce_1.Is_Recurring_Donation__c\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"> <AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"> <Value> <![CDATA[false]]> </Value> </AttributePath> </Condition> <Condition Key=\"Donation__c_Salesforce_1.Is_Recurring_Donation__c\" Operator=\"IsNull\" UiMetaData=\"_UI_METADATA_\"> <AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"> <Value> <![CDATA[]]> </Value> </AttributePath> </Condition> </ConditionSet></ConditionSet></FilterDefinition>"
+  },
+
+  DONATED_SG_RECENTLY_KR: {
+    description: "Date__c is on or after Today Minus 30 days and Status__c equal Processed and (Is_Recurring_Donation__c is False OR Is_Recurring_Donation__c is null)",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Donation__c_Salesforce_1.Date__c\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"><Value><![CDATA[;-;30;days]]></Value></AttributePath></Condition><Condition Key=\"Donation__c_Salesforce_1.Status__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"><Value><![CDATA[Processed]]></Value></AttributePath></Condition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"> <Condition Key=\"Donation__c_Salesforce_1.Is_Recurring_Donation__c\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"> <AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"> <Value> <![CDATA[false]]> </Value> </AttributePath> </Condition> <Condition Key=\"Donation__c_Salesforce_1.Is_Recurring_Donation__c\" Operator=\"IsNull\" UiMetaData=\"_UI_METADATA_\"> <AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"> <Value> <![CDATA[]]> </Value> </AttributePath> </Condition> </ConditionSet></ConditionSet></FilterDefinition>"
   },
 
   DONATED_RG_RECENTLY: {
@@ -135,7 +147,7 @@ const DECISION_SPLIT_RULES_BY_SYNC_DE = {
   },
 
   "DONATED_RECENTLY": {
-    "description": "Date__c is on or after Today Minus 14 days andStatus__c equal Processed",
+    "description": "Date__c is on or after Today Minus 14 days and Status__c equal Processed",
     "criteria": `
       <FilterDefinition>
           <ConditionSet Operator="AND" ConditionSetName="Individual Filter Grouping">
@@ -157,47 +169,38 @@ const DECISION_SPLIT_RULES_BY_SYNC_DE = {
       </FilterDefinition>
     `
   },
+
+  RG_STATUS_IS_ACTIVE: {
+    description: "Recurring_Donation_Status__c equal Active",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.Recurring_Donation_Status__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[Active]]></Value></Condition></ConditionSet></FilterDefinition>"
+  },
 }
 
 const DECISION_SPLIT_RULES_BY_ENTRY_DE = {
   EMAIL_OPT_OUT: {
     description: "HasOptedOutOfEmail is True OR Fundraising_Appeals_Opt_Out__c is True",
-    "criteria": "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact:et4ae5__HasOptedOutOfMobile__c\" Operator=\"Is\" UiMetaData=\"{}\"><Value><![CDATA[true]]></Value></Condition></ConditionSet></FilterDefinition>"
+    "criteria": "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact__r:et4ae5__HasOptedOutOfMobile__c\" Operator=\"Is\" UiMetaData=\"{}\"><Value><![CDATA[true]]></Value></Condition></ConditionSet></FilterDefinition>"
   },
   
-  EMAIL_IS_VALID: {
-    description: "Email contains @ AND Email does not contain noaddress",
-    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact:Email\" Operator=\"Contains\" UiMetaData=\"{}\"><Value><![CDATA[@]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact:Email\" Operator=\"NotContains\" UiMetaData=\"{}\"><Value><![CDATA[noaddress]]></Value></Condition></ConditionSet></FilterDefinition>"
-  },
 
   EMAIL_NOT_VALID: {
-    description: "Email is null  OR Email does not contain @ OR Email contains noaddress",
-    criteria: "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact:Email\" Operator=\"NotContains\" UiMetaData=\"{}\"><Value><![CDATA[@]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact:Email\" Operator=\"Contains\" UiMetaData=\"{}\"><Value><![CDATA[noaddress]]></Value></Condition></ConditionSet></FilterDefinition>"
+    description: "Email is null OR Email does not contain @ OR Email contains noaddress",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact__r:Email\" Operator=\"NotContains\" UiMetaData=\"{}\"><Value><![CDATA[@]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact__r:Email\" Operator=\"Contains\" UiMetaData=\"{}\"><Value><![CDATA[noaddress]]></Value></Condition></ConditionSet></FilterDefinition>"
   },
 
   CALL_OPT_OUT: {
     description: "DoNotCall is True OR Fundraising_Appeals_Opt_Out__c is True",
-    criteria: "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact:DoNotCall\" Operator=\"Is\" UiMetaData=\"{}\"><Value><![CDATA[true]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact:Fundraising_Appeals_Opt_Out__c\" Operator=\"Is\" UiMetaData=\"{}\"><Value><![CDATA[true]]></Value></Condition></ConditionSet></FilterDefinition>"
-  },
-
-  PHONE_IS_VALID_TW: {
-    description: "MobilePhone contains +886 AND MobilePhone does not contain 0000000 AND MobilePhone does not contain 1234567 AND MobilePhone does not contain 28548338",
-    criteria: "<FilterDefinition> <ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"> <Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact:MobilePhone\" Operator=\"Contains\" UiMetaData=\"{}\"> <Value> <![CDATA[+886]]> </Value> </Condition> <Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact:MobilePhone\" Operator=\"NotContains\" UiMetaData=\"{}\"> <Value> <![CDATA[0000000]]> </Value> </Condition> <Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact:MobilePhone\" Operator=\"NotContains\" UiMetaData=\"{}\"> <Value> <![CDATA[1234567]]> </Value> </Condition> <Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact:MobilePhone\" Operator=\"NotContains\" UiMetaData=\"{}\"> <Value> <![CDATA[28548338]]> </Value> </Condition> </ConditionSet> </FilterDefinition>"
-  },
-
-  PHONE_IS_VALID_HK: {
-    description: "MobilePhone contains +852 AND MobilePhone does not contain 0000000 AND MobilePhone does not contain 1234567 AND MobilePhone does not contain 28548338",
-    criteria: "<FilterDefinition> <ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"> <Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact:MobilePhone\" Operator=\"Contains\" UiMetaData=\"{}\"> <Value> <![CDATA[+852]]> </Value> </Condition> <Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact:MobilePhone\" Operator=\"NotContains\" UiMetaData=\"{}\"> <Value> <![CDATA[0000000]]> </Value> </Condition> <Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact:MobilePhone\" Operator=\"NotContains\" UiMetaData=\"{}\"> <Value> <![CDATA[1234567]]> </Value> </Condition> <Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact:MobilePhone\" Operator=\"NotContains\" UiMetaData=\"{}\"> <Value> <![CDATA[28548338]]> </Value> </Condition> </ConditionSet> </FilterDefinition>"
+    criteria: "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact__r:DoNotCall\" Operator=\"Is\" UiMetaData=\"{}\"><Value><![CDATA[true]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact__r:Fundraising_Appeals_Opt_Out__c\" Operator=\"Is\" UiMetaData=\"{}\"><Value><![CDATA[true]]></Value></Condition></ConditionSet></FilterDefinition>"
   },
 
   PHONE_NOT_VALID_TW: {
-    description: "CampaignMember:Contact:MobilePhone does not contain +886 OR CampaignMember:Contact:MobilePhone contains 0000000 OR CampaignMember:Contact:MobilePhone contains 1234567 OR CampaignMember:Contact:MobilePhone contains 28548338",
-    criteria: "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact:MobilePhone\" Operator=\"NotContains\" UiMetaData=\"{}\"><Value><![CDATA[+886]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact:MobilePhone\" Operator=\"Contains\" UiMetaData=\"{}\"><Value><![CDATA[0000000]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact:MobilePhone\" Operator=\"Contains\" UiMetaData=\"{}\"><Value><![CDATA[1234567]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact:MobilePhone\" Operator=\"Contains\" UiMetaData=\"{}\"><Value><![CDATA[28548338]]></Value></Condition></ConditionSet></FilterDefinition>"
+    description: "Contact:MobilePhone does not contain +886 OR Contact:MobilePhone contains 0000000 OR Contact:MobilePhone contains 1234567 OR Contact:MobilePhone contains 28548338",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact__r:MobilePhone\" Operator=\"NotContains\" UiMetaData=\"{}\"><Value><![CDATA[+886]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact__r:MobilePhone\" Operator=\"Contains\" UiMetaData=\"{}\"><Value><![CDATA[0000000]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact__r:MobilePhone\" Operator=\"Contains\" UiMetaData=\"{}\"><Value><![CDATA[1234567]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact__r:MobilePhone\" Operator=\"Contains\" UiMetaData=\"{}\"><Value><![CDATA[28548338]]></Value></Condition></ConditionSet></FilterDefinition>"
   },
 
   PHONE_NOT_VALID_HK: {
-    description: "CampaignMember:Contact:MobilePhone does not contain +852 OR CampaignMember:Contact:MobilePhone contains 0000000 OR CampaignMember:Contact:MobilePhone contains 1234567 OR CampaignMember:Contact:MobilePhone contains 28548338",
-    criteria: "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact:MobilePhone\" Operator=\"NotContains\" UiMetaData=\"{}\"><Value><![CDATA[+852]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact:MobilePhone\" Operator=\"Contains\" UiMetaData=\"{}\"><Value><![CDATA[0000000]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact:MobilePhone\" Operator=\"Contains\" UiMetaData=\"{}\"><Value><![CDATA[1234567]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact:MobilePhone\" Operator=\"Contains\" UiMetaData=\"{}\"><Value><![CDATA[28548338]]></Value></Condition></ConditionSet></FilterDefinition>"
+    description: "Contact:MobilePhone does not contain +852 OR Contact:MobilePhone contains 0000000 OR Contact:MobilePhone contains 1234567 OR Contact:MobilePhone contains 28548338",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact__r:MobilePhone\" Operator=\"NotContains\" UiMetaData=\"{}\"><Value><![CDATA[+852]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact__r:MobilePhone\" Operator=\"Contains\" UiMetaData=\"{}\"><Value><![CDATA[0000000]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact__r:MobilePhone\" Operator=\"Contains\" UiMetaData=\"{}\"><Value><![CDATA[1234567]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact__r:MobilePhone\" Operator=\"Contains\" UiMetaData=\"{}\"><Value><![CDATA[28548338]]></Value></Condition></ConditionSet></FilterDefinition>"
   },
 
 

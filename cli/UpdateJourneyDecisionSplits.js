@@ -9,9 +9,11 @@ require('dotenv').config()
  */
 async function main() {
   // EDIT HERE
-  const srcJourneyName = "tw-special_appeal-adhoc-20220802-general_rg_donors"
-  const destJourneyName = "tw-special_appeal-adhoc-20220802-general_rg_donors"
+  const srcJourneyName = "tw-comms-adhoc-20221011-winback_campaign_journey"
+  const destJourneyName = srcJourneyName
+  // const destJourneyName = "kr-middle_donor_upgrade-adhoc-20220913-md_hv_upgrade"
   const market = "TW"
+  const replaceWaitToMinutes = true
 
   let mcbase = new MCBase({market})
 
@@ -29,7 +31,13 @@ async function main() {
   mcJB.generateActivityWaitMap()
 
   // path the criteria
-  let nextJ = mcJB.pathJourney()
+  mcJB.pathJourney()
+
+  if (replaceWaitToMinutes) {
+    mcJB.pathJourneyWaitTimeToMinute()  
+  }
+  
+  let nextJ = mcJB.nextJ
 
   // Read the dest journey
   r = await mcJourney.findByName(destJourneyName, {mostRecentVersionOnly: true}) // EDIT HERE

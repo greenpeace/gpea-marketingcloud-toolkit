@@ -63,6 +63,11 @@ class MCBase {
       this.clientSecret = process.env.MC_HK_CLIENTSECRET
       this.subDomain = process.env.MC_HK_SUBDOMAIN
       this.accountId = process.env.MC_HK_ACCOUNTID
+    } else if (this.market==="kr") {
+      this.clientId = process.env.MC_KR_CLIENTID
+      this.clientSecret = process.env.MC_KR_CLIENTSECRET
+      this.subDomain = process.env.MC_KR_SUBDOMAIN
+      this.accountId = process.env.MC_KR_ACCOUNTID
     } else {
       throw new Error("un-supported market: "+this.market)
     }
@@ -126,6 +131,7 @@ class MCBase {
     let retrieveResponseMsg = _.get(jsonResponse, "soap:Envelope.soap:Body.RetrieveResponseMsg")
     let createResponse = _.get(jsonResponse, "soap:Envelope.soap:Body.CreateResponse")
     let performResponseMsg = _.get(jsonResponse, "soap:Envelope.soap:Body.PerformResponseMsg")
+    let updateResponse = _.get(jsonResponse, "soap:Envelope.soap:Body.UpdateResponse")
     let deleteResponse = _.get(jsonResponse, "soap:Envelope.soap:Body.DeleteResponse")
 
     if (retrieveResponseMsg) {
@@ -134,6 +140,27 @@ class MCBase {
       }
       
       return _.get(retrieveResponseMsg, "Results", [])
+    }
+
+    if (createResponse) {
+      if (createResponse.Results.StatusCode!=="OK") {
+        throw new Error(createResponse.Results.StatusMessage)
+      }
+      
+      return _.get(createResponse, "Results.Object", [])
+    }
+
+    if (updateResponse) {
+      if (['OK', 'MoreDataAvailable'].indexOf(updateResponse.OverallStatus)<0) {
+        let errMsg = _.get(updateResponse, 'Results.StatusMessage')
+        if (errMsg) {
+          logger.error(updateResponse.OverallStatus+": "+errMsg)
+        }
+
+        throw new Error(updateResponse.OverallStatus)
+      }
+      
+      return updateResponse.Results
     }
 
     if (deleteResponse) {
