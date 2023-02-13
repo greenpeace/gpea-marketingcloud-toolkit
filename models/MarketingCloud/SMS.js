@@ -48,6 +48,17 @@ class SMS {
 
     return response.data
   }
+
+  async renderLMS({content, paramData, contactRow}) {
+    let fieldsToRender = paramData.map(param => Object.keys(param)[0])
+    // console.log('fieldsToRender', fieldsToRender)
+
+    _.intersection(Object.keys(contactRow, fieldsToRender)).forEach(fieldName => {
+      content = content.replace(new RegExp(`@${fieldName}@`, 'g'), contactRow[fieldName])
+    })
+
+    return {renderedContent:content}
+  }
 }
 
 module.exports = SMS

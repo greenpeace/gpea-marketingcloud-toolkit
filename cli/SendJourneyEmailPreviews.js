@@ -47,10 +47,19 @@ async function main() {
   // random show some candidate rows
   let sampleSize = 3
   let sampleRows = _.sampleSize(r, sampleSize)
-  logger.info(`Sample ${sampleSize} rows:`)
-  logger.info(sampleRows)
-  
+
+  // // manually assign the ContactId to preview
+  // let targetContactId = '0032u00000DpihGAAR'
+  // let foundContactRow = r.find(row => row.some(pair => pair.Name==="Id" && pair.Value===targetContactId))
+  // if (foundContactRow) {
+  //   sampleRows = [foundContactRow]
+  // } else {
+  //   throw new Error(`Cannot find row with ContactId ${targetContactId}`)
+  // }
+
   // resolve using which row to preview
+  logger.info(`Sample ${sampleSize.length} rows:`)
+  logger.info(sampleRows)
   let previewRow = _.sample(sampleRows)  // [{ Name: '_CustomObjectKey', Value: '39681' }, ...]
 
   // convert into {Name:Value, ...}
@@ -61,8 +70,10 @@ async function main() {
 
   let previewRowId = previewRow['_CustomObjectKey']
 
-  logger.info(`Using rowId: ${previewRowId}) to preview email`)
-  logger.info(JSON.stringify(previewRow, null, 4))
+  // let previewRowId = 100
+
+  logger.info(`Using rowId: ${previewRowId} to preview email`)
+  // logger.info(JSON.stringify(previewRow, null, 4))
 
   // find the email activities of the journey
   r = await mcJourney.findByName(targetJourneyName, {mostRecentVersionOnly: true})
@@ -127,6 +138,32 @@ async function main() {
     logger.info(`  [${smsName}] ${renderedContent}`)
   }
 
+  // prepare the LMS(KR SMS) content previews
+  let lmsActivities = activities.filter(a => a.type==="REST" && _.get(a, "arguments.execute.inArguments.0.sendtype")=="LMS")
+  logger.info(`Start to render LMS previews`)
+  // console.log('lmsActivities', lmsActivities)
+  for (let i = 0; i < lmsActivities.length; i++) {
+    const aLmsAct = lmsActivities[i];
+    
+    let lmsName = _.get(aLmsAct, 'name')
+    let lmsTitle = _.get(aLmsAct, 'arguments.execute.inArguments.0.title')
+    let lmsContent = _.get(aLmsAct, 'arguments.execute.inArguments.0.msg')
+    let paramData = _.get(aLmsAct, 'arguments.execute.inArguments.0.paramData')
+
+    // console.log('lmsTitle', lmsTitle)
+    // console.log('lmsContent', lmsContent)
+
+    // TODO
+    // 1. Query the DE by _customObjectKey instead of giving a object
+    // 2. Correctly render the content
+    let {renderedContent, contentFieldsNotFound} = await mcSMS.renderLMS({
+      content: lmsContent,
+      paramData: paramData,
+      contactRow: previewRow
+    })
+
+    logger.info(`  [${lmsName}] \n${lmsTitle}\n${renderedContent}`)
+  }
 }
 
 
