@@ -24,7 +24,7 @@ const axios = require("axios");
 const cliProgress = require('cli-progress');
 
 async function shortenUrl(longUrl) {
-  const accessToken = "564fcda7fd2a25879e7ef7d2fde63f68911b2ebe";
+  const accessToken = "";
   const headers = {
     "Content-Type": "application/json",
     Authorization: accessToken
