@@ -1,3 +1,19 @@
+/**
+ * How to add/update the pre-defined criteria template
+ *
+ * 1. Add or Update the criteria in a journey
+ * 2. open the Chrome Dev Console, natvigate to Network Tab
+ * 4. Save the journey, find the post body of request Request URL:
+ *    https://jbinteractions.s50.marketingcloudapps.com/fuelapi/interaction/v1/interactions/?versionNumber=xx
+ * 5. Find your target criteria in activities with type=="MULTICRITERIADECISION"
+ * 6. Copy the activities[].outcomes[].metaData.criteriaDescription as the description
+ * 7. Find the criteria xml string by activities[].outcomes[].key.
+ *  The criteria is located at activities[].configurationArguments.criteria with key as Object key. Copy the xml as the criteria field.
+ * 8. For the criteria, replace UiMetaData=\"{&quot;groupToSetRelationshipId&quot;:&quot;xxxxx&quot;}\" with UiMetaData=\"_UI_METADATA_\"
+ * 9. For the criteria, replace the RelationshipID=xxx with RelationshipID=\"_Donation__c_Salesforce_1_\" (Note you have to replace the corresponding object names)
+
+ */
+
 const MARKET_RELATED_DEFS = {
   tw: {
     UI_METADATA: "{&quot;groupToSetRelationshipId&quot;:&quot;fe966f2d-4cca-ea11-b83a-b883035bd8a1&quot;}",
@@ -40,7 +56,7 @@ const DECISION_SPLIT_RULES_BY_SYNC_DE = {
     "description": "HasOptedOutOfEmail is True OR Fundraising_Appeals_Opt_Out__c is True OR Marketing_Opt_Out__c is True",
     "criteria": "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.HasOptedOutOfEmail\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[true]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.Fundraising_Appeals_Opt_Out__c\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[true]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.Marketing_Opt_Out__c\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[true]]></Value></Condition></ConditionSet></FilterDefinition>"
   },
-  
+
   EMAIL_NOT_VALID: {
     description: "Email is null OR Email does not contain @ OR Email contains noaddress",
     criteria: "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.Email\" Operator=\"IsNull\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.Email\" Operator=\"NotContains\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[@]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.Email\" Operator=\"Contains\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[noaddress]]></Value></Condition></ConditionSet></FilterDefinition>"
@@ -87,8 +103,8 @@ const DECISION_SPLIT_RULES_BY_SYNC_DE = {
   },
 
   DONATED_RECENTLY: {
-    description: "Date__c is on or after Today Minus 14 days and Status__c equal Processed",
-    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Donation__c_Salesforce_1.Date__c\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"><Value><![CDATA[;-;14;days]]></Value></AttributePath></Condition><Condition Key=\"Donation__c_Salesforce_1.Status__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"><Value><![CDATA[Processed]]></Value></AttributePath></Condition></ConditionSet></FilterDefinition>"
+    description: "( Date__c is on or after Today Minus 14 days AND Status__c equal Processed) OR ( Payment_Method__c equal Direct Debit AND Status__c equal Pending )",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Donation__c_Salesforce_1.Date__c\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"><Value><![CDATA[;-;14;days]]></Value></AttributePath></Condition><Condition Key=\"Donation__c_Salesforce_1.Status__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"><Value><![CDATA[\n                          Processed\n                      ]]></Value></AttributePath></Condition></ConditionSet><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Donation__c_Salesforce_1.Payment_Method__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"><Value><![CDATA[Direct Debit]]></Value></AttributePath></Condition><Condition Key=\"Donation__c_Salesforce_1.Status__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"><Value><![CDATA[Pending]]></Value></AttributePath></Condition></ConditionSet></ConditionSet></FilterDefinition>"
   },
 
   DONATED_SG_RECENTLY: {
@@ -140,40 +156,51 @@ const DECISION_SPLIT_RULES_BY_SYNC_DE = {
     description: "Preferred_Language__c equal English",
     criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.Preferred_Language__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[English]]></Value></Condition></ConditionSet></FilterDefinition>"
   },
-  
+
   INTERESTS_DEFINED: {
     description: "Interested_In_Arctic__c is True OR Interested_In_Climate__c is True OR Interested_In_Forest__c is True OR Interested_In_Health__c is True OR Interested_In_Oceans__c is True OR Interested_In_Plastics__c is True OR Interested_In_Nuclear__c is True",
     criteria: "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.Interested_In_Arctic__c\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[true]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.Interested_In_Climate__c\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[true]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.Interested_In_Forest__c\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[true]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.Interested_In_Health__c\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[true]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.Interested_In_Oceans__c\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[true]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.Interested_In_Plastics__c\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[true]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.Interested_In_Nuclear__c\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[true]]></Value></Condition></ConditionSet></FilterDefinition>"
-  },
-
-  "DONATED_RECENTLY": {
-    "description": "Date__c is on or after Today Minus 14 days and Status__c equal Processed",
-    "criteria": `
-      <FilterDefinition>
-          <ConditionSet Operator="AND" ConditionSetName="Individual Filter Grouping">
-              <Condition Key="Donation__c_Salesforce_1.Date__c" Operator="AtOrAfter" UiMetaData="_UI_METADATA_">
-                  <AttributePath RelationshipID="_Donation__c_Salesforce_1_">
-                      <Value>
-                          <![CDATA[;-;14;days]]>
-                      </Value>
-                  </AttributePath>
-              </Condition>
-              <Condition Key="Donation__c_Salesforce_1.Status__c" Operator="Equal" UiMetaData="_UI_METADATA_">
-                  <AttributePath RelationshipID="_Donation__c_Salesforce_1_">
-                      <Value>
-                          <![CDATA[Processed]]>
-                      </Value>
-                  </AttributePath>
-              </Condition>
-          </ConditionSet>
-      </FilterDefinition>
-    `
   },
 
   RG_STATUS_IS_ACTIVE: {
     description: "Recurring_Donation_Status__c equal Active",
     criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.Recurring_Donation_Status__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[Active]]></Value></Condition></ConditionSet></FilterDefinition>"
   },
+
+  IS_ACTIVE_DONOR: {
+    description: "Donor_Status__c equal Active Donor",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.Donor_Status__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[Active Donor]]></Value></Condition></ConditionSet></FilterDefinition>",
+  },
+
+  IS_INACTIVE_DONOR: {
+    description: "Donor_Status__c equal Inactive Donor",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.Donor_Status__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[Inactive Donor]]></Value></Condition></ConditionSet></FilterDefinition>",
+  },
+
+  IS_LAPSED_DONOR: {
+    description: "Donor_Status__c equal Lapsed Donor",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.Donor_Status__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[Lapsed Donor]]></Value></Condition></ConditionSet></FilterDefinition>",
+  },
+
+  CREATED_CASE_IN_3MONTHS: {
+    description: "CreatedDate is on or after Today Minus 90 days AND Direction__c equal Outbound AND Category__c equal TFR",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Case_Salesforce_1.CreatedDate\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[;-;90;days]]></Value></AttributePath></Condition><Condition Key=\"Case_Salesforce_1.Direction__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[Outbound]]></Value></AttributePath></Condition><Condition Key=\"Case_Salesforce_1.Category__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[TFR]]></Value></AttributePath></Condition></ConditionSet></FilterDefinition>",
+  },
+
+  SAID_NO_IN_6MOTHS: {
+    description: "Last_Call_Date__c is on or after Today Minus 180 days AND ( TFR_Call_Outcome__c equal No OR TFR_Call_Outcome__c equal Invalid Data OR TFR_Call_Outcome__c equal Call Back OR TFR_Call_Outcome__c equal Other )",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Case_Salesforce_1.Last_Call_Date__c\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[;-;180;days]]></Value></AttributePath></Condition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Case_Salesforce_1.TFR_Call_Outcome__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[No]]></Value></AttributePath></Condition><Condition Key=\"Case_Salesforce_1.TFR_Call_Outcome__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[Invalid Data]]></Value></AttributePath></Condition><Condition Key=\"Case_Salesforce_1.TFR_Call_Outcome__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[Call Back]]></Value></AttributePath></Condition><Condition Key=\"Case_Salesforce_1.TFR_Call_Outcome__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[Other]]></Value></AttributePath></Condition></ConditionSet></ConditionSet></FilterDefinition>",
+  },
+
+  SAID_YES_OR_UP_DOWN_GRADED_IN_9MONTHS: {
+    description: "( TFR_Call_Outcome__c equal Yes AND Last_Call_Date__c is on or after Today Minus 270 days ) OR Last_Successful_Downgrade__c is on or after Today Minus 270 days OR Last_Successful_Upgrade__c is on or after Today Minus 270 days",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Case_Salesforce_1.TFR_Call_Outcome__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[Yes]]></Value></AttributePath></Condition><Condition Key=\"Case_Salesforce_1.Last_Call_Date__c\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[;-;270;days]]></Value></AttributePath></Condition></ConditionSet><Condition Key=\"Contact_Salesforce_1.Last_Successful_Downgrade__c\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[;-;270;days]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.Last_Successful_Upgrade__c\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[;-;270;days]]></Value></Condition></ConditionSet></FilterDefinition>",
+  },
+
+  TFR_CALLED_IN_30DAYS: {
+    description: "Last_Call_Date__c is on or after Today Minus 30 days AND Category__c equal TFR",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Case_Salesforce_1.Last_Call_Date__c\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[;-;30;days]]></Value></AttributePath></Condition><Condition Key=\"Case_Salesforce_1.Category__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[TFR]]></Value></AttributePath></Condition></ConditionSet></FilterDefinition>",
+  }
 }
 
 const DECISION_SPLIT_RULES_BY_ENTRY_DE = {
@@ -181,7 +208,7 @@ const DECISION_SPLIT_RULES_BY_ENTRY_DE = {
     description: "HasOptedOutOfEmail is True OR Fundraising_Appeals_Opt_Out__c is True",
     "criteria": "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact__r:et4ae5__HasOptedOutOfMobile__c\" Operator=\"Is\" UiMetaData=\"{}\"><Value><![CDATA[true]]></Value></Condition></ConditionSet></FilterDefinition>"
   },
-  
+
 
   EMAIL_NOT_VALID: {
     description: "Email is null OR Email does not contain @ OR Email contains noaddress",
@@ -219,10 +246,10 @@ const DECISION_SPLIT_RULES_BY_ENTRY_DE = {
 
 //     // update the market ui_metadata
 //     criteria = criteria.replace(new RegExp(`_UI_METADATA_`, 'g'), MARKET_RELATED_DEFS[market].UI_METADATA)
-    
+
 //     // replace the relation ids
 //     Object.keys(MARKET_RELATED_DEFS[market].SYNCED_DE_RELATIONID_MAP).forEach (deName => {
-//       criteria = criteria.replace(new RegExp(`_${deName}_`, 'g'), 
+//       criteria = criteria.replace(new RegExp(`_${deName}_`, 'g'),
 //         MARKET_RELATED_DEFS[market].SYNCED_DE_RELATIONID_MAP[deName])
 //     })
 

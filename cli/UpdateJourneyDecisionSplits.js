@@ -9,13 +9,13 @@ require('dotenv').config()
  */
 async function main() {
   // EDIT HERE
-  const srcJourneyName = "tw-comms-adhoc-20221011-winback_campaign_journey"
+  const srcJourneyName = "hk-lead_conversion-automd-plastics_dpt_policy"
   const destJourneyName = srcJourneyName
-  // const destJourneyName = "kr-middle_donor_upgrade-adhoc-20220913-md_hv_upgrade"
-  const market = "TW"
-  const replaceWaitToMinutes = true
+  // const destJourneyName = "up-lead_conversion-dev-general-elm"
+  const market = "HK"
+  const replaceWaitToMinutes = false
 
-  let mcbase = new MCBase({market})
+  let mcbase = new MCBase({ market })
 
   await mcbase.doAuth()
   let mcJourney = mcbase.factory('Journey')
@@ -27,27 +27,27 @@ async function main() {
 
   // init criteria
   mcJB.setMarket(market)
-  mcJB.pathDecisionSplitCriteria()
+  mcJB.patchDecisionSplitCriteria()
   mcJB.generateActivityWaitMap()
 
   // path the criteria
-  mcJB.pathJourney()
+  mcJB.patchJourney()
 
   if (replaceWaitToMinutes) {
-    mcJB.pathJourneyWaitTimeToMinute()  
+    mcJB.patchJourneyWaitTimeToMinute()
   }
-  
+
   let nextJ = mcJB.nextJ
 
   // Read the dest journey
-  r = await mcJourney.findByName(destJourneyName, {mostRecentVersionOnly: true}) // EDIT HERE
+  r = await mcJourney.findByName(destJourneyName, { mostRecentVersionOnly: true }) // EDIT HERE
   let destJ = _.get(r, 'items.0')
   if (!destJ) {
     throw "Cannot find the destination journey"
   }
 
   // replace the dest content with updated content
-  Object.assign(destJ, nextJ) 
+  Object.assign(destJ, nextJ)
 
   // console.log('destJ', JSON.stringify(destJ, null, 4));
   logger.info(`Updating journey ${destJ.name} version:${destJ.version} status:${destJ.status}`)

@@ -4,7 +4,7 @@ const _ = require("lodash")
 const format = require('date-fns/format')
 
 const {
-  MARKET_RELATED_DEFS, 
+  MARKET_RELATED_DEFS,
   DECISION_SPLIT_RULES_BY_SYNC_DE,
   DECISION_SPLIT_RULES_BY_ENTRY_DE} = require('./DecisionSplitCriteria.js')
 
@@ -29,9 +29,9 @@ class JourneyBuilder {
 
   /**
    * Read the journey setting.
-   * 
+   *
    * @param {string} The journey name
-   * @returns 
+   * @returns
    */
   async loadSrcJourneyName (jName) {
     // find the source journey
@@ -50,7 +50,7 @@ class JourneyBuilder {
 
   setMarket (market) {
     market = market.toLowerCase()
-    
+
     if (["tw","hk","kr"].indexOf(market)<0) {
       throw new Error("The market should be one of tw, hk or kr")
     }
@@ -62,14 +62,14 @@ class JourneyBuilder {
   /**
    * Prepare the pre-defined decision split criteria which will be used to replace the rules.
    */
-  pathDecisionSplitCriteria () {
+  patchDecisionSplitCriteria () {
     if ( !this.market) { throw new Error("You must setMarket before using this function.") }
 
     this.patchRule_UIMETADATA()
     this.patchRule_DeRelationIds()
 
     if (this.isSFObjectTriggered()) {
-      this.patchRule_TriggeredDe()  
+      this.patchRule_TriggeredDe()
     }
   }
 
@@ -81,7 +81,7 @@ class JourneyBuilder {
 
     // replace all the placeholders
     Object.keys(rule).forEach(pathName => {
-      rule[pathName].criteria = 
+      rule[pathName].criteria =
         rule[pathName].criteria.replace(new RegExp(`_UI_METADATA_`, 'g'), MARKET_RELATED_DEFS[this.market].UI_METADATA)
     })
 
@@ -100,7 +100,7 @@ class JourneyBuilder {
 
       // replace the relation ids
       Object.keys(MARKET_RELATED_DEFS[this.market].SYNCED_DE_RELATIONID_MAP).forEach (deName => {
-        criteria = criteria.replace(new RegExp(`_${deName}_`, 'g'), 
+        criteria = criteria.replace(new RegExp(`_${deName}_`, 'g'),
           MARKET_RELATED_DEFS[this.market].SYNCED_DE_RELATIONID_MAP[deName])
       })
 
@@ -111,7 +111,7 @@ class JourneyBuilder {
   }
 
   /**
-   * 
+   *
    */
   patchRule_TriggeredDe () {
     let rule = this.decisionSplitRulesByEntryDe
@@ -125,7 +125,9 @@ class JourneyBuilder {
       console.info("Cannot resolve eventDefinitionKey from journey triggers.0.metaData.eventDefinitionKey")
     }
 
-    let objectApiName = this.triggerObjectApiName = _.get(this.srcJ, "triggers.0.configurationArguments.objectApiName")
+    let objectApiName = this.triggerObjectApiName =
+      _.get(this.srcJ, "triggers.0.configurationArguments.objectApiName")
+      || _.get(this.srcJ, "triggers.0.configurationArguments.objectAPIName")
     if ( !objectApiName) {
       console.log(`_.get(this.srcJ, "triggers.0")`, _.get(this.srcJ, "triggers.0"))
       console.info("Cannot resolve objectApiName from journey triggers.0.configurationArguments.objectApiName")
@@ -139,8 +141,12 @@ class JourneyBuilder {
 
       criteria = criteria.replace(new RegExp(`_ENTRY_EVENT_`, 'g'), eventPlaceholder)
       criteria = criteria.replace(new RegExp(`_ENTRY_OEJECT_`, 'g'), objectApiName)
-      criteria = criteria.replace(new RegExp(`\.Contact:Contact:`, 'g'), '.Contact:') // special case for Contact EntryObject 
-    
+      criteria = criteria.replace(new RegExp(`\.Contact:Contact:`, 'g'), '.Contact:') // special case for Contact EntryObject
+
+      // special case for CampaignMember Triggered Entry. For Hong Kong Market
+      // Not Sure other markets ex Taiwan or Korea
+      criteria = criteria.replace(new RegExp(`\.CampaignMember:Contact__r:`, 'g'), '.CampaignMember:Contact:')
+
       rule[pathName].criteria = criteria
     })
 
@@ -155,16 +161,16 @@ class JourneyBuilder {
       pathName = pathName.replace(new RegExp(ICON_RULE_FROM_SYNC_DE, 'g'), "")
       pathName = pathName.replace(new RegExp(ICON_RULE_FROM_TRIGGERED_DE, 'g'), "")
     }
-    
+
     return pathName
   }
 
   /**
    * Get the pre-defined criteria
-   * 
+   *
    * @param {string} pathName The criteria name
-   * @param {object} options 
-   *     options.useEntryDataField {bool} Default False. To read data from Synced Data Extension or from entry data. 
+   * @param {object} options
+   *     options.useEntryDataField {bool} Default False. To read data from Synced Data Extension or from entry data.
    */
   getCriteria(pathName, options) {
     let targetRules = this.decisionSplitRulesBySyncDe
@@ -186,11 +192,11 @@ class JourneyBuilder {
 
   /**
    * Generate the min and max waiting times for each activity.
-   * 
+   *
    * Usage:
-   * 
+   *
    * this.generateActivityWaitMap()
-   * 
+   *
    * let minWaitTime = this.resolveActivityMinWaitMinutesFromEntry(activityId)
    * let maxWaitTime = this.resolveActivityMinWaitMinutesFromEntry(activityId)
    */
@@ -247,7 +253,7 @@ class JourneyBuilder {
 
   /**
    * Resolve how many minutes before this activity since entry.
-   * 
+   *
    * @param {string} activityId ex c25e6915-5aa7-4466-b247-e9ee99160b00
    */
   resolveActivityMinWaitMinutesFromEntry (activityId) {
@@ -264,8 +270,11 @@ class JourneyBuilder {
   isSFObjectTriggered() {
     return _.get(this.srcJ, 'triggers.0.type')==="SalesforceObjectTriggerV2"
   }
+  isAutomationTriggered() {
+    return _.get(this.srcJ, 'triggers.0.type')==="AutomationAudience"
+  }
 
-  pathJourney () {
+  patchJourney () {
     this.nextJ = _.pick(this.srcJ, ["activities", "triggers"])
 
     this.patchJourneyDecisionSplits()
@@ -280,7 +289,7 @@ class JourneyBuilder {
     // patch decision splits
     for (let i = 0; i < nextJ.activities.length; i++) {
       const act = nextJ.activities[i];
-      
+
       if (act.type==='MULTICRITERIADECISION') {
         let minMinutesToThisActivity = this.resolveActivityMinWaitMinutesFromEntry(act.id)
 
@@ -306,7 +315,7 @@ class JourneyBuilder {
           if (predefinedCriteria) {
             let originalLabel = actOutcome.metaData.label
             let newLabel = (shouldUseEntryDe?ICON_RULE_FROM_TRIGGERED_DE:ICON_RULE_FROM_SYNC_DE)+actOutcomeMetaDataLabel
-            
+
             let originalDesc = nextJ.activities[i].outcomes[j].metaData.criteriaDescription
             let afterDesc = predefinedCriteria.description
 
@@ -314,11 +323,11 @@ class JourneyBuilder {
               logger.info(`Replace ${actOutcome.metaData.label} to ${newLabel}`)
               logger.info(`\tbefore: `+nextJ.activities[i].outcomes[j].metaData.criteriaDescription)
               logger.info(`\tafter : `+predefinedCriteria.description)
-  
+
               // start to update the criteria
               nextJ.activities[i].outcomes[j].metaData.label = newLabel
               nextJ.activities[i].outcomes[j].metaData.criteriaDescription = predefinedCriteria.description
-              nextJ.activities[i].configurationArguments.criteria[actOutcome.key] = predefinedCriteria.criteria 
+              nextJ.activities[i].configurationArguments.criteria[actOutcome.key] = predefinedCriteria.criteria
             } else {
               logger.debug(`Skip ${originalLabel}`)
             }
@@ -338,13 +347,13 @@ class JourneyBuilder {
     this.nextJ = nextJ
   }
 
-  pathJourneyWaitTimeToMinute () {
+  patchJourneyWaitTimeToMinute () {
     let nextJ = this.nextJ
 
     // patch decision splits
     for (let i = 0; i < nextJ.activities.length; i++) {
       const act = nextJ.activities[i];
-      
+
       if (act.type==='WAIT' && act.metaData.uiType==="WAITBYDURATION") {
         nextJ.activities[i].configurationArguments.waitUnit = "MINUTES"
         logger.debug(`Replace ${act.key} from ${act.name} to ${act.configurationArguments.waitDuration} ${nextJ.activities[i].configurationArguments.waitUnit}`)

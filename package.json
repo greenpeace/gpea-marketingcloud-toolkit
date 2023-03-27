@@ -12,6 +12,7 @@
     "cookie-parser": "~1.4.4",
     "cron-parser": "^4.0.0",
     "csv": "^6.2.5",
+    "csv-writer": "^1.6.0",
     "date-fns": "^2.24.0",
     "debug": "~2.6.9",
     "dotenv": "^10.0.0",
