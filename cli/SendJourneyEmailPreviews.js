@@ -9,14 +9,14 @@ const format = require('date-fns/format')
  */
 async function main() {
   // EDIT HERE!
-  let targetJourneyName = 'hk-annual_reactivation-adhoc-20220930'
-  let emailPrefix = `[annual_reactivation]`
-  let recipients = ['uchen+20220922@greenpeace.org']
-  let market = "hk"
+  let targetJourneyName = 'tw-oneoff_conversion-adhoc-20230328-remind_lapsed_sg_donors'
+  let emailPrefix = `[tw-sg2rg-adhoc]`
+  let recipients = ['uchen@greenpeace.org']
+  // let recipients = ['uchen@greenpeace.org']
+  let market = "tw"
 
   let deFilter
   // let deFilter = {property:"Recurring Donation Status", simpleOperator:"notEquals", value:"Active"}
-  
 
   // main
   let mcbase = new MCBase({market})
@@ -33,12 +33,12 @@ async function main() {
   logger.info(`Resolving [${targetJourneyName}] definitions …`)
   let eventDef = await mcJourney.getJourneyEventDefinitionsByJourneyName(targetJourneyName)
   let deName = _.get(eventDef, 'dataExtensionName', null)
-  
+
   // resolve the original de
   let de = await mcDE.findDeBy({field: "Name", value:deName})
   let deId = de.ObjectID
   let deCustomerKey = de.CustomerKey
-  
+
   // fetch rows
   logger.info(`Fetching DE rows [${deName}], deId: ${deId} …`)
   r = await mcDE.fetchDeRows(deName, {filter: deFilter})
@@ -103,20 +103,20 @@ async function main() {
     let logMsg = `${prefix}${emailSubject}`
     if (logMsg.indexOf(emailName)<0) {
       logMsg = `${emailName}: ${logMsg}`
-    } 
+    }
 
     logger.info("  "+logMsg)
     let r = await mcEmail.postEmailPreviewSend({
-      emailId: emailId, 
-      deId: deId, 
-      rowId: previewRowId, 
+      emailId: emailId,
+      deId: deId,
+      rowId: previewRowId,
       recipients: recipients,
       subjectPrefix: prefix,
-      
+
       senderProfileId,
       deliveryProfileId
     })
-    // logger.debug(r)
+    // // logger.debug(r)
   }
 
   // prepare the SMS content previews
@@ -124,7 +124,7 @@ async function main() {
   logger.info(`Start to render SMS previews`)
   for (let i = 0; i < smsActivities.length; i++) {
     const aSmsAct = smsActivities[i];
-    
+
     let smsAssetId = _.get(aSmsAct, 'configurationArguments.assetId')
     let smsName = _.get(aSmsAct, 'name')
     let smsContent = _.get(aSmsAct, 'metaData.store.selectedContentBuilderMessage')
@@ -144,7 +144,7 @@ async function main() {
   // console.log('lmsActivities', lmsActivities)
   for (let i = 0; i < lmsActivities.length; i++) {
     const aLmsAct = lmsActivities[i];
-    
+
     let lmsName = _.get(aLmsAct, 'name')
     let lmsTitle = _.get(aLmsAct, 'arguments.execute.inArguments.0.title')
     let lmsContent = _.get(aLmsAct, 'arguments.execute.inArguments.0.msg')

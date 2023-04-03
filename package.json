@@ -22,6 +22,7 @@
     "morgan": "~1.9.1",
     "node-cron": "^3.0.0",
     "node-sass-middleware": "^1.0.1",
+    "rrule": "^2.7.2",
     "soap": "^0.42.0",
     "winston": "^3.3.3",
     "xml-js": "^1.6.11",

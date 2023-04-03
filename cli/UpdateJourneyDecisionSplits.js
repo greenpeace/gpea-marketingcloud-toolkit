@@ -9,7 +9,7 @@ require('dotenv').config()
  */
 async function main() {
   // EDIT HERE
-  const srcJourneyName = "hk-lead_conversion-automd-plastics_dpt_policy"
+  const srcJourneyName = "hk-unfreeze_inactive-automd-inactive_donor"
   const destJourneyName = srcJourneyName
   // const destJourneyName = "up-lead_conversion-dev-general-elm"
   const market = "HK"

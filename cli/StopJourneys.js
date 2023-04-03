@@ -4,18 +4,14 @@ const _ = require("lodash")
 const Notifier = require('../lib/Notifier.js')
 
 async function main () {
-  let market = "HK"
+  let market = "TW"
 
   let mcbase = new MCBase({market})
   await mcbase.doAuth()
   let mcJourney = mcbase.factory('Journey')
 
   let journeyNamesToStop = [
-    'hk-oneoff_conversion-automd-sg2rg-lantau-documentary-movie-20220629_in_other_journey',
-    'hk-oneoff_conversion-automd-sg2rg-lantau-documentary-movie-20220629_for_missing_lc',
-    'hk-oneoff_conversion-automd-sg2rg-lantau-documentary-movie-20220517',
-    'hk-oneoff_conversion-automd-sg2rg-lantau-documentary-movie-20220607',
-    'hk-oneoff_conversion-automd-sg2rg-lantau-documentary-movie-20220726_for_passcode_donor_lc',
+    'tw-unfreeze_inactive-adhoc-20220712-resend_sms_to_0032u00000dpt0haar'
   ]
 
   for (let i = 0; i < journeyNamesToStop.length; i++) {
