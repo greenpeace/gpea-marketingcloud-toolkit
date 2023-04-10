@@ -5,6 +5,10 @@ const format = require('date-fns/format')
 const subDays = require('date-fns/subDays')
 
 class Journey {
+  constructor(options) {
+    this.parent = null
+  }
+
   /**
    * Retriebe the full journey list
    * @return {array}
@@ -40,9 +44,9 @@ class Journey {
 
   /**
    * Fetch the journey details.
-   * 
-   * @param {string} journeyId THe GUID style journeyId. 
-   * @return {object} 
+   *
+   * @param {string} journeyId THe GUID style journeyId.
+   * @return {object}
    *  {
    *   count: 1,
    *   page: 1,
@@ -74,7 +78,7 @@ class Journey {
    *       notifiers: [],
    *       stats: [Object],
    *       healthStats: {
-   *          currentlyInCount, 
+   *          currentlyInCount,
    *       },
    *       tags: [Array],
    *       entryMode: 'SingleEntryAcrossAllVersions',
@@ -101,11 +105,11 @@ class Journey {
   }
 
   /**
-   * 
-   * @param {string} journeyName 
-   * @param {dict} options 
+   *
+   * @param {string} journeyName
+   * @param {dict} options
    *     options.mostRecentVersionOnly bool
-   * @returns 
+   * @returns
    */
   async findByName(journeyName, options={}) {
     let url = `${this.parent.restEndpoint}/interaction/v1/interactions?name=${journeyName}&mostRecentVersionOnly=${options.mostRecentVersionOnly ? 'true':'false'}&extras=all`
@@ -125,7 +129,7 @@ class Journey {
     return response.data
   }
 
-  /** 
+  /**
    * Retrieve the Contacts Evaluated and Contacts Accepted for
    * entring into the Journey in last 30 days
    *
@@ -137,7 +141,7 @@ class Journey {
    *   { "eventType": "Failed", "category": "failure", "count": 5 }, # Rejected Contacts
    *   { "eventType": "ContactsWaiting", "category": "information", "count": 2861 } # People In Data Extension
    * ]
-   * 
+   *
    */
   async getTriggerstats(eventDefinitionId) {
     let url = `${this.parent.restEndpoint}/interaction/v1/triggerstats/${eventDefinitionId}`
@@ -150,7 +154,7 @@ class Journey {
 
   /**
    * A helper function to quickly get the number contacts for journeys
-   * 
+   *
    * @param {string} journeyName The full journey name to find
    * @returns { cumulativePopulation, numContactsCurrentlyInJourney, numContactsAcceptedIn30Days}
    */
@@ -179,16 +183,16 @@ class Journey {
     let metCriteriaSuccessRow = triggerstats.find(row => row.eventType === 'MetCriteria' && row.category ==='success')
     let numContactsAcceptedIn30Days = metCriteriaSuccessRow ? metCriteriaSuccessRow.count : 0
 
-    return { 
-      cumulativePopulation, 
-      numContactsCurrentlyInJourney, 
+    return {
+      cumulativePopulation,
+      numContactsCurrentlyInJourney,
       numContactsAcceptedIn30Days,
       journey: foundJourney }
   }
 
   /**
    * To pause a journey
-   * 
+   *
    * Usage:
    *   res = await mcJourney.pause(journeyId, {
     ExtendWaitEndDates: true,
@@ -197,11 +201,11 @@ class Journey {
     RetainContactInjectionWhileJourneyPaused: true,
     AllVersions: true
   })
-   * 
-   * 
+   *
+   *
    * @param {UIUD} journeyId The journey journeyId UUID string (The ID on the URL)
    * @param {dict} options @see Offical Document https://developer.salesforce.com/docs/atlas.en-us.noversion.mc-apis.meta/mc-apis/JourneyPauseByDefinitionId.htm
-   * @returns 
+   * @returns
    */
   async pause (journeyId, options) {
     let url = `${this.parent.restEndpoint}/interaction/v1/interactions/pause/${journeyId}`
@@ -222,10 +226,10 @@ class Journey {
 
   /**
    * To resume a paused journey
-   * 
+   *
    * @param {string} journeyId The journey GUID which show on the URL
    * @param {*} options @see https://developer.salesforce.com/docs/atlas.en-us.noversion.mc-apis.meta/mc-apis/JourneyResumeByDefinitionId.htm
-   * @returns 
+   * @returns
    */
   async resume (journeyId, options={}) {
     let url = `${this.parent.restEndpoint}/interaction/v1/interactions/resume/${journeyId}`
@@ -263,11 +267,11 @@ class Journey {
 
  /**
    * To stop a paused journey
-   * 
+   *
    * @param {string} journeyId The journey GUID which show on the URL
    * @param {*} options @see https://developer.salesforce.com/docs/atlas.en-us.noversion.mc-apis.meta/mc-apis/JourneyResumeByDefinitionId.htm
    *  options.versionNumber is required.
-   * @returns 
+   * @returns
    */
   async stop (journeyId, options={}) {
     let url = `${this.parent.restEndpoint}/interaction/v1/interactions/stop/${journeyId}`
@@ -305,9 +309,9 @@ class Journey {
 
   /**
    * Find contacts is in which journeys.
-   * 
+   *
    * @see https://developer.salesforce.com/docs/marketing/marketing-cloud/guide/contactMembershipRequest.html
-   * @param {array} contactKeys 
+   * @param {array} contactKeys
    * @returns {Object}
    */
   async contactInWhichJourneys(contactKeys) {
@@ -368,10 +372,10 @@ class Journey {
 
   /**
    * Get the contact in journey status. ex, entered? completed?
-   * 
-   * @param {string} journeyDefinitionId 
-   * @param {string} contactKey 
-   * @returns 
+   *
+   * @param {string} journeyDefinitionId
+   * @param {string} contactKey
+   * @returns
    */
   async getContactJourneyStatus (journeyDefinitionId, contactKey) {
     let url = `${this.parent.restEndpoint}/interaction/v1/interactions/journeyhistory/contactkey?$page=1&$pageSize=1000`
@@ -391,9 +395,9 @@ class Journey {
 
   /**
    * To update the journey
-   * 
-   * @param {*} journeyDetails 
-   * @returns 
+   *
+   * @param {*} journeyDetails
+   * @returns
    */
   async updateJourney (journeyDetails) {
     let url = `${this.parent.restEndpoint}/interaction/v1/interactions`
@@ -411,14 +415,14 @@ class Journey {
 
   /**
    * Find the journey trigger event definitions.
-   * 
+   *
    * @param {string} jName Journey Name
    * @returns object
    */
   async getJourneyEventDefinitionsByJourneyName (jName) {
     let r = await this.findByName(jName)
     let j = _.get(r, 'items.0', null)
-  
+
     if ( !j) {
       throw new Error("Cannot find the journey with name: "+j)
     }
@@ -435,7 +439,7 @@ class Journey {
 
   /**
    * Get the journey entry event definitions
-   * 
+   *
    * @param {string} eventDefId ex. 67e6d2d0-b102-4ba9-9b8c-cd14e7c2cbc6
    * @returns dict
    */

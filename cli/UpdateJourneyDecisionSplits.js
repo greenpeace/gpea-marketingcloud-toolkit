@@ -9,10 +9,10 @@ require('dotenv').config()
  */
 async function main() {
   // EDIT HERE
-  const srcJourneyName = "hk-unfreeze_inactive-automd-inactive_donor"
+  const srcJourneyName = "kr-special_appeal-20230328-sample_flow"
   const destJourneyName = srcJourneyName
   // const destJourneyName = "up-lead_conversion-dev-general-elm"
-  const market = "HK"
+  const market = "KR"
   const replaceWaitToMinutes = false
 
   let mcbase = new MCBase({ market })

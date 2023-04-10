@@ -4,54 +4,33 @@ const logger = require('../../lib/logger');
 
 
 /**
- * TODO:
- */
-
-/**
- * Relationships between the objects :
-
-    Tasks represent the columns in Automation Studio.
-    Activities are the objects in each column
-
-Program → Task → Activity
-
-Program.ObjectID = Task.Program.ObjectID
-Task.ObjectID = Activity.Task.ObjectID
-QueryDefinition.ObjectID = Activity.Definition.ObjectID
-
-53733187-7e61-4a3d-a685-6acc4450ef40
-
-
-SFMC Automation Studio API Objects https://charliefay.medium.com/sfmc-automation-studio-api-objects-620ec868239b
- */
-
-/**
- * Status Map @see https://developer.salesforce.com/docs/atlas.en-us.noversion.mc-apis.meta/mc-apis/automation.htm
+ * Appendix for Automation Objects
  *
- * Code 	Status Type 	Message
--1 	Error 	Program errored out
-0 	BuildingError 	Program errored out during building
-1 	Building 	Program building with activities, schedules, and other elements
-2 	Ready 	Program ready to start
-3 	Running 	Program running
-4 	Paused 	Program paused from running state
-5 	Stopped 	Program stopped
-6 	Scheduled 	Program scheduled
-7 	Awaiting Trigger 	Program waiting for a trigger
-8 	InactiveTrigger 	Program trigger inactive
- */
-
-/**
- * Status Code:
- * Note: You can NOT use status code in the filters.
- *  0 - Draft: The automation is in draft status and has not been started.
- *  1 - Scheduled: The automation is scheduled and will run at the specified date and time.
- *  2 - Running: The automation is currently running.
- *  3 - Paused: The automation has been paused.
- *  4 - Stopped: The automation has been stopped by the user.
- *  5 - Completed: The automation has completed its run.
- *  6 - Errored: The automation encountered an error during its run.
- *  7 - Timeout: The automation exceeded the allowed runtime and was terminated.
+ * # 1. Relationship between Objects
+ * The following objects have a relationship in the Automation Studio:
+ *
+ * Program → Task → Activity
+ * Program.ObjectID = Task.Program.ObjectID
+ * Task.ObjectID = Activity.Task.ObjectID
+ * QueryDefinition.ObjectID = Activity.Definition.ObjectID
+ *
+ * For more information on Automation Studio API Objects,
+ * visit https://charliefay.medium.com/sfmc-automation-studio-api-objects-620ec868239b
+ *
+ *
+ * # 2. Automation Status Codes:
+ * -1: Error - The program has encountered an error.
+ * 0: BuildingError - The program encountered an error during building.
+ * 1: Building - The program is building with activities, schedules, and other elements.
+ * 2: Ready - The program is ready to start.
+ * 3: Running - The program is currently running.
+ * 4: Paused - The program has been paused from running state.
+ * 5: Stopped - The program has been stopped by the user.
+ * 6: Scheduled - The program is scheduled to run at the specified date and time.
+ * 7: Awaiting Trigger - The program is waiting for a trigger to start.
+ * 8: InactiveTrigger - The program trigger is inactive.
+ *
+ * Note: Status codes cannot be used in filters!!
  */
 class Automation {
   /**
@@ -135,32 +114,40 @@ class Automation {
    * @param {string} qryDefObjectId
    * @reutnr {Object} return the object of function findAutomationByIdRest
    */
-  async findAutomationByQueryDefObjectIdRest(qryDefObjectId) {
+  async findAutomationsByQueryDefObjectIdRest(qryDefObjectId) {
     // find the activity which related to this query definition
-    let activity = await this.findActivityBy({
+    let activities = await this.findActivitiesBy({
       field: "Definition.ObjectID",
       value: qryDefObjectId
     })
-    if (!activity) {
+    if (activities.length<1) {
       logger.warn(`Cannot find the automation activity by id: ${qryDefObjectId}`)
       return null
+    } else if (activities.length>1) {
+      logger.warn(`Found ${activities.length} activities which related to the query definition ${qryDefObjectId}`)
     }
-
-
-    let programObjectId = _.get(activity, 'Program.ObjectID')
-    let taskObjectId = _.get(activity, 'Task.ObjectID')
-
-    console.log('programObjectId', programObjectId)
 
     // find the original automation
-    let automation = await this.findAutomationByIdRest(programObjectId)
-    if (!automation) {
-      logger.info(`Cannot fin dthe automation by id ${programObjectId}`)
+    let automations = []
+
+    for (let i = 0; i < activities.length; i++) {
+      const activity = activities[i];
+
+      let programObjectId = _.get(activity, 'Program.ObjectID')
+      let taskObjectId = _.get(activity, 'Task.ObjectID')
+      let automation = null
+
+      if (programObjectId) {
+        automation = await this.findAutomationByIdRest(programObjectId)
+      }
+      if (automation) {
+        automations.push(automation)
+      } else {
+        logger.info(`Cannot fin dthe automation by activity's program id ${programObjectId}`)
+      }
     }
 
-    console.log('automation', automation)
-
-    return automation
+    return automations
   }
 
   async findBy(criteria) {
@@ -352,10 +339,10 @@ class Automation {
    * // find by the query definition objectId
    *
    * @param {Object} criteria {"field":"Name", "value":deName}
-   * @returns {Promise<Object>} The details of the specified Activity
+   * @returns {Array or an Object} The details of the specified Activity
    * @throws {Error} If an error occurs during the request or the response contains errors
    */
-  async findActivityBy(criteria) {
+  async findActivitiesBy(criteria) {
     // Construct the SOAP request body
     const requestBody = `<?xml version="1.0" encoding="UTF-8"?>
       <s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope" xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
@@ -404,7 +391,9 @@ class Automation {
       });
 
       // Handle the SOAP response
-      return await this.parent.handleSoapResponse(response);
+      let soapResponse =  await this.parent.handleSoapResponse(response);
+      return Array.isArray(soapResponse) ? soapResponse : [soapResponse] // wrap with array to make sure it always return an array
+
     } catch (error) {
       // Handle any errors that occurred during the request
       throw new Error(`Failed to retrieve Activity: ${error.message}`);

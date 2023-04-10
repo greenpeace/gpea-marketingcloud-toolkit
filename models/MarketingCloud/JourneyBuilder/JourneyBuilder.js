@@ -41,7 +41,7 @@ class JourneyBuilder {
     let srcJ = this.srcJ = _.get(r, 'items.0', null)
 
     if (!srcJ) {
-      throw new Error("Cannot find the source journey")
+      throw new Error(`Cannot find the source ${jName} journey`)
     }
 
     // resolve market
@@ -272,6 +272,9 @@ class JourneyBuilder {
   }
   isAutomationTriggered() {
     return _.get(this.srcJ, 'triggers.0.type')==="AutomationAudience"
+  }
+  isJourneyScheduled() {
+    return _.get(this.srcJ, 'triggers.0.type')==="EmailAudience"
   }
 
   patchJourney () {
