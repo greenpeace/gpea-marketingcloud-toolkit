@@ -1,8 +1,7 @@
 const axios = require('axios');
 const logger = require('../../lib/logger');
 const _ = require("lodash")
-const format = require('date-fns/format')
-const subDays = require('date-fns/subDays')
+const { format, subDays, sub, parse, add } = require('date-fns');
 
 class Journey {
   constructor(options) {
@@ -13,14 +12,14 @@ class Journey {
    * Retriebe the full journey list
    * @return {array}
    */
-  async getAll () {
+  async getAll() {
     let page = 1
     let items = []
 
     while (true) {
       let url = `${this.parent.restEndpoint}/interaction/v1/interactions?$page=${page}`
       let response = await axios.get(url, {
-        headers: {"authorization": `Bearer ${this.parent.accessToken}`}
+        headers: { "authorization": `Bearer ${this.parent.accessToken}` }
       })
 
       // concate the found journeys
@@ -29,9 +28,9 @@ class Journey {
       logger.debug(`Fetched ${data.items.length} journeys for page ${page}`)
 
       // determine should we run next
-      if (data.page*data.pageSize>=data.count) {
+      if (data.page * data.pageSize >= data.count) {
         break
-      } else if (page>=50) {
+      } else if (page >= 50) {
         break // to prevent anything wrong to fallinto infinite loops
       } else {
         page += 1
@@ -111,8 +110,8 @@ class Journey {
    *     options.mostRecentVersionOnly bool
    * @returns
    */
-  async findByName(journeyName, options={}) {
-    let url = `${this.parent.restEndpoint}/interaction/v1/interactions?name=${journeyName}&mostRecentVersionOnly=${options.mostRecentVersionOnly ? 'true':'false'}&extras=all`
+  async findByName(journeyName, options = {}) {
+    let url = `${this.parent.restEndpoint}/interaction/v1/interactions?name=${journeyName}&mostRecentVersionOnly=${options.mostRecentVersionOnly ? 'true' : 'false'}&extras=all`
     let response = await axios.get(url, {
       headers: { "authorization": `Bearer ${this.parent.accessToken}` }
     })
@@ -167,7 +166,7 @@ class Journey {
 
     let foundJourney = response.data.items.find(j => j.name === journeyName)
 
-    if ( !foundJourney) {
+    if (!foundJourney) {
       throw new Error(`Cannot find the given journey by name ${journeyName}`)
     } else {
       logger.debug(`Found journey with name ${journeyName}`)
@@ -180,14 +179,15 @@ class Journey {
     // get numContactsAcceptedIn30Days in 30 days
     let eventDefId = _.get(foundJourney, "triggers.0.metaData.eventDefinitionId")
     let triggerstats = await this.getTriggerstats(eventDefId)
-    let metCriteriaSuccessRow = triggerstats.find(row => row.eventType === 'MetCriteria' && row.category ==='success')
+    let metCriteriaSuccessRow = triggerstats.find(row => row.eventType === 'MetCriteria' && row.category === 'success')
     let numContactsAcceptedIn30Days = metCriteriaSuccessRow ? metCriteriaSuccessRow.count : 0
 
     return {
       cumulativePopulation,
       numContactsCurrentlyInJourney,
       numContactsAcceptedIn30Days,
-      journey: foundJourney }
+      journey: foundJourney
+    }
   }
 
   /**
@@ -207,7 +207,7 @@ class Journey {
    * @param {dict} options @see Offical Document https://developer.salesforce.com/docs/atlas.en-us.noversion.mc-apis.meta/mc-apis/JourneyPauseByDefinitionId.htm
    * @returns
    */
-  async pause (journeyId, options) {
+  async pause(journeyId, options) {
     let url = `${this.parent.restEndpoint}/interaction/v1/interactions/pause/${journeyId}`
 
     // add the version.
@@ -231,7 +231,7 @@ class Journey {
    * @param {*} options @see https://developer.salesforce.com/docs/atlas.en-us.noversion.mc-apis.meta/mc-apis/JourneyResumeByDefinitionId.htm
    * @returns
    */
-  async resume (journeyId, options={}) {
+  async resume(journeyId, options = {}) {
     let url = `${this.parent.restEndpoint}/interaction/v1/interactions/resume/${journeyId}`
 
     // add the version.
@@ -258,22 +258,22 @@ class Journey {
       headers: { "authorization": `Bearer ${this.parent.accessToken}` }
     })
 
-    if (response.data.errors && response.data.errors.length>0) {
+    if (response.data.errors && response.data.errors.length > 0) {
       logger.error(JSON.stringify(response.data.errors))
     }
 
     return response.data
   }
 
- /**
-   * To stop a paused journey
-   *
-   * @param {string} journeyId The journey GUID which show on the URL
-   * @param {*} options @see https://developer.salesforce.com/docs/atlas.en-us.noversion.mc-apis.meta/mc-apis/JourneyResumeByDefinitionId.htm
-   *  options.versionNumber is required.
-   * @returns
-   */
-  async stop (journeyId, options={}) {
+  /**
+    * To stop a paused journey
+    *
+    * @param {string} journeyId The journey GUID which show on the URL
+    * @param {*} options @see https://developer.salesforce.com/docs/atlas.en-us.noversion.mc-apis.meta/mc-apis/JourneyResumeByDefinitionId.htm
+    *  options.versionNumber is required.
+    * @returns
+    */
+  async stop(journeyId, options = {}) {
     let url = `${this.parent.restEndpoint}/interaction/v1/interactions/stop/${journeyId}`
 
     // add the version.
@@ -300,7 +300,7 @@ class Journey {
       headers: { "authorization": `Bearer ${this.parent.accessToken}` }
     })
 
-    if (response.data.errors && response.data.errors.length>0) {
+    if (response.data.errors && response.data.errors.length > 0) {
       logger.error(JSON.stringify(response.data.errors))
     }
 
@@ -323,14 +323,14 @@ class Journey {
       headers: { "authorization": `Bearer ${this.parent.accessToken}` }
     })
 
-    if (response.data.errors && response.data.errors.length>0) {
+    if (response.data.errors && response.data.errors.length > 0) {
       logger.error(JSON.stringify(response.data.errors))
     }
 
     return response.data
   }
 
-  async getJourneyErrorHistory (inDays=1) {
+  async getJourneyErrorHistory(inDays = 1) {
     let findAfterDate = subDays(new Date(), inDays);
 
     let url = `${this.parent.restEndpoint}/interaction/v1/interactions/journeyhistory/search?$page=1&$pageSize=1000`
@@ -362,7 +362,7 @@ class Journey {
       headers: { "authorization": `Bearer ${this.parent.accessToken}` }
     })
 
-    if (response.data.errors && response.data.errors.length>0) {
+    if (response.data.errors && response.data.errors.length > 0) {
       logger.error(JSON.stringify(response.data.errors))
     }
 
@@ -377,7 +377,7 @@ class Journey {
    * @param {string} contactKey
    * @returns
    */
-  async getContactJourneyStatus (journeyDefinitionId, contactKey) {
+  async getContactJourneyStatus(journeyDefinitionId, contactKey) {
     let url = `${this.parent.restEndpoint}/interaction/v1/interactions/journeyhistory/contactkey?$page=1&$pageSize=1000`
     let response = await axios.post(url, {
       "definitionIds": [journeyDefinitionId],
@@ -386,7 +386,7 @@ class Journey {
       headers: { "authorization": `Bearer ${this.parent.accessToken}` }
     })
 
-    if (response.data.errors && response.data.errors.length>0) {
+    if (response.data.errors && response.data.errors.length > 0) {
       logger.error(JSON.stringify(response.data.errors))
     }
 
@@ -399,14 +399,14 @@ class Journey {
    * @param {*} journeyDetails
    * @returns
    */
-  async updateJourney (journeyDetails) {
+  async updateJourney(journeyDetails) {
     let url = `${this.parent.restEndpoint}/interaction/v1/interactions`
 
     let response = await axios.put(url, journeyDetails, {
       headers: { "authorization": `Bearer ${this.parent.accessToken}` }
     })
 
-    if (response.data.errors && response.data.errors.length>0) {
+    if (response.data.errors && response.data.errors.length > 0) {
       logger.error(JSON.stringify(response.data.errors))
     }
 
@@ -419,17 +419,17 @@ class Journey {
    * @param {string} jName Journey Name
    * @returns object
    */
-  async getJourneyEventDefinitionsByJourneyName (jName) {
+  async getJourneyEventDefinitionsByJourneyName(jName) {
     let r = await this.findByName(jName)
     let j = _.get(r, 'items.0', null)
 
-    if ( !j) {
-      throw new Error("Cannot find the journey with name: "+j)
+    if (!j) {
+      throw new Error("Cannot find the journey with name: " + j)
     }
 
     let triggerEventDefId = _.get(j, 'triggers.0.metaData.eventDefinitionId', null)
-    if ( !triggerEventDefId) {
-      throw new Error("Cannot find the eventId from journey "+jName)
+    if (!triggerEventDefId) {
+      throw new Error("Cannot find the eventId from journey " + jName)
     }
 
     let def = await this.getEventDefinitions(triggerEventDefId)
@@ -443,12 +443,87 @@ class Journey {
    * @param {string} eventDefId ex. 67e6d2d0-b102-4ba9-9b8c-cd14e7c2cbc6
    * @returns dict
    */
-  async getEventDefinitions (eventDefId) {
+  async getEventDefinitions(eventDefId) {
     let url = `${this.parent.restEndpoint}/interaction/v1/eventDefinitions/${eventDefId}`
 
     let response = await axios.get(url, {
       headers: { "authorization": `Bearer ${this.parent.accessToken}` }
     })
+
+    return response.data
+  }
+
+  /**
+   * Get Journey history by filtering the Definition ID via API
+   *
+   * @see https://sfmarketing.cloud/2019/11/27/get-journey-history-by-filtering-the-definition-id-via-api/
+   * @param {string} journeyName
+   * @param {Date} start
+   * @param {Date} end
+   * @param {string} extras "all"
+   */
+  async getJourneyHistory(journeyName, { start, end, extras } = {}) {
+    start = start ? start : sub(new Date(), { days: 30 });
+    end = end ? end : (new Date())
+    extras = extras || "all"
+
+    logger.debug(`Fetching ${journeyName} definition Ids`)
+    let r = await this.findByName(journeyName)
+    let jDefIds = r.items
+      .filter((aJourneyDef, idx) => {
+        return aJourneyDef.name === journeyName
+      })
+      .map((aJourneyDef, idx) => {
+        return aJourneyDef.definitionId
+      })
+
+
+    // Loop through each day between the start and end dates
+    let setpHours = 12
+    let histories = []
+    let currentDate = start;
+    let nextDate = Math.min(add(currentDate, { hours: setpHours }), end);
+    while (currentDate < end) {
+      logger.debug(`Fetching ${journeyName} history ${format(currentDate, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")}-${format(nextDate, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")} ...`)
+      r = await this._getJourneyErrorHistory(jDefIds, currentDate, nextDate)
+
+      if (r.items) {
+        histories = histories.concat(r.items)
+
+        if (r.items.length===10000) {
+          logger.warn('The journey may contains more rows. But maximum 10000 rows retrieved.')
+        }
+      }
+      logger.debug(`Found ${r.count} items.`)
+
+      // prepare next loop
+      currentDate = add(nextDate, { seconds: 1 });
+      nextDate = add(currentDate, { hours: setpHours });
+    }
+
+    return histories
+  }
+
+  /**
+   * Fetch journey history which max contains 10000 records
+   *
+   * @param {array} journeyDefIds  required
+   * @param {Date} start required
+   * @param {Date} end required
+   * @returns
+   */
+  async _getJourneyErrorHistory(journeyDefIds, start, end) {
+    let url = `${this.parent.restEndpoint}/interaction/v1/interactions/journeyhistory/search?$page=1&$pageSize=10000&%24orderBy=TransactionTime%20desc`
+    let response = await axios.post(url,
+      {
+        "definitionIds": journeyDefIds,
+        "start": format(start, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"),
+        "end": format(end, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"),
+        "extras": "all"
+      },
+      {
+        headers: { "authorization": `Bearer ${this.parent.accessToken}` }
+      })
 
     return response.data
   }

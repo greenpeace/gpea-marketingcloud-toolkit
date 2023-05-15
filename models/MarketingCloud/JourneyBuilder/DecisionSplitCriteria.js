@@ -167,6 +167,11 @@ const DECISION_SPLIT_RULES_BY_SYNC_DE = {
     criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.Recurring_Donation_Status__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[Active]]></Value></Condition></ConditionSet></FilterDefinition>"
   },
 
+  RG_STATUS_IS_NOT_ACTIVE: {
+    description: "Recurring_Donation_Status__c is not equal Active",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.Recurring_Donation_Status__c\" Operator=\"NotEqual\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[Active]]></Value></Condition></ConditionSet></FilterDefinition>"
+  },
+
   IS_ACTIVE_DONOR: {
     description: "Donor_Status__c equal Active Donor",
     criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.Donor_Status__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[Active Donor]]></Value></Condition></ConditionSet></FilterDefinition>",
