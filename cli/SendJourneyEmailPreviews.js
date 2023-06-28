@@ -9,10 +9,12 @@ const format = require('date-fns/format')
  */
 async function main() {
   // EDIT HERE!
-  let targetJourneyName = 'tw-oneoff_conversion-adhoc-20230328-remind_lapsed_sg_donors'
-  let emailPrefix = `[tw-sg2rg-adhoc]`
+  let targetJourneyName = 'tw-new_donor_upgrade-automd'
+  let emailPrefix = ``
+  // let recipients = ['uchen@greenpeace.org', 'gigi.wu@greenpeace.org']
+  // let recipients = ['uchen@greenpeace.org', 'mirang.kim@greenpeace.org', ]
+  // let recipients = ['uchen@greenpeace.org', 'gigi.wu@greenpeace.org']
   let recipients = ['uchen@greenpeace.org']
-  // let recipients = ['uchen@greenpeace.org']
   let market = "tw"
 
   let deFilter

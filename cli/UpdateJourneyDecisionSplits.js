@@ -9,10 +9,10 @@ require('dotenv').config()
  */
 async function main() {
   // EDIT HERE
-  const srcJourneyName = "kr-special_appeal-20230328-sample_flow"
+  const srcJourneyName = "hk-comms-adhoc-20230522-notice_of_billing_date_modification-chinese"
   const destJourneyName = srcJourneyName
   // const destJourneyName = "up-lead_conversion-dev-general-elm"
-  const market = "KR"
+  const market = "HK"
   const replaceWaitToMinutes = false
 
   let mcbase = new MCBase({ market })

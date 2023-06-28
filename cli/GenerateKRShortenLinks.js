@@ -26,25 +26,24 @@ const cliProgress = require('cli-progress');
 require('dotenv').config()
 
 // EDIT HERE!
-let deCsvPath = '/Users/upchen/Downloads/kr-special_appeal-20230328-batch_2_rg_cc-1click_url_generation.csv'
-let outputDeCsvPath = '/Users/upchen/Downloads/kr-special_appeal-20230328-batch_2_rg_cc-1click_url_generation-generated.csv'
+let deCsvPath = '/Users/upchen/Downloads/kr-middle_donor_upgrade-adhoc-20230628.csv'
+let outputDeCsvPath = '/Users/upchen/Downloads/kr-middle_donor_upgrade-adhoc-20230628-generated.csv'
 
-let URLCallToAction = "ONEOFF"; // UPGRADE or ONEOFF or COLA
-let askAmount = 70000; // batch 2
-let campaignId = "7012u000000h2ZFAAY"; // Special Appeal - SMS - 2023 - KR
-let utm_campaign = "special_appeal";
-let utm_source = "sfmc-special_appeal-20230328-batch_2_rg_cc-1click_url_generation-sms";
-let utm_medium = "SMS";
-let utm_content = "";
+let URLCallToAction = "UPGRADE"; // UPGRADE or ONEOFF or COLA
+let askAmount = 20000; // batch 2
+let campaignId = "7012u000000h2XTAAY"; // Upgrade - Annual Upgrade - SMS - 2023 - KR
+let utm_campaign = "middle_donor_upgrade";
+let utm_source = "donor_journey";
+let utm_medium = "LMS";
+let utm_content = "kr-middle_donor_upgrade-adhoc-20230628";
 let utm_term = "";
 
-const ContactIdFieldName = 'Id (18 digit)'
-const RGStatusFieldName = 'Recurring Donation Status'
-const RGPaymentMethodFieldName = 'Recurring Donation Payment Method'
+const ContactIdFieldName = 'Id'
+const RGStatusFieldName = 'Recurring_Donation_Status__c'
+const RGPaymentMethodFieldName = 'Recurring_Donation_Payment_Method__c'
 
 const longLinkFieldName = 'long_link'
 const shortenLinkFieldName = 'url2'
-
 
 async function shortenUrl(longUrl) {
   const accessToken = process.env.BITLY_TOKEN;
@@ -134,7 +133,7 @@ async function main() {
   let baseDe = parse(fs.readFileSync(deCsvPath), { columns: true });
   logger.info(`Data Extension loaded with ${baseDe.length} rows.`)
 
-  // baseDe = baseDe.slice(0,3000) // for debug
+  // baseDe = baseDe.slice(0,100) // for debug
 
   // Check the necessary fields is present
   if (baseDe.length < 1) {
