@@ -209,11 +209,15 @@ const DECISION_SPLIT_RULES_BY_SYNC_DE = {
 }
 
 const DECISION_SPLIT_RULES_BY_ENTRY_DE = {
+  MODIFIED_BY_ADMIN: {
+    description: "LastModifiedById equal 0052u000000he2JAAQ OR LastModifiedById equal 0052v00000ahdbhAAA",
+    "criteria": "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:LastModifiedById\" Operator=\"Equal\" UiMetaData=\"{}\"><Value><![CDATA[0052u000000he2JAAQ]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:LastModifiedById\" Operator=\"Equal\" UiMetaData=\"{}\"><Value><![CDATA[0052v00000ahdbhAAA]]></Value></Condition></ConditionSet></FilterDefinition>",
+  },
+
   EMAIL_OPT_OUT: {
     description: "HasOptedOutOfEmail is True OR Fundraising_Appeals_Opt_Out__c is True",
     "criteria": "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact__r:et4ae5__HasOptedOutOfMobile__c\" Operator=\"Is\" UiMetaData=\"{}\"><Value><![CDATA[true]]></Value></Condition></ConditionSet></FilterDefinition>"
   },
-
 
   EMAIL_NOT_VALID: {
     description: "Email is null OR Email does not contain @ OR Email contains noaddress",
@@ -233,9 +237,7 @@ const DECISION_SPLIT_RULES_BY_ENTRY_DE = {
   PHONE_NOT_VALID_HK: {
     description: "Contact:MobilePhone does not contain +852 OR Contact:MobilePhone contains 0000000 OR Contact:MobilePhone contains 1234567 OR Contact:MobilePhone contains 28548338",
     criteria: "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact__r:MobilePhone\" Operator=\"NotContains\" UiMetaData=\"{}\"><Value><![CDATA[+852]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact__r:MobilePhone\" Operator=\"Contains\" UiMetaData=\"{}\"><Value><![CDATA[0000000]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact__r:MobilePhone\" Operator=\"Contains\" UiMetaData=\"{}\"><Value><![CDATA[1234567]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"_ENTRY_EVENT_._ENTRY_OEJECT_:Contact__r:MobilePhone\" Operator=\"Contains\" UiMetaData=\"{}\"><Value><![CDATA[28548338]]></Value></Condition></ConditionSet></FilterDefinition>"
-  },
-
-
+  }
 }
 
 // // prepare the market definitions

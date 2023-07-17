@@ -141,10 +141,11 @@ class JourneyBuilder {
 
       criteria = criteria.replace(new RegExp(`_ENTRY_EVENT_`, 'g'), eventPlaceholder)
       criteria = criteria.replace(new RegExp(`_ENTRY_OEJECT_`, 'g'), objectApiName)
-      criteria = criteria.replace(new RegExp(`\.Contact:Contact:`, 'g'), '.Contact:') // special case for Contact EntryObject
 
-      // special case for CampaignMember Triggered Entry. For Hong Kong Market
-      // Not Sure other markets ex Taiwan or Korea
+      // works for tw, hk contact objects
+      criteria = criteria.replace(new RegExp(`\.Contact:Contact__r:`, 'g'), '.Contact:') // special case for Contact EntryObject
+
+      // works for tw, hk camapgin member objects
       criteria = criteria.replace(new RegExp(`\.CampaignMember:Contact__r:`, 'g'), '.CampaignMember:Contact:')
 
       rule[pathName].criteria = criteria

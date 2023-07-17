@@ -131,7 +131,7 @@ async function main() {
 
       if (csvRow) {
         // Modify csvRow object to fill in "-" for empty values and show 0 for zero values
-        Object.keys(csvRow).forEach((key) => {
+        csvKeys.forEach((key) => {
           if (csvRow[key] === undefined || csvRow[key] === null || csvRow[key] === "") {
             csvRow[key] = "-";
           } else if (csvRow[key] === 0) {
@@ -168,7 +168,9 @@ async function processJourney(params) {
   data = await processSms(params)
   Object.assign(csvRow, data);
   data = await processLms(params)
-  Object.assign(csvRow, data);
+  if (data.smses!=='') {
+    Object.assign(csvRow, data);
+  }
 
   data = await process369Criteria(params);
   Object.assign(csvRow, data);
