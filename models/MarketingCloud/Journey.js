@@ -369,6 +369,27 @@ class Journey {
     return response.data
   }
 
+  async getJourneyWarnHistory(inDays = 1) {
+    let findAfterDate = subDays(new Date(), inDays);
+
+    let url = `${this.parent.restEndpoint}/interaction/v1/interactions/journeyhistory/search?$page=1&$pageSize=1000`
+    let response = await axios.post(url, {
+      "start": format(findAfterDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"),
+      "end": null,
+      "clientStatuses": [
+        "Warning"
+      ]
+    }, {
+      headers: { "authorization": `Bearer ${this.parent.accessToken}` }
+    })
+
+    if (response.data.errors && response.data.errors.length > 0) {
+      logger.error(JSON.stringify(response.data.errors))
+    }
+
+    return response.data
+  }
+
 
   /**
    * Get the contact in journey status. ex, entered? completed?

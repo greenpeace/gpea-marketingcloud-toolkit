@@ -50,10 +50,15 @@ const check = async (mcbase, rules) => {
   let mcJourney = mcbase.factory("Journey");
   let errors = [];
 
-  let r = await mcJourney.getJourneyErrorHistory((inDays = 1));
-  let journeyErrorGroup = _.groupBy(r.items, "definitionName");
+  // process errors
+  let errorRs = await mcJourney.getJourneyErrorHistory((inDays = 1));
+  let warningRs = await mcJourney.getJourneyWarnHistory((inDays = 1));
 
-  _.forEach(journeyErrorGroup, (items, journeyName) => {
+  // process together
+  let notificationItems = [...errorRs.items, ...warningRs.items]
+  let notificationGroup = _.groupBy(notificationItems, "definitionName");
+
+  _.forEach(notificationGroup, (items, journeyName) => {
     let thisErrMsg = "";
     let errorTypeGroups = {
       "ContactPreviouslyInSameInteraction": [],
@@ -96,7 +101,7 @@ const check = async (mcbase, rules) => {
 
     let countsMsgs = [];
     // let candidateErrTypes = ['Others', 'ListDetective', 'SuppressionLogic', 'InvalidEmail', 'MetExitCriteria', 'CurrentlyWaitingInSameInteraction', 'ContactPreviouslyInSameInteraction']
-    let candidateErrTypes = ["Others", "ContactPreviouslyInSameInteraction", "SuppressionLogic", "GlobalUnsubscribeList", "InvalidEmail"]; // only show specific errors
+    let candidateErrTypes = ["Others", "SuppressionLogic", "GlobalUnsubscribeList", "InvalidEmail"]; // only show specific errors
     let warningCounts = 0;
 
     candidateErrTypes.forEach((k) => {
