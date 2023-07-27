@@ -65,7 +65,7 @@ async function main() {
   });
 
   const markets = ['HK', 'TW', 'KR']
-  // const markets = ['TW']
+  // const markets = ['KR']
 
   for (let i = 0; i < markets.length; i++) {
     const market = markets[i]
@@ -110,6 +110,7 @@ async function main() {
     // // 'kr-new_donor_upgrade-automd',
     // // 'kr-202112-new-donor-upgrade-journey_2022'
     //   // 'tw-20201201-reactivation-journey-inactive-donor-single-create-tfr'
+    //   'hk-lead_conversion-automd-plastics-survey'
     // ]
 
     // start to process
@@ -168,9 +169,10 @@ async function processJourney(params) {
   data = await processSms(params)
   Object.assign(csvRow, data);
   data = await processLms(params)
-  if (data.smses!=='') {
+  if (csvRow.smses==='-' || csvRow.smses==='') {
     Object.assign(csvRow, data);
   }
+  console.log('data.smses 2', data.smses)
 
   data = await process369Criteria(params);
   Object.assign(csvRow, data);
@@ -401,7 +403,7 @@ async function processLms({ srcJ, mcJB }) {
     return aMinWait - bMinWait;
   });
 
-  returnObj.lmses = lmsActivities.map((aLmsAct, idx) => {
+  returnObj.smses = lmsActivities.map((aLmsAct, idx) => {
     let lmsName = _.get(aLmsAct, 'name')
     let lmsTitle = _.get(aLmsAct, 'arguments.execute.inArguments.0.title')
     let lmsContent = _.get(aLmsAct, 'arguments.execute.inArguments.0.msg')

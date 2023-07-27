@@ -4,14 +4,14 @@ const _ = require("lodash")
 
 class DataExtension {
   /**
-   * 
+   *
    * @param {*} criteria {"field":"Name", "value":deName}
    */
   async findDeBy (criteria) {
     let rbody = `<?xml version="1.0" encoding="UTF-8"?>
-      <s:Envelope 
-        xmlns:s="http://www.w3.org/2003/05/soap-envelope" 
-        xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" 
+      <s:Envelope
+        xmlns:s="http://www.w3.org/2003/05/soap-envelope"
+        xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing"
         xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
         <s:Header>
           <a:Action s:mustUnderstand="1">Retrieve</a:Action>
@@ -47,13 +47,13 @@ class DataExtension {
 
   /**
    * Return the top 2500 rows from data extension
-   * 
-   * @param {string} deName 
+   *
+   * @param {string} deName
    * @param {Object} option
    *  option.properties {Array} What fields to return
    *  option.filter {Object} Filter the results. {property:string, simpleOperator:string, value:string}
    *    @see https://developer.salesforce.com/docs/marketing/marketing-cloud/guide/simplefilterpart.html
-   * @returns 
+   * @returns
    */
   async fetchDeRows (deName, {properties, filter}={}) {
     // resolve the DE CustomerKey
@@ -80,12 +80,12 @@ class DataExtension {
         <Value>${filter["value"]}</Value>
       </Filter>`
     }
-    
+
     // generate the POST XML
     let rbody = `<?xml version="1.0" encoding="UTF-8"?>
-      <s:Envelope 
-        xmlns:s="http://www.w3.org/2003/05/soap-envelope" 
-        xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" 
+      <s:Envelope
+        xmlns:s="http://www.w3.org/2003/05/soap-envelope"
+        xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing"
         xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
         <s:Header>
           <a:Action s:mustUnderstand="1">Retrieve</a:Action>
@@ -114,8 +114,8 @@ class DataExtension {
   }
 
   /**
-   * 
-   * @param {string} deName 
+   *
+   * @param {string} deName
    * @param {array} rows [{key:value, ...}, ...]
    */
   async updateRow (deName, row) {
@@ -128,12 +128,12 @@ class DataExtension {
     let propertiesXML = ""
     let fieldXML = Object.keys(row).map(k => `<Property><Name>${k}</Name><Value><![CDATA[${row[k]}]]></Value></Property>`).join("")
     propertiesXML += `<Properties>${fieldXML}</Properties>\n`
-    
+
     // generate the POST XML
     let rbody = `<?xml version="1.0" encoding="UTF-8"?>
-      <s:Envelope 
-        xmlns:s="http://www.w3.org/2003/05/soap-envelope" 
-        xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" 
+      <s:Envelope
+        xmlns:s="http://www.w3.org/2003/05/soap-envelope"
+        xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing"
         xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
         <s:Header>
           <a:Action s:mustUnderstand="1">Retrieve</a:Action>
@@ -142,9 +142,9 @@ class DataExtension {
         </s:Header>
         <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
         <UpdateRequest xmlns="http://exacttarget.com/wsdl/partnerAPI">
-          <Options /> 
+          <Options />
           <Objects xsi:type="ns1:DataExtensionObject" xmlns:ns1="http://exacttarget.com/wsdl/partnerAPI">
-              <CustomerKey>${deCustomerKey}</CustomerKey> 
+              <CustomerKey>${deCustomerKey}</CustomerKey>
               ${propertiesXML}
           </Objects>
         </UpdateRequest>
@@ -161,18 +161,18 @@ class DataExtension {
   }
 
   /**
-   * 
-   * 
+   *
+   *
    * @see DataExtensionField https://sforce.co/3JAMXR6
-   * 
-   * @param {object} criteria 
-   * @returns 
+   *
+   * @param {object} criteria
+   * @returns
    */
   async getDataExtensionFields (criteria) {
     let rbody = `<?xml version="1.0" encoding="UTF-8"?>
-      <s:Envelope 
-        xmlns:s="http://www.w3.org/2003/05/soap-envelope" 
-        xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" 
+      <s:Envelope
+        xmlns:s="http://www.w3.org/2003/05/soap-envelope"
+        xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing"
         xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
         <s:Header>
           <a:Action s:mustUnderstand="1">Retrieve</a:Action>
@@ -216,14 +216,14 @@ class DataExtension {
     return await this.parent.handleSoapResponse(response)
   }
 
-  /** 
+  /**
   To Create a Data extension in the marketing cloud.
   Note, if you create with a existing name, you'll have an error.
 
   @params deName: The target extension name
   @params contactIdFieldName: string The contactId field name. The MC uses this field to lookup contacts.
   @params fields: [{
-    Name:string, 
+    Name:string,
     FieldType:Boolean|Date|Decimal|EmailAddress|Number|Phone|Text @see https://sforce.co/3ys4XH4
     IsRequired: bool,
     IsPrimaryKey: bool,
@@ -233,7 +233,7 @@ class DataExtension {
 
   :return: bool True when create successfully
   */
-  async createDataExtension ({deName, fields, contactIdFieldName="Id"}) {
+  async createDataExtension ({deName, fields, contactIdFieldName="Id", isSendable=true}) {
     if ( !deName) {
       throw new Error("deName is required.")
     }
@@ -273,9 +273,9 @@ class DataExtension {
 
     // generate the XML
     let rbody = `<?xml version="1.0" encoding="UTF-8"?>
-      <s:Envelope 
-        xmlns:s="http://www.w3.org/2003/05/soap-envelope" 
-        xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing" 
+      <s:Envelope
+        xmlns:s="http://www.w3.org/2003/05/soap-envelope"
+        xmlns:a="http://schemas.xmlsoap.org/ws/2004/08/addressing"
         xmlns:u="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
         <s:Header>
           <a:Action s:mustUnderstand="1">Retrieve</a:Action>
@@ -286,8 +286,8 @@ class DataExtension {
           <CreateRequest xmlns="http://exacttarget.com/wsdl/partnerAPI">
             <Objects xsi:type="DataExtension">
                 <Name>${deName}</Name>
-                <IsSendable>true</IsSendable>
-                <IsTestable>true</IsTestable>
+                <IsSendable>${isSendable ? "true":"false"}</IsSendable>
+                <IsTestable>${isSendable ? "true":"false"}</IsTestable>
                 <SendableDataExtensionField>
                     <Name>${contactIdFieldName}</Name>
                     <FieldType>Text</FieldType>
