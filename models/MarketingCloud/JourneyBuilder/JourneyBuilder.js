@@ -504,7 +504,7 @@ class JourneyBuilder {
 
       if (act.name.indexOf(`END_CONTACTJOURNEY`)>=0) {
         if (!firstContactJourneyObject) {
-          throw new Error("Cannot find the first ContactJourney Create Or Update Object in first 10 activities")
+          throw new Error("Cannot find the first ContactJourney Create Or Update Object activities")
         }
 
         logger.debug(`Updating ${act.name} (${act.key})`)
@@ -629,7 +629,7 @@ class JourneyBuilder {
      * @returns Object activity or null if not found
      */
     _findFirstContactJourneyCreateOrUpdateActivity() {
-      for (let i = 0; i < 10 && i<this.nextJ.activities.length; i++) {
+      for (let i = 0; i<this.nextJ.activities.length; i++) {
         const act = this.nextJ.activities[i];
         if (act.type === "SALESCLOUDACTIVITY" && act.name.indexOf("CREATE_CONTACTJOURNEY")>=0) {
           return act
