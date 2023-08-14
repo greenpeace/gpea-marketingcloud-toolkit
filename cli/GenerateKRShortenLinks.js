@@ -26,21 +26,24 @@ const cliProgress = require('cli-progress');
 require('dotenv').config()
 
 // EDIT HERE!
-let deCsvPath = '/Users/upchen/Downloads/kr-middle_donor_upgrade-adhoc-20230628.csv'
-let outputDeCsvPath = '/Users/upchen/Downloads/kr-middle_donor_upgrade-adhoc-20230628-generated.csv'
+let deCsvPath = '/Users/upchen/Downloads/report1691459682005_cc.csv'
+let outputDeCsvPath = '/Users/upchen/Downloads/report1691459682005_cc-generated.csv'
 
-let URLCallToAction = "UPGRADE"; // UPGRADE or ONEOFF or COLA
-let askAmount = 20000; // batch 2
-let campaignId = "7012u000000h2XTAAY"; // Upgrade - Annual Upgrade - SMS - 2023 - KR
-let utm_campaign = "middle_donor_upgrade";
+let URLCallToAction = "ONEOFF"; // UPGRADE or ONEOFF or COLA
+let askAmount = 50000; // batch 2
+  // Group A: RD amount <20,000 : Asking Amount 50,000 (min. 30,000)
+  // Group B: RD amount >=20,000 : Asking Amount 70,000 (mn. 30,000)
+
+let campaignId = "7012u000000h2ZFAAY"; // Special Appeal - SMS - 2023 - KR
+let utm_campaign = "special_appeal";
 let utm_source = "donor_journey";
-let utm_medium = "LMS";
-let utm_content = "kr-middle_donor_upgrade-adhoc-20230628";
+let utm_medium = "sms";
+let utm_content = "kr-special_appeal-adhoc-20230825-batch_2_rg_cc-1click_url_generation-sms";
 let utm_term = "";
 
-const ContactIdFieldName = 'Id'
-const RGStatusFieldName = 'Recurring_Donation_Status__c'
-const RGPaymentMethodFieldName = 'Recurring_Donation_Payment_Method__c'
+const ContactIdFieldName = 'Id (18 digit)'
+const RGStatusFieldName = 'Recurring Donation Status'
+const RGPaymentMethodFieldName = 'Recurring Donation Payment Method'
 
 const longLinkFieldName = 'long_link'
 const shortenLinkFieldName = 'url2'
@@ -87,6 +90,14 @@ async function processRow(params) {
     if (RgPaymentMethod === "Credit Card" || RgPaymentMethod === "CMS") {
       isAbleToUse1ClickUpgrade = true;
     }
+  }
+
+  // determine the askAmount
+  let RgAmount = parseInt(row['Recurring Donation Amount'], 10)
+  if (RgAmount>=20000) {
+    askAmount = 70000
+  } else {
+    askAmount = 50000
   }
 
   // Start to generate the links

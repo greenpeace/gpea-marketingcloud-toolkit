@@ -1,5 +1,6 @@
 const axios = require('axios');
 const logger = require('../../lib/logger');
+const fs = require('fs');
 const _ = require("lodash")
 const { format, subDays, sub, parse, add } = require('date-fns');
 
@@ -104,10 +105,12 @@ class Journey {
   }
 
   /**
+   * Find the journey which partialy matches the given names
    *
    * @param {string} journeyName
    * @param {dict} options
    *     options.mostRecentVersionOnly bool
+   *     options.fuzzyMatch bool Default False. To search with `%journeyName%`
    * @returns
    */
   async findByName(journeyName, options = {}) {
@@ -115,6 +118,13 @@ class Journey {
     let response = await axios.get(url, {
       headers: { "authorization": `Bearer ${this.parent.accessToken}` }
     })
+
+    // exactly match, remove the partial match items
+    if ( !options.fuzzyMatch && response.data.items.length>1) {
+      response.data.items = response.data.items.filter(j => {
+        return j.name === journeyName
+      })
+    }
 
     return response.data
   }

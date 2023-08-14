@@ -4,15 +4,23 @@ const _ = require("lodash")
 require('dotenv').config()
 
 /**
- * To update the journey criteria based on the pre-defined criteria.
+ * What this script does:
+ *
+ * 1. To update the journey criteria based on the pre-defined criteria.
  * For all the supported criteria, @see models/MarketingCloud/JourneyBuilder/DecisionSplitCriteria.js
+ * 2. Replace all the wait period to X minutes. Controled by `replaceWaitToMinutes` variable.
+ * 3. Patch the CREATE_CONTACTJOURNEY and END_CONTACTJOURNEY activities.
+ *
+ * TODO:
+ * 4. Patch SMS activities with black out window 8am-8pm
+ * 5. Check the Call Case activities with all the necessary fields.
  */
 async function main() {
   // EDIT HERE
-  const srcJourneyName = "hk-comms-adhoc-20230522-notice_of_billing_date_modification-chinese"
+  const srcJourneyName = "up-test-adhoc-20221130"
   const destJourneyName = srcJourneyName
   // const destJourneyName = "up-lead_conversion-dev-general-elm"
-  const market = "HK"
+  const market = "tw"
   const replaceWaitToMinutes = false
 
   let mcbase = new MCBase({ market })
@@ -36,6 +44,11 @@ async function main() {
   if (replaceWaitToMinutes) {
     mcJB.patchJourneyWaitTimeToMinute()
   }
+
+  // path contact journeys (contact audiences)
+  mcJB.patchCreateContactJourneyActivity()
+  mcJB.patchEndContactJourneyActivity()
+
 
   let nextJ = mcJB.nextJ
 

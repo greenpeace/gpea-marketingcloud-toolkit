@@ -368,11 +368,328 @@ class JourneyBuilder {
   }
 
   /**
-   * Trim the journey to only the main pathes. (Decision splits and wait times)
+   * For name=CREATE_CONTACTJOURNEY & type=SALESCLOUDACTIVITY(Object Activity)
+   *
+   * Upadte to
+   *   * Contact: Assign to the Person in the Journey
+   *   * Journey_Name__c: The current Journey Name
+   *   * Journey_Start_Date__c: Date Contact Enters Activity
+   *   * Ready_for_Journey__c: true
+   *
+   *
+   * Usage:
+   * 1. Add a SalesCloudActivity Stage in Journey Builder.
+   * 2. Rename the activity to CREATE_CONTACTJOURNEY. (No need to update the content)
+   * 3. Run the update script/
    */
-  trimJourneyOnlyStructure () {
+  patchCreateContactJourneyActivity() {
+    let nextJ = this.nextJ
 
+    // patch decision splits
+    for (let i = 0; i < nextJ.activities.length; i++) {
+      const act = nextJ.activities[i];
+
+      if (act.name.indexOf(`CREATE_CONTACTJOURNEY`)>=0) {
+        logger.debug(`Updating ${act.name} (${act.key})`)
+
+        // Generate Existing Field Maps
+        let existingFieldNameToFieldValueMap = {}
+        let existingObjectMapObjects = _.get(act, 'arguments.objectMap.objects', [])
+        existingObjectMapObjects.forEach(row => {
+          existingFieldNameToFieldValueMap[row.FieldName] = row.FieldValue
+        })
+
+        _.set(nextJ.activities[i], 'name', `${ICON_RULE_FROM_SYNC_DE}CREATE_CONTACTJOURNEY`)
+        _.set(nextJ.activities[i], 'schema.arguments', {
+					"SalesforceObjectID": {
+						"access": "Visible",
+						"dataType": "Text",
+						"direction": "Out",
+						"isNullable": true
+					}
+				})
+        _.set(nextJ.activities[i], 'metaData', {
+          "isConfigured": true,
+          "expressionBuilderPrefix": "Contact Journey"
+        })
+        _.set(nextJ.activities[i], 'arguments.version', "1.0")
+        _.set(nextJ.activities[i], 'arguments.objectMap.objects', [{
+          "type": "coe__Contact_Audience__c",
+          "subtype": null,
+          "order": "1",
+          "action": "Create",
+          "lookup": null,
+          "fields": [
+            {
+              "FieldName": "coe__Contact__c",
+              "FieldLabel": "Contact",
+              "FieldValue": "Assign to the Person in the Journey",
+              "FieldValueLabel": "Assign to the Person in the Journey",
+              "Required": "true",
+              "FieldType": "reference",
+              "MappingType": "Constant",
+              "Processor": "personInJourney",
+              "ReferenceObjectNames": [
+                "CONTACT"
+              ]
+            },
+            {
+              "FieldName": "Journey_Name__c",
+              "FieldLabel": "Journey Name",
+              "FieldValue": this.srcJ.name,
+              "FieldValueLabel": this.srcJ.name,
+              "Required": "false",
+              "FieldType": "string",
+              "MappingType": "Constant",
+              "Processor": "static"
+            },
+            {
+              "FieldName": "Journey_Start_Date__c",
+              "FieldLabel": "Journey Start Date",
+              "FieldValue": "Date Contact Enters Activity",
+              "FieldValueLabel": "Date Contact Enters Activity",
+              "Required": "false",
+              "FieldType": "datetime",
+              "MappingType": "Constant",
+              "Processor": "dateContactEnters",
+              "FieldAdjustment": {
+                "SubProcessor": "dateAdjustment",
+                "Units": "Days",
+                "NumUnits": "0",
+                "TimeDirection": "after"
+              }
+            },
+            {
+              "FieldName": "Ready_for_Journey__c",
+              "FieldLabel": "Ready for Journey",
+              "FieldValue": "true",
+              "FieldValueLabel": "true",
+              "Required": "false",
+              "FieldType": "boolean",
+              "MappingType": "Constant",
+              "Processor": "static"
+            }
+          ]
+        }])
+
+        logger.debug(` - Journey_Name__c: ${this.srcJ.name}`)
+      }
+    }
+
+    return this.nextJ = nextJ
   }
+
+  /**
+  * For name=END_CONTACTJOURNEY & type=SALESCLOUDACTIVITY(Object Activity)
+  *
+  * Upadte to
+  *   * Contact: Assign to the Person in the Journey
+  *   * Journey_Name__c: The current Journey Name
+  *   * Journey_Start_Date__c: Date Contact Enters Activity
+  *   * Ready_for_Journey__c: true
+  *
+  * Usage:
+  * 1. Add a SalesCloudActivity Stage in Journey Builder.
+  * 2. Rename the activity to END_CONTACTJOURNEY. (No need to update the content)
+  * 3. Run the update script/
+   */
+  patchEndContactJourneyActivity() {
+    let nextJ = this.nextJ
+
+    // find the target ContactJourney Object to update
+    let firstContactJourneyObject = this._findFirstContactJourneyCreateOrUpdateActivity() // note firstContactJourneyObject could be null
+
+    for (let i = 0; i < nextJ.activities.length; i++) {
+      const act = nextJ.activities[i];
+
+      if (act.name.indexOf(`END_CONTACTJOURNEY`)>=0) {
+        if (!firstContactJourneyObject) {
+          throw new Error("Cannot find the first ContactJourney Create Or Update Object in first 10 activities")
+        }
+
+        logger.debug(`Updating ${act.name} (${act.key})`)
+
+        // Generate for Contact Journeys
+        let fields = [{
+          "UpdateType": "OverWriteNewValue",
+          "Updateable": "true",
+          "FieldName": "Journey_End_Date__c",
+          "FieldLabel": "Journey End Date",
+          "FieldValue": "Date Contact Enters Activity",
+          "FieldValueLabel": "Date Contact Enters Activity",
+          "Required": "false",
+          "FieldType": "datetime",
+          "MappingType": "Constant",
+          "Processor": "dateContactEnters",
+          "FieldAdjustment": {
+            "SubProcessor": "dateAdjustment",
+            "Units": "Days",
+            "NumUnits": "0",
+            "TimeDirection": "after"
+          }
+        }]
+
+        // handle generated cases
+        let firstPrecedingCaseActivity = this._findFirstPrecedingCaseActivity(act.key)
+        if (firstPrecedingCaseActivity) {
+          fields.push({
+            "UpdateType": "OverWriteNewValue",
+            "Updateable": "true",
+            "FieldName": "Journey_Outcome_Case__c",
+            "FieldLabel": "Journey Outcome Case",
+            "FieldValue": `{{Interaction.${firstPrecedingCaseActivity.key}.salesforceObjectID}}`,
+            "FieldValueLabel": "salesforceObjectID",
+            "Required": "false",
+            "FieldType": "reference",
+            "MappingType": "Constant",
+            "Processor": "static",
+            "ReferenceObjectNames": [
+              "CASE"
+            ]
+          })
+
+          logger.debug(` - Journey_Outcome_Case__c: ${_.last(fields).FieldValue}`)
+  }
+
+        // handle exit reason
+        let {decisionSplitActivity, decisionSplitOutcome} = this._findFirstPrecedingDecisionActivity(act.key)
+        if (decisionSplitOutcome) {
+          fields.push({
+            "UpdateType": "OverWriteNewValue",
+            "Updateable": "true",
+            "FieldName": "Journey_Exit_Reason__c",
+            "FieldLabel": "Journey Exit Reason",
+            "FieldValue": decisionSplitOutcome.metaData.label,
+            "FieldValueLabel": decisionSplitOutcome.metaData.label,
+            "Required": "false",
+            "FieldType": "string",
+            "MappingType": "Constant",
+            "Processor": "static"
+          })
+          logger.debug(` - Journey_Exit_Reason__c: ${_.last(fields).FieldValue}`)
+        }
+
+        // resolve the new activity name
+        let activityName = `${ICON_RULE_FROM_SYNC_DE}END_CONTACTJOURNEY`
+        if (decisionSplitOutcome) {
+          let subfix = decisionSplitOutcome.metaData.label
+          subfix = subfix.replace(ICON_RULE_FROM_SYNC_DE, '')
+          subfix = subfix.replace(ICON_RULE_FROM_TRIGGERED_DE, '')
+          activityName = `${activityName}(${subfix})`
+        }
+        _.set(nextJ.activities[i], 'name', activityName)
+        logger.debug(` - Rename to: ${activityName}`)
+
+        _.set(nextJ.activities[i], 'schema.arguments', {
+					"SalesforceObjectID": {
+						"access": "Visible",
+						"dataType": "Text",
+						"direction": "Out",
+						"isNullable": true
+					}
+				})
+        _.set(nextJ.activities[i], 'metaData', {
+          "isConfigured": true,
+          "expressionBuilderPrefix": "Contact Journey"
+        })
+        _.set(nextJ.activities[i], 'arguments.version', "1.0")
+        _.set(nextJ.activities[i], 'arguments.objectMap.objects', [{
+          "type": "coe__Contact_Audience__c",
+          "subtype": null,
+          "order": "1",
+          "action": "Update",
+          "lookup": {
+            "type": "salesforceLookup",
+            "lookupObject": "coe__Contact_Audience__c",
+            "steps": [
+              {
+                "criteria": [
+                  {
+                    "FieldName": "Id",
+                    "FieldValue": `{{Interaction.${firstContactJourneyObject.key}.salesforceObjectID}}`,
+                    "FieldValueLabel": firstContactJourneyObject.name,
+                    "FieldType": "id"
+                  }
+                ]
+              }
+            ],
+            "MultiOutComeOption": "DoNotUpdate",
+            "ZeroOutComeOption": "DoNotUpdate"
+          },
+          "fields": fields
+        }])
+      }
+    }
+
+    return this.nextJ = nextJ
+  }
+
+    /**
+     * Find the first contact_audience object creation in the journey.
+     * @returns Object activity or null if not found
+     */
+    _findFirstContactJourneyCreateOrUpdateActivity() {
+      for (let i = 0; i < 10 && i<this.nextJ.activities.length; i++) {
+        const act = this.nextJ.activities[i];
+        if (act.type === "SALESCLOUDACTIVITY" && act.name.indexOf("CREATE_CONTACTJOURNEY")>=0) {
+          return act
+        }
+      }
+
+      return null
+    }
+
+    /**
+     * Finds the nearest preceding activity that leads to the given activity key (actKey).
+     *
+     * @param {string} actKey - The key of the activity for which to find the preceding activity.
+     * @returns {activity | null}
+     */
+    _findFirstPrecedingCaseActivity(actKey) {
+      // find the preceding activity which outcome to the given actKey
+      let precedingAct = this.nextJ.activities.find((anAct, idx) => {
+        return _.get(anAct, 'outcomes', []).find(anOutcome => {
+          return anOutcome.next === actKey
+        })
+      })
+
+      if (precedingAct === undefined) {
+        return null
+      } else if (precedingAct.metaData.expressionBuilderPrefix === "Case") {
+        return precedingAct
+      } else { // find futhur Preceding
+        return this._findFirstPrecedingCaseActivity(precedingAct.key)
+      }
+    }
+
+    /**
+     * Finds the nearest preceding activity that leads to the given activity key (actKey).
+     *
+     * @param {string} actKey - The key of the activity for which to find the preceding activity.
+     * @returns {Object | null} {decisionSplitActivity, decisionSplitOutcome}
+     */
+    _findFirstPrecedingDecisionActivity(actKey) {
+      // find the preceding activity which outcome to the given actKey
+      let precedingAct = this.nextJ.activities.find((anAct, idx) => {
+        return _.get(anAct, 'outcomes', []).find(anOutcome => {
+          return anOutcome.next === actKey
+        })
+      })
+
+      // find the target outcome
+      let theOutcome = precedingAct.outcomes.find(anOutcome => {
+        return anOutcome.next === actKey
+      })
+
+      if (precedingAct === undefined) {
+        return null
+      } else if (precedingAct.type === "MULTICRITERIADECISION") {
+        return {decisionSplitActivity: precedingAct, decisionSplitOutcome: theOutcome}
+      } else { // find futhur Preceding
+        return this._findFirstPrecedingDecisionActivity(precedingAct.key)
+      }
+    }
+
 }
 
 module.exports = JourneyBuilder
