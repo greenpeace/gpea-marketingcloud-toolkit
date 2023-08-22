@@ -19,32 +19,7 @@ async function main() {
     let mcbase;
     let journeyRules = [];
 
-    if (market === "TW") {
-      // init marketing cloud settings
-      mcbase = new MCBase({
-        clientId: process.env.MC_TW_CLIENTID,
-        clientSecret: process.env.MC_TW_CLIENTSECRET,
-        subDomain: process.env.MC_TW_SUBDOMAIN,
-        accountId: process.env.MC_TW_ACCOUNTID,
-      });
-    } else if (market === "HK") {
-      // init marketing cloud settings
-      mcbase = new MCBase({
-        clientId: process.env.MC_HK_CLIENTID,
-        clientSecret: process.env.MC_HK_CLIENTSECRET,
-        subDomain: process.env.MC_HK_SUBDOMAIN,
-        accountId: process.env.MC_HK_ACCOUNTID,
-      });
-    } else if (market === "KR") {
-      // init marketing cloud settings
-      mcbase = new MCBase({
-        clientId: process.env.MC_KR_CLIENTID,
-        clientSecret: process.env.MC_KR_CLIENTSECRET,
-        subDomain: process.env.MC_KR_SUBDOMAIN,
-        accountId: process.env.MC_KR_ACCOUNTID,
-      });
-    }
-
+    mcbase = new MCBase({market});
     if (!mcbase) {
       throw new Error(`Undefined market ${market}`);
     }
