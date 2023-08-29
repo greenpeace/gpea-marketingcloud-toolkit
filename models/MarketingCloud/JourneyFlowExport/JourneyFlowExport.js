@@ -2,28 +2,43 @@ const fs = require('fs');
 const path = require('path');
 const logger = require('../../../lib/logger');
 
+/**
+ * Export the journey flow to mermaid format or HTML format.
+ * Usage:
+ *
+
+	let mcbase = new MCBase({ market })
+	await mcbase.doAuth()
+	let mcJourney = mcbase.factory('Journey')
+	let mcJB = mcbase.factory('JourneyBuilder')
+	let srcJ = await mcJB.loadSrcJourneyName(srcJourneyName)
+	let jFlowExport = new JourneyFlowExport(srcJ)
+
+	let markdown = jFlowExport.exportMarkdown()
+	let html = jFlowExport.exportHTML()
+ */
 class JourneyFlowExport {
-	constructor (srcJ=null) {
+	constructor(srcJ = null) {
 		this.srcJ = srcJ ? srcJ : null
 		this.withIcons = true
 		this.removeUnimportantNodes = true
 	}
 
-	loadJourneySrc (srcJ) {
+	loadJourneySrc(srcJ) {
 		this.srcJ = srcJ
 
 		// validate step
-		if (this.srcJ.activities===undefined) {
+		if (this.srcJ.activities === undefined) {
 			throw new Error("The srcJ formate should be {activities:[...]}")
 		}
 	}
 
-	_getJourneyName () {
+	_getJourneyName() {
 		return this.srcJ.name
 	}
 
 
-	_resolveActMermaidKey (act) {
+	_resolveActMermaidKey(act) {
 		return act.key
 	}
 
@@ -32,7 +47,7 @@ class JourneyFlowExport {
 	 * @param {Object} anOutcome
 	 * @returns string
 	 */
-	_resolveOutcomeMermaidKey (anOutcome) {
+	_resolveOutcomeMermaidKey(anOutcome) {
 		return anOutcome.next
 	}
 
@@ -41,7 +56,7 @@ class JourneyFlowExport {
 	 * @param {Object} anOutcome
 	 * @returns string
 	 */
-	_resolveOutcomeMermaidPathText (anOutcome) {
+	_resolveOutcomeMermaidPathText(anOutcome) {
 		let desc = ''
 		if (anOutcome.metaData?.label) {
 			desc += anOutcome.metaData.label
@@ -54,7 +69,7 @@ class JourneyFlowExport {
 	 * @param {Object} act
 	 * @returns string
 	 */
-	_resolveActMermaidName (act) {
+	_resolveActMermaidName(act) {
 		let iconMap = {
 			"UPDATECONTACTDATA": 'fa:fa-database',
 			"SALESCLOUDACTIVITY": 'fa:fa-suitcase',
@@ -63,18 +78,26 @@ class JourneyFlowExport {
 			"STOWAIT": 'fa:fa-clock',
 			"EMAILV2": 'fa:fa-envelope',
 			"Case": 'fa:fa-suitcase',
-			"SMSSYNC": 'fa:fa-sms'
+			"SMSSYNC": 'fa:fa-sms',
+			'REST': 'fa:fa-gear'
 		}
 
 		let name = ''
-		if (this.withIcons && iconMap[act.type]) {
-			name = iconMap[act.type] + " "
+		if (this.withIcons) {
+			if (act.type === "REST" && act.configurationArguments.save?.url.indexOf('surem') >= 0) {
+				name = 'fa:fa-sms ' // special case for KR message
+			} else if (iconMap[act.type]) {
+				name = iconMap[act.type] + " "
+			}
 		}
 
 		if (act.type === "MULTICRITERIADECISION") {
 			name += act.name || "DecisionSplit"
 		} else if (act.type === "STOWAIT") {
+
 			name += act.name || "Send Time Optimize"
+		} else if (act.type === "REST" && act.configurationArguments.save?.url.indexOf('surem') >= 0) {
+			name += (act.name || "Message")
 		} else {
 			name += (act.name || "NO_NAME")
 		}
@@ -87,7 +110,7 @@ class JourneyFlowExport {
 	 * @param {Object} act
 	 * @returns string
 	 */
-	_resolveActParentheses (act) {
+	_resolveActParentheses(act) {
 		if (act.type === "MULTICRITERIADECISION") {
 			return ['{', '}']
 		} else if (act.type === "EMAILV2" || act.type === "SMSSYNC") {
@@ -102,12 +125,13 @@ class JourneyFlowExport {
 	 * @param {Object} act
 	 * @returns string
 	 */
-	_resolveActNodeClassname (act) {
+	_resolveActNodeClassname(act) {
 		let name
 
-		if (act.type==="EMAILV2"
-			|| act.type==="SMSSYNC"
-			|| act.type==="SALESCLOUDACTIVITY"
+		if (act.type === "EMAILV2"
+			|| act.type === "SMSSYNC"
+			|| act.type === "SALESCLOUDACTIVITY"
+			|| act.type === "REST"
 		) {
 			name = "is-communication"
 		}
@@ -122,7 +146,7 @@ class JourneyFlowExport {
 	 * @param {Array} activities
 	 * @returns
 	 */
-	_removeShouldBeHideActivities (activities) {
+	_removeShouldBeHideActivities(activities) {
 		// collect nodes which should not be shown in the exported charts
 		let { excluded, remainders } = activities.reduce((groups, act) => {
 			if (act.metaData.expressionBuilderPrefix === "Contact Journey") {
@@ -160,10 +184,10 @@ class JourneyFlowExport {
 	 * Convert the srcJ to a mermaid markdown
 	 * @returns string
 	 */
-	exportMarkdown () {
+	exportMarkdown() {
 		let markdown = ""
 
-		markdown +=`---\ntitle: ${this._getJourneyName()}\n---\n`
+		markdown += `---\ntitle: ${this._getJourneyName()}\n---\n`
 		markdown += "%%{ init: { 'theme': 'base', 'themeVariables': { 'primaryColor': '#F8F0E5', 'secondaryColor': '#EADBC8', 'lineColor': '#AAA' } } }%%\n"
 		markdown += "flowchart LR\n"
 		markdown += "classDef is-communication fill:#102C57, color: #FFF\n"
@@ -180,7 +204,7 @@ class JourneyFlowExport {
 			let actName = this._resolveActMermaidName(anAct)
 			let parentheses = this._resolveActParentheses(anAct)
 			let className = this._resolveActNodeClassname(anAct)
-			markdown += `\t${actKey}${parentheses[0]}"${actName}"${parentheses[1]}${className? ":::"+className:""}\n`
+			markdown += `\t${actKey}${parentheses[0]}"${actName}"${parentheses[1]}${className ? ":::" + className : ""}\n`
 		});
 
 		// connect nodes
@@ -210,7 +234,7 @@ class JourneyFlowExport {
 	 * Convert the srcJ to a HTML string which can directly opended by a browser.
 	 * @returns string
 	 */
-	exportHTML () {
+	exportHTML() {
 		let markdown = this.exportMarkdown()
 
 		const tmplPath = path.join(path.dirname(__filename), 'JourneyFlowTMPL.html');

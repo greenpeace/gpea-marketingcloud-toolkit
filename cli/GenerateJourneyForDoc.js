@@ -1,10 +1,13 @@
 const MCBase = require('../models/MarketingCloud/Base')
+const JourneyFlowExport = require('../models/MarketingCloud/JourneyFlowExport/JourneyFlowExport.js')
 const logger = require('../lib/logger');
 const _ = require("lodash")
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const { rruleToHumanReadable } = require('../models/Utils/tools.js')
 const cliProgress = require('cli-progress');
-
+const fs = require('fs')
+const path = require('path');
+const {syncFolder} = require('../models/Utils/tools.js')
 
 require('dotenv').config()
 
@@ -52,7 +55,8 @@ async function main() {
     "emails",
     "smses",
     "lmses",
-    "use369"
+    "use369",
+    "journeyFlow"
   ]
 
   // let allJourneys = await mcJourney.getAll()
@@ -65,7 +69,7 @@ async function main() {
   });
 
   const markets = ['HK', 'TW', 'KR']
-  // const markets = ['KR']
+  // const markets = ['TW']
 
   for (let i = 0; i < markets.length; i++) {
     const market = markets[i]
@@ -103,14 +107,14 @@ async function main() {
     }
 
     // journeyNames = [
-    //   // 'kr-oneoff_conversion-automd-sg2rg-revised-v2',
-    // //   'kr-unfreeze_inactive-automd',
-    // //   // 'kr-debit_fail-credit_card-automd',
-    // //   // 'kr-debit_fail-CMS-automd'
-    // // 'kr-new_donor_upgrade-automd',
+    //   'kr-oneoff_conversion-automd-sg2rg-revised-v2',
+    //   'kr-unfreeze_inactive-automd',
+    //   'kr-debit_fail-credit_card-automd',
+    //   'kr-debit_fail-CMS-automd',
+    //   'kr-new_donor_upgrade-automd',
     // // 'kr-202112-new-donor-upgrade-journey_2022'
     //   // 'tw-20201201-reactivation-journey-inactive-donor-single-create-tfr'
-    //   'hk-lead_conversion-automd-plastics-survey'
+    //   // 'hk-lead_conversion-automd-plastics-survey'
     // ]
 
     // start to process
@@ -144,6 +148,16 @@ async function main() {
     }
     progressBar.stop()
   }
+
+  // upload journey flows to sftp
+  const secretFilePath = path.join(process.env.HOME, '.npm-en-uploader-secret');
+  const secretsJson = fs.readFileSync(secretFilePath, 'utf-8');
+  const serverConfigs = JSON.parse(secretsJson);
+
+  const localPath = path.join(path.basename(__dirname), '../build')
+  const remotePath = '/htdocs/app/sfmc/journey-master-doc'
+  logger.info(`Syncing to server ${serverConfigs.ftp_tw.host}:${remotePath}`)
+  await syncFolder(serverConfigs.ftp_tw, localPath, remotePath)
 }
 
 async function processJourney(params) {
@@ -175,6 +189,9 @@ async function processJourney(params) {
   console.log('data.smses 2', data.smses)
 
   data = await process369Criteria(params);
+  Object.assign(csvRow, data);
+
+  data = await processJourneyFlow(params);
   Object.assign(csvRow, data);
 
   return csvRow;
@@ -452,6 +469,37 @@ async function process369Criteria({ srcJ }) {
       return `#${idx}: ${anOutcome.metaData.label}\n(${anOutcome.metaData.criteriaDescription})`
     }).join("\n")
   }
+
+  return returnObj
+}
+
+function convertToUrlSafeFileName(inputString) {
+  const urlSafeFileName = inputString
+    .toLowerCase()                       // Convert to lowercase
+    .replace(/[^a-z0-9_-]/g, '_')         // Replace non-alphanumeric characters with underscores
+    .replace(/_+/g, '_')                 // Replace consecutive underscores with a single underscore
+    .replace(/^-|-$/g, '');             // Remove leading and trailing underscores
+
+  return urlSafeFileName;
+}
+
+async function processJourneyFlow({srcJ}) {
+  let returnObj = { journeyFlow: '-' }
+
+  let jFlowExport = new JourneyFlowExport(srcJ)
+	let html = jFlowExport.exportHTML()
+
+  let buildFolderPath = 'build'
+  if (!fs.existsSync(buildFolderPath)) {
+    fs.mkdirSync(buildFolderPath);
+  }
+  let exposeFileName = convertToUrlSafeFileName(jFlowExport._getJourneyName())+'.html'
+	let outputPath = `build/${exposeFileName}`
+	fs.writeFileSync(outputPath, html, 'utf8');
+	logger.info(`Exported HTML to file ${outputPath}`)
+
+  https://change.greenpeace.org.tw/app/mc-journey-tfr-call-cases-overview-master-doc/Do%20Not%20Edit%20-%20Petition%20Lead%20Convert%20to%20Salesforce%20Contact.html
+  returnObj.journeyFlow = `https://change.greenpeace.org.tw/app/sfmc/journey-master-doc/${exposeFileName}`
 
   return returnObj
 }

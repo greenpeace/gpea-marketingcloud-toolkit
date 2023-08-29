@@ -7,8 +7,8 @@ require('dotenv').config()
 
 async function main() {
 	// EDIT HERE
-	const srcJourneyName = "tw-debit_fail-automd"
-	const market = "tw"
+	const srcJourneyName = "kr-debit_fail-credit_card-automd"
+	const market = "kr"
 
 	let mcbase = new MCBase({ market })
 
@@ -18,6 +18,9 @@ async function main() {
 
 	logger.info(`Fetching journey ${srcJourneyName} details`)
 	let srcJ = await mcJB.loadSrcJourneyName(srcJourneyName)
+
+	fs.writeFileSync(`${srcJourneyName}.json`, JSON.stringify(srcJ, null, 2))
+
 	let jFlowExport = new JourneyFlowExport(srcJ)
 	jFlowExport.withIcons = true
 	jFlowExport.removeUnimportantNodes = true

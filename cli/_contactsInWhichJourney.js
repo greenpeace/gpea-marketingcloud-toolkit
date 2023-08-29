@@ -4,22 +4,17 @@ const _ = require("lodash")
 const Notifier = require('../lib/Notifier.js')
 
 async function main () {
-  let mcbase = new MCBase({
-    clientId: process.env.MC_HK_CLIENTID,
-    clientSecret: process.env.MC_HK_CLIENTSECRET,
-    subDomain: process.env.MC_HK_SUBDOMAIN,
-    accountId: process.env.MC_HK_ACCOUNTID,
-  })
+  let mcbase = new MCBase({market:"HK"})
   await mcbase.doAuth()
   let mcJourney = mcbase.factory('Journey')
 
   // contacts keys to find
   let contactKeys = [
-    '0032u00000HqoouAAB'
+    '0032u00000naf2xAAA'
   ]
 
-  
-  // 
+
+  //
 
   let foundContactMemberships = []
 
