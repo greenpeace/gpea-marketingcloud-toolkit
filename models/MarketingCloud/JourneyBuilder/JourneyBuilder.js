@@ -634,6 +634,9 @@ class JourneyBuilder {
       if (act.type === "SALESCLOUDACTIVITY" && act.name.indexOf("CREATE_CONTACTJOURNEY") >= 0) {
         return act
       }
+      else if (act.type === "SALESCLOUDACTIVITY" && act.name.indexOf("UPDATE_CONTACTJOURNEY") >= 0) {
+        return act
+      }
     }
 
     return null

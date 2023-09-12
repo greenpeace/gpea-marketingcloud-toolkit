@@ -1,6 +1,6 @@
 const path = require('path');
 const FTPS = require('ftps')
-
+const axios = require('axios')
 const { RRule } = require('rrule');
 
 
@@ -92,9 +92,38 @@ async function syncFolder (settings, localDir, remoteDir) {
   })
 }
 
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
 
+
+async function shortenUrl(longUrl) {
+  const accessToken = process.env.BITLY_TOKEN;
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: accessToken
+  };
+  const payload = {
+    long_url: longUrl
+  };
+
+  try {
+    const response = await axios.post("https://api-ssl.bitly.com/v4/shorten", payload, { headers });
+    const bitlyUrl = response.data.id;
+    const shortenUrl = `https://${bitlyUrl}`;
+
+    return shortenUrl;
+  } catch (error) {
+    console.error(error);
+    throw error
+  }
+}
 
 module.exports = {
   rruleToHumanReadable,
-  syncFolder
+  syncFolder,
+  sleep,
+  shortenUrl
 };

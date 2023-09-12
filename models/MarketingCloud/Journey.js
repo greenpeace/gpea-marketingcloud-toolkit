@@ -120,7 +120,7 @@ class Journey {
     })
 
     // exactly match, remove the partial match items
-    if ( !options.fuzzyMatch && response.data.items.length>1) {
+    if (!options.fuzzyMatch && response.data.items.length > 1) {
       response.data.items = response.data.items.filter(j => {
         return j.name === journeyName
       })
@@ -204,7 +204,7 @@ class Journey {
    * To pause a journey
    *
    * Usage:
-   *   res = await mcJourney.pause(journeyId, {
+   *   res = await this.pause(journeyId, {
     ExtendWaitEndDates: true,
     PausedDays: 14,
     GuardrailAction: "Stop",
@@ -521,7 +521,7 @@ class Journey {
       if (r.items) {
         histories = histories.concat(r.items)
 
-        if (r.items.length===10000) {
+        if (r.items.length === 10000) {
           logger.warn('The journey may contains more rows. But maximum 10000 rows retrieved.')
         }
       }
@@ -557,6 +557,103 @@ class Journey {
       })
 
     return response.data
+  }
+
+  /**
+   *
+   * @param {array} recipients
+   * @param {options.subjectFunc} function(emailActivity) Resolve the email subject.
+   */
+  async sendEmailPreviews(journeyName, recipients, { subjectPrefixFunc, targetContactId }={}) {
+    // find the trigger DE Name
+    logger.debug(`Resolving [${journeyName}] definitions …`)
+    let eventDef = await this.getJourneyEventDefinitionsByJourneyName(journeyName)
+    let deName = _.get(eventDef, 'dataExtensionName', null)
+
+    // resolve the original de
+    let mcDE = this.parent.factory('DataExtension')
+    let de = await mcDE.findDeBy({ field: "Name", value: deName })
+    let deId = de.ObjectID
+    let deCustomerKey = de.CustomerKey
+
+    // fetch rows
+    logger.debug(`Fetching DE rows [${deName}], deId: ${deId} …`)
+    let r = await mcDE.fetchDeRows(deName)
+    logger.debug(`Found ${r.length} rows`)
+
+    // random show some candidate rows
+    let sampleSize = 3
+    let sampleRows = _.sampleSize(r, sampleSize)
+
+    // manually assign the ContactId to preview
+    if (targetContactId) {
+      let foundContactRow = r.find(row => row.some(pair => pair.Name === "Id" && pair.Value === targetContactId))
+      if (foundContactRow) {
+        sampleRows = [foundContactRow]
+      } else {
+        throw new Error(`Cannot find row with ContactId ${targetContactId}`)
+      }
+    }
+
+    // resolve using which row to preview
+    // logger.debug(`Sample ${sampleSize.length} rows:`)
+    // logger.debug(sampleRows)
+    let previewRow = _.sample(sampleRows)  // [{ Name: '_CustomObjectKey', Value: '39681' }, ...]
+
+    // convert into {Name:Value, ...}
+    previewRow = previewRow.reduce((accumlator, currentRow) => {
+      accumlator[currentRow.Name] = currentRow.Value
+      return accumlator
+    }, {})
+
+    let previewRowId = previewRow['_CustomObjectKey']
+
+    // let previewRowId = 100
+    logger.debug(`Using rowId: ${previewRowId} to preview email`)
+
+    // find the email activities of the journey
+    r = await this.findByName(journeyName, { mostRecentVersionOnly: true })
+
+    let activities = _.get(r, 'items.0.activities')
+    let emailActivities = activities.filter(a => a.type === "EMAILV2")
+
+    // send the preview emails
+    logger.info(`Start to send test emails to ${JSON.stringify(recipients)}`)
+    for (let i = 0; i < emailActivities.length; i++) {
+      let activityName = emailActivities[i].name
+      let emailId = emailActivities[i].configurationArguments.triggeredSend.emailId
+      let emailSubject = emailActivities[i].configurationArguments.triggeredSend.emailSubject
+      let sendClassificationId = emailActivities[i].configurationArguments.triggeredSend.sendClassificationId
+      let senderProfileId = emailActivities[i].configurationArguments.triggeredSend.senderProfileId
+      let deliveryProfileId = emailActivities[i].configurationArguments.triggeredSend.deliveryProfileId
+
+      // resolve the prefix
+      let prefix = subjectPrefixFunc ? subjectPrefixFunc(emailActivities[i]) : '[test]'
+
+      // resolve the email name
+      let mcEmail = this.parent.factory('Email')
+      let emailObj = await mcEmail.findEmailByLegacyEmailId(emailId)
+      let emailName = _.get(emailObj, '0.name')
+
+      // send the email
+      let logMsg = `${prefix}${emailSubject}`
+      if (logMsg.indexOf(emailName) < 0) {
+        // logMsg = `${emailName}: ${logMsg}`
+        logMsg = `${logMsg}`
+      }
+
+      logger.debug("  " + logMsg)
+      let r = await mcEmail.postEmailPreviewSend({
+        emailId: emailId,
+        deId: deId,
+        rowId: previewRowId,
+        recipients: recipients,
+        subjectPrefix: prefix,
+
+        senderProfileId,
+        deliveryProfileId
+      })
+    }
   }
 }
 

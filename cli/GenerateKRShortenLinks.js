@@ -26,8 +26,8 @@ const cliProgress = require('cli-progress');
 require('dotenv').config()
 
 // EDIT HERE!
-let deCsvPath = '/Users/upchen/Downloads/report1691459682005_cc.csv'
-let outputDeCsvPath = '/Users/upchen/Downloads/report1691459682005_cc-generated.csv'
+let deCsvPath = '/Users/upchen/Downloads/report1692245680021.csv'
+let outputDeCsvPath = '/Users/upchen/Downloads/report1692245680021-generated.csv'
 
 let URLCallToAction = "ONEOFF"; // UPGRADE or ONEOFF or COLA
 let askAmount = 50000; // batch 2
@@ -38,7 +38,8 @@ let campaignId = "7012u000000h2ZFAAY"; // Special Appeal - SMS - 2023 - KR
 let utm_campaign = "special_appeal";
 let utm_source = "donor_journey";
 let utm_medium = "sms";
-let utm_content = "kr-special_appeal-adhoc-20230825-batch_2_rg_cc-1click_url_generation-sms";
+// let utm_content = "kr-special_appeal-adhoc-20230825-batch_2_rg_cc-1click_url_generation-sms";
+let utm_content = "230830_climate_RG_CC_1click_url_sms_Other";
 let utm_term = "";
 
 const ContactIdFieldName = 'Id (18 digit)'
@@ -93,11 +94,15 @@ async function processRow(params) {
   }
 
   // determine the askAmount
-  let RgAmount = parseInt(row['Recurring Donation Amount'], 10)
-  if (RgAmount>=20000) {
+  if (row['Group']==="A") {
+    askAmount = 50000
+    utm_content = "230830_climate_RG_CC_1click_url_sms_A";
+  } else if (row['Group']==="B") {
     askAmount = 70000
+    utm_content = "230830_climate_RG_CC_1click_url_sms_B";
   } else {
     askAmount = 50000
+    utm_content = "230830_climate_RG_CC_1click_url_sms_Other";
   }
 
   // Start to generate the links

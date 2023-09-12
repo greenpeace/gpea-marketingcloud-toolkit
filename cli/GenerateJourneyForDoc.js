@@ -7,7 +7,10 @@ const { rruleToHumanReadable } = require('../models/Utils/tools.js')
 const cliProgress = require('cli-progress');
 const fs = require('fs')
 const path = require('path');
-const {syncFolder} = require('../models/Utils/tools.js')
+const { syncFolder } = require('../models/Utils/tools.js')
+const Mailgun = require('../models/Mailgun')
+const { format } = require('date-fns');
+const { sleep, shortenUrl } = require('../models/Utils/tools')
 
 require('dotenv').config()
 
@@ -30,14 +33,6 @@ require('dotenv').config()
 async function main() {
   // EDIT HERE
   const csvFileName = 'journeyDoc.csv'
-
-
-  // let journeyNames = [
-  //   'hk-new_donor_upgrade-automd',
-  //   'hk-reactivation-automd-lapsed_donor',
-  //   'hk-unfreeze_inactive-automd-inactive_donor',
-  //   'hk-welcome_new_donor-automd-for_rg_status_delay_population-20220311',
-  // ]
 
   let csvKeys = [
     "journeyName",
@@ -107,13 +102,15 @@ async function main() {
     }
 
     // journeyNames = [
-    //   'kr-oneoff_conversion-automd-sg2rg-revised-v2',
-    //   'kr-unfreeze_inactive-automd',
-    //   'kr-debit_fail-credit_card-automd',
-    //   'kr-debit_fail-CMS-automd',
-    //   'kr-new_donor_upgrade-automd',
-    // // 'kr-202112-new-donor-upgrade-journey_2022'
-    //   // 'tw-20201201-reactivation-journey-inactive-donor-single-create-tfr'
+    //   // 'kr-oneoff_conversion-automd-sg2rg-revised-v2',
+    //   // 'kr-unfreeze_inactive-automd',
+    //   // 'kr-debit_fail-credit_card-automd',
+    //   // 'kr-debit_fail-CMS-automd',
+    //   // 'kr-new_donor_upgrade-automd',
+    //   // 'kr-202112-new-donor-upgrade-journey_2022'
+    //   // 'tw-welcome_new_donor-automd-20220311',
+    //   // 'tw-debit_fail-automd-soft_fail',
+    //   'tw-reactivation-automd-new_lapsed'
     //   // 'hk-lead_conversion-automd-plastics-survey'
     // ]
 
@@ -122,7 +119,7 @@ async function main() {
     progressBar.start(journeyNames.length, 0);
 
     for (let i = 0; i < journeyNames.length; i++) {
-      progressBar.update(i+1);
+      progressBar.update(i + 1);
 
       const jName = journeyNames[i]
       let csvRow = null
@@ -149,7 +146,14 @@ async function main() {
     progressBar.stop()
   }
 
-  // upload journey flows to sftp
+
+  // download and upload email previews
+  // sleep for 1 minutes to wait for all the email received
+  logger.info('wait 60 seconds to receiving all the emails')
+  await sleep(60 * 1000)
+  await downloadUploadEmailPreviews()
+
+  // upload build folder (including journey flows & email previews) to sftp
   const secretFilePath = path.join(process.env.HOME, '.npm-en-uploader-secret');
   const secretsJson = fs.readFileSync(secretFilePath, 'utf-8');
   const serverConfigs = JSON.parse(secretsJson);
@@ -183,7 +187,7 @@ async function processJourney(params) {
   data = await processSms(params)
   Object.assign(csvRow, data);
   data = await processLms(params)
-  if (csvRow.smses==='-' || csvRow.smses==='') {
+  if (csvRow.smses === '-' || csvRow.smses === '') {
     Object.assign(csvRow, data);
   }
   console.log('data.smses 2', data.smses)
@@ -246,16 +250,16 @@ ${_.get(triggers, '0.configurationArguments.relatedObjectFilterSummary')}
 
       // find the original query definitions
       let automations = await mcAutomation.findAutomationsByQueryDefObjectIdRest(queryDefinitionsForDE[0].ObjectID)
-      if ( !Array.isArray(automations)) {
+      if (!Array.isArray(automations)) {
         logger.warn(`Cannot find the automation by QueryDefinition ${queryDefinitionsForDE[0].Name} (${queryDefinitionsForDE[0].ObjectID})`)
-      } else if (automations.length>1) {
+      } else if (automations.length > 1) {
         logger.warn(`Found more than 1 automation realted to this query definitions`)
         automations.forEach((automation, idx) => {
           logger.warn(`#${idx} Automation: ${automation.name} ${automation.id}`)
         })
-      } else if (automations.length<1) {
+      } else if (automations.length < 1) {
         logger.warn(`Cannot find the automation by QueryDefinition ${queryDefinitionsForDE[0].Name} (${queryDefinitionsForDE[0].ObjectID})`)
-      } else if (automations.length==1) { // exactly one automation
+      } else if (automations.length == 1) { // exactly one automation
         let automation = automations[0]
         let automationScheduleIcalRecur = _.get(automation, 'schedule.icalRecur')
         let automationScheduledTime = _.get(automation, 'schedule.scheduledTime')
@@ -278,7 +282,7 @@ ${_.get(triggers, '0.configurationArguments.relatedObjectFilterSummary')}
     }
   } else {
     // console.log(JSON.stringify(srcJ, null, 2)); // for debug
-    logger.error(`Unknow-trigger type for journey ${jName} with type: ${_.get(srcJ, 'triggers.0.type')}` )
+    logger.error(`Unknow-trigger type for journey ${jName} with type: ${_.get(srcJ, 'triggers.0.type')}`)
   }
 
   return returnObj
@@ -347,7 +351,18 @@ async function processCases({ srcJ, mcJB }) {
 
   return returnObj
 }
-async function processEmail({ srcJ, mcJB }) {
+async function processEmail({ srcJ, mcJB, mcJourney }) {
+
+  // send emails
+  await mcJourney.sendEmailPreviews(
+    srcJ.name,
+    ['store_this_email@' + process.env.MAILGUN_DOMAIN],
+    {
+      subjectPrefixFunc: (emailAct) => {
+        return `[${srcJ.name}-${emailAct.key}]`
+      }
+    })
+
   let returnObj = { emails: '-' }
 
   // List Emails
@@ -366,15 +381,21 @@ async function processEmail({ srcJ, mcJB }) {
 
   emailActivties.forEach((emailAct, idx) => {
     let emailSubject = _.get(emailAct, 'configurationArguments.triggeredSend.emailSubject')
-
   })
 
-  returnObj.emails = emailActivties.map((emailAct, idx) => {
-    let emailSubject = _.get(emailAct, 'configurationArguments.triggeredSend.emailSubject')
-    logger.info(`Email ${idx + 1}: ${emailSubject} (${emailAct.name})`)
-    return `#${idx + 1}: ${emailSubject} (${emailAct.name})`
-  }).join("\n")
+  returnObj.emails = [];
 
+  for (let idx = 0; idx < emailActivties.length; idx++) {
+    const emailAct = emailActivties[idx];
+    const emailSubject = _.get(emailAct, 'configurationArguments.triggeredSend.emailSubject');
+    const exposeFileName = `${srcJ.name}-${emailAct.key}.html`; // should match previous email prefix
+
+    // const emailPreviewLink = `https://change.greenpeace.org.tw/app/sfmc/journey-master-doc/${exposeFileName}`;
+    const emailPreviewLink = await shortenUrl(`https://change.greenpeace.org.tw/app/sfmc/journey-master-doc/${exposeFileName}`);
+    logger.info(`Email ${idx + 1}: ${emailSubject} (${emailAct.name})\n${emailPreviewLink}`);
+    returnObj.emails.push(`#${idx + 1}: ${emailSubject} (${emailAct.name})\n${emailPreviewLink}`);
+  }
+  returnObj.emails = returnObj.emails.join("\n")
   return returnObj
 }
 async function processSms({ srcJ, mcJB }) {
@@ -409,7 +430,7 @@ async function processLms({ srcJ, mcJB }) {
   // List SMSs
   let lmsActivities = []
   srcJ.activities.forEach(act => {
-    if (act.type==="REST" && _.get(act, "arguments.execute.inArguments.0.sendtype")=="LMS") {
+    if (act.type === "REST" && _.get(act, "arguments.execute.inArguments.0.sendtype") == "LMS") {
 
       lmsActivities.push(act)
     }
@@ -483,25 +504,73 @@ function convertToUrlSafeFileName(inputString) {
   return urlSafeFileName;
 }
 
-async function processJourneyFlow({srcJ}) {
+async function processJourneyFlow({ srcJ }) {
   let returnObj = { journeyFlow: '-' }
 
   let jFlowExport = new JourneyFlowExport(srcJ)
-	let html = jFlowExport.exportHTML()
+  let html = jFlowExport.exportHTML()
 
   let buildFolderPath = 'build'
   if (!fs.existsSync(buildFolderPath)) {
     fs.mkdirSync(buildFolderPath);
   }
-  let exposeFileName = convertToUrlSafeFileName(jFlowExport._getJourneyName())+'.html'
-	let outputPath = `build/${exposeFileName}`
-	fs.writeFileSync(outputPath, html, 'utf8');
-	logger.info(`Exported HTML to file ${outputPath}`)
+  let exposeFileName = convertToUrlSafeFileName(jFlowExport._getJourneyName()) + '.html'
+  let outputPath = `build/${exposeFileName}`
+  fs.writeFileSync(outputPath, html, 'utf8');
+  logger.info(`Exported HTML to file ${outputPath}`)
 
-  https://change.greenpeace.org.tw/app/mc-journey-tfr-call-cases-overview-master-doc/Do%20Not%20Edit%20-%20Petition%20Lead%20Convert%20to%20Salesforce%20Contact.html
   returnObj.journeyFlow = `https://change.greenpeace.org.tw/app/sfmc/journey-master-doc/${exposeFileName}`
 
   return returnObj
+}
+
+async function downloadUploadEmailPreviews({ } = {}) {
+  // the prefix should match the name defined in processEmail
+  let mg = new Mailgun({
+    domain: process.env.MAILGUN_DOMAIN,
+    apiKey: process.env.MAILGUN_APIKEY
+  })
+  let storedEmails = await mg.getStortedEmails()
+
+  // sort by timestamp asc
+  storedEmails.sort((a, b) => a.timestamp - b.timestamp);
+
+  // convert into HTML
+  progressBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
+  progressBar.start(storedEmails.length, 0);
+  for (let i = 0; i < storedEmails.length; i++) {
+    progressBar.update(i + 1);
+    const item = storedEmails[i];
+    const thisEmailSubject = item.message.headers.subject
+
+    const formattedDate = format(new Date(Math.ceil(item.timestamp * 1000)), 'yyyy/MM/dd HH:mm:ss');
+    console.log(`\n${formattedDate} id:${item.message.headers.subject} from:${item.message.headers.from}`)
+    process.stdout.clearLine();
+    process.stdout.cursorTo(0);
+
+    // resolve the email key
+    const regex = /\[([^\]]+)\]/;
+    const matches = thisEmailSubject.match(regex);
+
+    let firstTokenInsideBrackets;
+    if (matches && matches.length > 1) {
+      firstTokenInsideBrackets = matches[1];
+    }
+
+    //
+    if (!firstTokenInsideBrackets) {
+      console.log(`Skip ${thisEmailSubject} since cannot find the [key] of the email`)
+      continue
+    }
+
+    // fetch and store the email content
+    let storedEmailDetail = await mg.getStoredEmail(item.storage.key)
+
+    let outputPath = `build/${firstTokenInsideBrackets}.html`
+    fs.writeFileSync(outputPath, storedEmailDetail['body-html'], 'utf8');
+    logger.info(`Exported HTML to file ${outputPath}`)
+  }
+  progressBar.stop()
 }
 
 (async () => {

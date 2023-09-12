@@ -1,6 +1,7 @@
 const MCBase = require('../models/MarketingCloud/Base')
 const logger = require('../lib/logger');
 const _ = require("lodash")
+const fs = require('fs')
 require('dotenv').config()
 
 /**
@@ -17,9 +18,9 @@ require('dotenv').config()
  */
 async function main() {
   // EDIT HERE
-  const srcJourneyName = "up-test-adhoc-20221130"
+  const srcJourneyName = "tw-debit_fail-automd-batch_B-reopen_30d_cases"
   const destJourneyName = srcJourneyName
-  // const destJourneyName = "up-lead_conversion-dev-general-elm"
+  // const destJourneyName = "up-lead_conversion-automd-oceans-oceanssancturies-dest-20230801"
   const market = "tw"
   const replaceWaitToMinutes = false
 
@@ -31,7 +32,7 @@ async function main() {
 
   let srcJ = await mcJB.loadSrcJourneyName(srcJourneyName)
   logger.info(`Read journey ${srcJ.name} version:${srcJ.version} status:${srcJ.status}`)
-  // console.log("srcJ", JSON.stringify(srcJ, null, 4));
+  // fs.writeFileSync(srcJourneyName, JSON.stringify(srcJ,null,2))
 
   // init criteria
   mcJB.setMarket(market)
