@@ -80,7 +80,7 @@ async function main() {
     let allJourneys = await mcJourney.getAll()
     let journeyNames = []
     for (let i = 0; i < allJourneys.length; i++) {
-      if (i%50===0) {
+      if (i%5===0) {
         await mcbase.doAuth() // auth again
       }
 
@@ -102,15 +102,15 @@ async function main() {
     }
 
     // journeyNames = [
-    //   // 'kr-oneoff_conversion-automd-sg2rg-revised-v2',
-    //   // 'kr-unfreeze_inactive-automd',
-    //   // 'kr-debit_fail-credit_card-automd',
-    //   // 'kr-debit_fail-CMS-automd',
-    //   // 'kr-new_donor_upgrade-automd',
-    //   // 'kr-202112-new-donor-upgrade-journey_2022'
+    //   'kr-oneoff_conversion-automd-sg2rg-revised-v2',
+    //   'kr-unfreeze_inactive-automd',
+    //   'kr-debit_fail-credit_card-automd',
+    //   'kr-debit_fail-CMS-automd',
+    //   'kr-new_donor_upgrade-automd',
+    //   'kr-202112-new-donor-upgrade-journey_2022'
     //   // 'tw-welcome_new_donor-automd-20220311',
     //   // 'tw-debit_fail-automd-soft_fail',
-    //   'tw-reactivation-automd-new_lapsed'
+    //   // 'tw-reactivation-automd-new_lapsed'
     //   // 'hk-lead_conversion-automd-plastics-survey'
     // ]
 
@@ -119,6 +119,10 @@ async function main() {
     progressBar.start(journeyNames.length, 0);
 
     for (let i = 0; i < journeyNames.length; i++) {
+      if (i%5===0) {
+        await mcbase.doAuth() // auth again
+      }
+
       progressBar.update(i + 1);
 
       const jName = journeyNames[i]
@@ -545,8 +549,6 @@ async function downloadUploadEmailPreviews({ } = {}) {
 
     const formattedDate = format(new Date(Math.ceil(item.timestamp * 1000)), 'yyyy/MM/dd HH:mm:ss');
     console.log(`\n${formattedDate} id:${item.message.headers.subject} from:${item.message.headers.from}`)
-    process.stdout.clearLine();
-    process.stdout.cursorTo(0);
 
     // resolve the email key
     const regex = /\[([^\]]+)\]/;
