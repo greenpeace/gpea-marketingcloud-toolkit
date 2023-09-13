@@ -80,7 +80,7 @@ async function main() {
     let allJourneys = await mcJourney.getAll()
     let journeyNames = []
     for (let i = 0; i < allJourneys.length; i++) {
-      if (i%50===0) {
+      if (i%5===0) {
         await mcbase.doAuth() // auth again
       }
 
@@ -545,8 +545,6 @@ async function downloadUploadEmailPreviews({ } = {}) {
 
     const formattedDate = format(new Date(Math.ceil(item.timestamp * 1000)), 'yyyy/MM/dd HH:mm:ss');
     console.log(`\n${formattedDate} id:${item.message.headers.subject} from:${item.message.headers.from}`)
-    process.stdout.clearLine();
-    process.stdout.cursorTo(0);
 
     // resolve the email key
     const regex = /\[([^\]]+)\]/;
