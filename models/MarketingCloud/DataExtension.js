@@ -98,6 +98,9 @@ class DataExtension {
               <ObjectType>DataExtensionObject[${deName}]</ObjectType>
               ${propertiesXML}
               ${filterXML}
+              <Options>
+                <BatchSize>50</BatchSize>
+              </Options>
             </RetrieveRequest>
           </RetrieveRequestMsg>
         </s:Body>

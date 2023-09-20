@@ -581,6 +581,11 @@ class Journey {
     let r = await mcDE.fetchDeRows(deName)
     logger.debug(`Found ${r.length} rows`)
 
+    if (r.length===0) {
+      logger.info(`Send 0 emails due to empty data extension`)
+      return
+    }
+
     // random show some candidate rows
     let sampleSize = 3
     let sampleRows = _.sampleSize(r, sampleSize)

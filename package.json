@@ -30,6 +30,9 @@
     "xml2js": "^0.4.23"
   },
   "devDependencies": {
+    "csv-parser": "^3.0.0",
+    "google-auth-library": "^9.0.0",
+    "googleapis": "^126.0.1",
     "sass": "^1.55.0"
   }
 }

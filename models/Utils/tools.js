@@ -1,8 +1,9 @@
 const path = require('path');
 const FTPS = require('ftps')
 const axios = require('axios')
+const fs = require('fs')
 const { RRule } = require('rrule');
-
+const { google } = require('googleapis');
 
 /**
  * Function to convert iCalendar RRule string into human-readable format
@@ -60,35 +61,35 @@ function rruleToHumanReadable(icalRecurString) {
  * @param  {string} localDir Local folder to update
  * @param  {string} remoteDir The remote path to upload. If it's not exist, it will be created.
  */
-async function syncFolder (settings, localDir, remoteDir) {
+async function syncFolder(settings, localDir, remoteDir) {
   return new Promise((resolve, reject) => {
     // @see https://github.com/Atinux/node-ftps for arguments
-  var ftps = new FTPS(settings)
+    var ftps = new FTPS(settings)
 
-  console.info(
-    `Sync from \`${localDir}\` to \`${settings.protocol}://${settings.username}@${settings.host}:${remoteDir}\``
-  )
+    console.info(
+      `Sync from \`${localDir}\` to \`${settings.protocol}://${settings.username}@${settings.host}:${remoteDir}\``
+    )
 
-  ftps
-    .mirror({
-      localDir: localDir,
-      remoteDir: remoteDir,
-      upload: true,
-    })
-    .cd(remoteDir)
-    .ls()
-    .exec(function (err, res) {
-      // err will be null (to respect async convention)
-      // res is an hash with { error: stderr || null, data: stdout }
-      if (err) {
-        console.error(err)
-        reject(err)
-      } else {
-        console.info('Successfully uploaded.')
-        console.info(res.data)
-        resolve(res)
-      }
-    })
+    ftps
+      .mirror({
+        localDir: localDir,
+        remoteDir: remoteDir,
+        upload: true,
+      })
+      .cd(remoteDir)
+      .ls()
+      .exec(function (err, res) {
+        // err will be null (to respect async convention)
+        // res is an hash with { error: stderr || null, data: stdout }
+        if (err) {
+          console.error(err)
+          reject(err)
+        } else {
+          console.info('Successfully uploaded.')
+          console.info(res.data)
+          resolve(res)
+        }
+      })
   })
 }
 
@@ -121,9 +122,34 @@ async function shortenUrl(longUrl) {
   }
 }
 
+
+/**
+ * Generate the google auth file.
+ * @returns Gooel Auth Client
+ */
+function getGoogleAuthorize() {
+  // Replace with your own credentials JSON file
+  const credentialsPath = path.join(__dirname, '../../secrets/gpea-syncer@gpea-engage.iam.gserviceaccount.com.json');
+  const credentials = JSON.parse(fs.readFileSync(credentialsPath));
+
+  const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
+
+  const { client_email, private_key } = credentials;
+  const auth = new google.auth.GoogleAuth({
+    credentials: {
+      client_email,
+      private_key,
+    },
+    scopes: SCOPES,
+  });
+
+  return auth.getClient();
+}
+
 module.exports = {
   rruleToHumanReadable,
   syncFolder,
   sleep,
-  shortenUrl
+  shortenUrl,
+  getGoogleAuthorize
 };

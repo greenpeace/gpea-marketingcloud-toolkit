@@ -4,26 +4,29 @@ const _ = require("lodash")
 const Notifier = require('../lib/Notifier.js')
 
 async function main () {
-  let market = "HK"
+  let market = "TW"
 
   let mcbase = new MCBase({market})
   await mcbase.doAuth()
   let mcJourney = mcbase.factory('Journey')
 
   let journeyNamesToStop = [
-    'hk-annual_reactivation-adhoc-20220930',
-'hk-annual_upgrade-adhoc-20221130-2023_q1-chinese-thank_you_after_case_outcome',
-'hk-annual_upgrade-adhoc-20221130-2023_q1-chinese_batch1_fix_call_case',
-'hk-annual_upgrade-adhoc-20221130-2023_q1-chinese_batch2_Jan',
-'hk-annual_upgrade-adhoc-20221130-2023_q1-chinese_batch3_Feb',
-'hk-annual_upgrade-adhoc-20221130-2023_q1-chinese_batch4_Mar',
-'hk-annual_upgrade-adhoc-20221206-2023_q1_group2-chinese_batch1',
-'hk-annual_upgrade-adhoc-20221206-2023_q1_group2-chinese_batch2',
-'hk-annual_upgrade-adhoc-20221206-2023_q1_group2-chinese_batch3',
-'hk-annual_upgrade-adhoc-20221208-2023_q1-eng',
-'hk-sms-adhoc-20220817-ebull-annual-report-webinar-sms-1',
-'hk-sms-adhoc-20220818-enews-annual-report-webinar-sms-1',
-'hk-sms-adhoc-20220826-enews-annual-report-webinar-sms-2',
+    'tw-sms-adhoc-20230502-donor_paydate_change-sms',
+    'tw-sms-adhoc-tw-20230202-activist-plastic_screening_donor_event-sms',
+    'tw-sms-adhoc-tw-20230412-Donor-Event-Annual-reception-sms',
+    'tw-sms-adhoc-tw-20230421-GF',
+    'tw-sms-adhoc-tw-20230518-protect_ocean_law-sms',
+    'tw-sms-adhoc-tw-20230621-Climate-Event-Invitation-sms',
+    'tw-sms-adhoc-tw-20230630-DFR_Fundraising-sms',
+    'tw-sms-adhoc-tw-20230704-ebull-activist-climate_donor_event-sms',
+    'tw-sms-adhoc-tw-20230726-plastic_DIY_invitation-sms',
+    'tw-sms-adhoc-tw-20230804-ebull-activist-plastic_donor_event_confirm_am',
+    'tw-sms-adhoc-tw-20230804-ebull-activist-plastic_donor_event_confirm_pm',
+    'tw-sms-adhoc-tw-20230824-ebull-activist-plastic_donor_event_confirm_am',
+    'tw-sms-adhoc-tw-20230824-ebull-activist-plastic_donor_event_confirm_pm',
+    'tw-sms-adhoc-tw-special_appeal-sms-20230827_gpt-one_off-sms',
+    'tw-sms-adhoc-tw-special_appeal-sms-20230908_climate-one_off',
+    'up-transactional-automd-new_oneoff_by_donor'
   ]
 
   for (let i = 0; i < journeyNamesToStop.length; i++) {

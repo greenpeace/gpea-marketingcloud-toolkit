@@ -9,8 +9,10 @@ const fs = require('fs')
 const path = require('path');
 const { syncFolder } = require('../models/Utils/tools.js')
 const Mailgun = require('../models/Mailgun')
-const { format } = require('date-fns');
-const { sleep, shortenUrl } = require('../models/Utils/tools')
+const { format, subDays } = require('date-fns');
+const { sleep, shortenUrl, getGoogleAuthorize } = require('../models/Utils/tools')
+const { google } = require('googleapis');
+const csv = require('csv-parser');
 
 require('dotenv').config()
 
@@ -30,10 +32,9 @@ require('dotenv').config()
  * To update the journey criteria based on the pre-defined criteria.
  * For all the supported criteria, @see models/MarketingCloud/JourneyBuilder/DecisionSplitCriteria.js
  */
-async function main() {
-  // EDIT HERE
-  const csvFileName = 'journeyDoc.csv'
+const csvFileName = 'journeyDoc.csv'
 
+async function main() {
   let csvKeys = [
     "journeyName",
     "triggerCriteria",
@@ -79,21 +80,29 @@ async function main() {
     logger.info(`Fetching journeys for ${market} `)
     let allJourneys = await mcJourney.getAll()
     let journeyNames = []
+
+    const modifiedDateThreshold = format(subDays(new Date(), 90), "yyyy-MM-dd'T'00:00:00.000");
+
     for (let i = 0; i < allJourneys.length; i++) {
-      if (i%5===0) {
+      if (i % 50 === 0) {
         await mcbase.doAuth() // auth again
       }
 
       const j = allJourneys[i];
 
-      if (j && j.status == 'Published') {
-        journeyNames.push(j.name)
-        logger.info(`Read journey ${j.name} version:${j.version} status:${j.status}`)
-      } else if (j && j.status=="Draft" && j.version>1) {
-        journeyNames.push(j.name)
-        logger.info(`Read journey ${j.name} version:${j.version} status:${j.status}`)
-      } else if (j && (/test/i).test(j.name)) {
+      // console.log('j', j)
+      if (j && (/test/i).test(j.name)) {
         logger.debug(`Skip journey ${j.name} due to "test"`)
+      } else if (j && j.modifiedDate >= modifiedDateThreshold) { // recently journeys
+        if (j.status == 'Published' || (j.status == 'Draft' && j.version > 1)) {
+          journeyNames.push(j.name)
+          logger.info(`Read journey ${j.name} version:${j.version} status:${j.status}`)
+        }
+      } else if (j && j.name.indexOf('automd') >= 0) { // automd journeys
+        if (j.status == 'Published' || (j.status == 'Draft' && j.version > 1)) {
+          journeyNames.push(j.name)
+          logger.info(`Read journey ${j.name} version:${j.version} status:${j.status}`)
+        }
       } else if (j) {
         logger.debug(`Skip journey ${j.name} version:${j.version} status:${j.status}`)
       } else {
@@ -102,16 +111,18 @@ async function main() {
     }
 
     // journeyNames = [
-    //   'kr-oneoff_conversion-automd-sg2rg-revised-v2',
-    //   'kr-unfreeze_inactive-automd',
-    //   'kr-debit_fail-credit_card-automd',
-    //   'kr-debit_fail-CMS-automd',
-    //   'kr-new_donor_upgrade-automd',
-    //   'kr-202112-new-donor-upgrade-journey_2022'
+    //   // 'kr-oneoff_conversion-automd-sg2rg-revised-v2',
+    //   // 'kr-unfreeze_inactive-automd',
+    //   // 'kr-debit_fail-credit_card-automd',
+    //   // 'kr-debit_fail-CMS-automd',
+    //   // 'kr-new_donor_upgrade-automd',
+    //   // 'kr-202112-new-donor-upgrade-journey_2022'
     //   // 'tw-welcome_new_donor-automd-20220311',
     //   // 'tw-debit_fail-automd-soft_fail',
     //   // 'tw-reactivation-automd-new_lapsed'
     //   // 'hk-lead_conversion-automd-plastics-survey'
+    //   'tw-debit_fail-automd-soft_fail',
+    //   'tw-debit_fail-automd-hard_fail'
     // ]
 
     // start to process
@@ -119,7 +130,7 @@ async function main() {
     progressBar.start(journeyNames.length, 0);
 
     for (let i = 0; i < journeyNames.length; i++) {
-      if (i%5===0) {
+      if (i % 5 === 0) {
         await mcbase.doAuth() // auth again
       }
 
@@ -150,6 +161,9 @@ async function main() {
     progressBar.stop()
   }
 
+  // sync the csv file to google sheet
+  logger.info(`Syncing to Google Sheet`)
+  await uploadCsvFileToGSheet()
 
   // download and upload email previews
   // sleep for 1 minutes to wait for all the email received
@@ -166,6 +180,8 @@ async function main() {
   const remotePath = '/htdocs/app/sfmc/journey-master-doc'
   logger.info(`Syncing to server ${serverConfigs.ftp_tw.host}:${remotePath}`)
   await syncFolder(serverConfigs.ftp_tw, localPath, remotePath)
+
+
 }
 
 async function processJourney(params) {
@@ -534,10 +550,15 @@ async function downloadUploadEmailPreviews({ } = {}) {
     domain: process.env.MAILGUN_DOMAIN,
     apiKey: process.env.MAILGUN_APIKEY
   })
-  let storedEmails = await mg.getStortedEmails()
+  let storedEmails = await mg.getStortedEmails({
+    limit: 300,
+    begin: Math.floor(subDays(new Date(), 1).getTime() / 1000),
+    ascending: 'yes'
+  })
+  let seenEmails = {} // only fetch each email once
 
-  // sort by timestamp asc
-  storedEmails.sort((a, b) => a.timestamp - b.timestamp);
+  // sort by timestamp desc
+  storedEmails.sort((a, b) => b.timestamp - a.timestamp);
 
   // convert into HTML
   progressBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
@@ -548,7 +569,8 @@ async function downloadUploadEmailPreviews({ } = {}) {
     const thisEmailSubject = item.message.headers.subject
 
     const formattedDate = format(new Date(Math.ceil(item.timestamp * 1000)), 'yyyy/MM/dd HH:mm:ss');
-    console.log(`\n${formattedDate} id:${item.message.headers.subject} from:${item.message.headers.from}`)
+
+    logger.debug(`Building ${formattedDate} id:${item.message.headers.subject}`)
 
     // resolve the email key
     const regex = /\[([^\]]+)\]/;
@@ -561,7 +583,12 @@ async function downloadUploadEmailPreviews({ } = {}) {
 
     //
     if (!firstTokenInsideBrackets) {
-      console.log(`Skip ${thisEmailSubject} since cannot find the [key] of the email`)
+      logger.debug(`Skip ${thisEmailSubject} since cannot find the [key] of the email`)
+      continue
+    }
+
+    if (seenEmails[firstTokenInsideBrackets]) {
+      logger.debug(`Skip ${thisEmailSubject} since has seen before`)
       continue
     }
 
@@ -570,9 +597,50 @@ async function downloadUploadEmailPreviews({ } = {}) {
 
     let outputPath = `build/${firstTokenInsideBrackets}.html`
     fs.writeFileSync(outputPath, storedEmailDetail['body-html'], 'utf8');
-    logger.info(`Exported HTML to file ${outputPath}`)
+    logger.info(`Exported ${thisEmailSubject} to file ${outputPath}`)
+
+    seenEmails[firstTokenInsideBrackets] = true
   }
   progressBar.stop()
+}
+
+async function uploadCsvFileToGSheet() {
+  const auth = await getGoogleAuthorize();
+  const sheets = google.sheets({ version: 'v4', auth });
+
+  // Replace with your Google Sheet ID and tab name
+  const spreadsheetId = process.env.JOURNEY_MASTER_DOC_GSHEET_ID;
+  const tabName = process.env.JOURNEY_MASTER_DOC_RAW_DATA_TAB_NAME; // Change to your tab name
+
+  // Read the local CSV file
+  const csvFilePath = csvFileName;
+  const csvData = fs.readFileSync(csvFilePath, 'utf8');
+
+  const rows = [];
+  fs.createReadStream(csvFilePath)
+    .pipe(csv({
+      headers: false // Include the header row
+    }))
+    .on('data', (row) => {
+      rows.push(Object.values(row)); // Convert the row object to an array
+    })
+    .on('end', async () => {
+      // Clear the existing data in the tab
+      await sheets.spreadsheets.values.clear({
+        spreadsheetId,
+        range: tabName,
+      });
+
+      // Write the new data to the tab
+      await sheets.spreadsheets.values.update({
+        spreadsheetId,
+        range: tabName,
+        valueInputOption: 'RAW',
+        resource: { values: rows },
+      });
+
+      console.log(`CSV data uploaded to ${tabName} successfully.`);
+    });
 }
 
 (async () => {

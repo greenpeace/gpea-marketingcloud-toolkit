@@ -1,5 +1,6 @@
 // Mailgun services
 const axios = require('axios')
+const querystring = require('querystring');
 
 class Mailgun {
 	constructor ({domain, apiKey}) {
@@ -17,13 +18,15 @@ class Mailgun {
 
 	/**
 	 * Fetch all the stored emails from mailgun
+	 * @param urlParams Object @see https://documentation.mailgun.com/en/latest/api-events.html#query-options
 	 * @returns StoredEmailResponse @see Mailgun.d.ts
 	 */
-	async getStortedEmails () {
+	async getStortedEmails (urlParams={}) {
 		const headers = this._generateAuthHeader()
 		let items = []
 
-		let nextURL = `https://api.mailgun.net/v3/${this.domain}/events`
+		let nextURL = `https://api.mailgun.net/v3/${this.domain}/events?${querystring.stringify(urlParams)}`
+
 		let pageNo = 0
 		while (nextURL) {
 			console.debug(`fetching page ${pageNo}`, nextURL)
