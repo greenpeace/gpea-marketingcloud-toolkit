@@ -11,6 +11,7 @@ const Send = require("./Send")
 const Email = require("./Email")
 const DataExtension = require("./DataExtension")
 const SMS = require("./SMS")
+const CloudPage = require("./CloudPage")
 require('dotenv').config()
 
 class MCBase {
@@ -21,7 +22,7 @@ class MCBase {
     this.accountId = options.accountId
 
     if (options.market) {
-      this.market = this.setMarket(options.market)  
+      this.market = this.setMarket(options.market)
       this._loadMarketVariable()
     }
 
@@ -39,7 +40,7 @@ class MCBase {
 
   setMarket (market) {
     market = market.toLowerCase()
-    
+
     if (["tw","hk","kr"].indexOf(market)<0) {
       throw new Error("The market should be one of tw, hk or kr")
     }
@@ -107,6 +108,8 @@ class MCBase {
       obj = new DataExtension()
     } else if (instanceName==="SMS") {
       obj = new SMS()
+    } else if (instanceName==="CloudPage") {
+      obj = new CloudPage()
     } else {
       logger.warn(`Cannot find the instanceName ${instanceName}`)
     }
@@ -123,7 +126,7 @@ class MCBase {
   }
 
   async handleSoapResponse (soapResponse) {
-    let jsonResponse = await xml2js.parseStringPromise(soapResponse.data, { 
+    let jsonResponse = await xml2js.parseStringPromise(soapResponse.data, {
       explicitArray: false,
       ignoreAttrs: true
     })
@@ -138,7 +141,7 @@ class MCBase {
       if (['OK', 'MoreDataAvailable'].indexOf(retrieveResponseMsg.OverallStatus)<0) {
         throw new Error(retrieveResponseMsg.OverallStatus)
       }
-      
+
       return _.get(retrieveResponseMsg, "Results", [])
     }
 
@@ -146,7 +149,7 @@ class MCBase {
       if (createResponse.Results.StatusCode!=="OK") {
         throw new Error(createResponse.Results.StatusMessage)
       }
-      
+
       return _.get(createResponse, "Results.Object", [])
     }
 
@@ -159,7 +162,7 @@ class MCBase {
 
         throw new Error(updateResponse.OverallStatus)
       }
-      
+
       return updateResponse.Results
     }
 
@@ -167,7 +170,7 @@ class MCBase {
       if (deleteResponse.Results.StatusCode!=="OK") {
         throw new Error(deleteResponse.Results.StatusMessage)
       }
-      
+
       return _.get(deleteResponse, "Results.Object", [])
     }
 

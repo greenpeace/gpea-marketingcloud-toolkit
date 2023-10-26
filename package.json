@@ -33,6 +33,7 @@
     "csv-parser": "^3.0.0",
     "google-auth-library": "^9.0.0",
     "googleapis": "^126.0.1",
+    "puppeteer": "^20.2.1",
     "sass": "^1.55.0"
   }
 }

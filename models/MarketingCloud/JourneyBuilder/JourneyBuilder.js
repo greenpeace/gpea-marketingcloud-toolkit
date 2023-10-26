@@ -272,7 +272,7 @@ class JourneyBuilder {
     return _.get(this.srcJ, 'triggers.0.type') === "SalesforceObjectTriggerV2"
   }
   isAutomationTriggered() {
-    return _.get(this.srcJ, 'triggers.0.type') === "AutomationAudience"
+    return _.get(this.srcJ, 'triggers.0.type') === "AutomationAudience" ||_.get(this.srcJ, 'triggers.0.type') === "ContactEvent"
   }
   isJourneyScheduled() {
     return _.get(this.srcJ, 'triggers.0.type') === "EmailAudience"
