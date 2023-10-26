@@ -161,14 +161,11 @@ async function main() {
     progressBar.stop()
   }
 
-  // sync the csv file to google sheet
-  logger.info(`Syncing to Google Sheet`)
-  await uploadCsvFileToGSheet()
 
   // download and upload email previews
   // sleep for 1 minutes to wait for all the email received
   logger.info('wait 60 seconds to receiving all the emails')
-  await sleep(60 * 1000)
+  await sleep(10 * 1000)
   await downloadUploadEmailPreviews()
 
   // upload build folder (including journey flows & email previews) to sftp
@@ -181,7 +178,9 @@ async function main() {
   logger.info(`Syncing to server ${serverConfigs.ftp_tw.host}:${remotePath}`)
   await syncFolder(serverConfigs.ftp_tw, localPath, remotePath)
 
-
+  // sync the csv file to google sheet
+  logger.info(`Syncing to Google Sheet`)
+  await uploadCsvFileToGSheet()
 }
 
 async function processJourney(params) {
@@ -451,7 +450,8 @@ async function processLms({ srcJ, mcJB }) {
   let lmsActivities = []
   srcJ.activities.forEach(act => {
     if (act.type === "REST" && _.get(act, "arguments.execute.inArguments.0.sendtype") == "LMS") {
-
+      lmsActivities.push(act)
+    } else if (act.type === "REST" && _.get(act, "arguments.execute.inArguments.0.sendtype") == "SUREMKAKAO") {
       lmsActivities.push(act)
     }
   });
@@ -626,12 +626,14 @@ async function uploadCsvFileToGSheet() {
     })
     .on('end', async () => {
       // Clear the existing data in the tab
+      logger.debug("Cleaning GoogleSheet Content")
       await sheets.spreadsheets.values.clear({
         spreadsheetId,
         range: tabName,
       });
 
       // Write the new data to the tab
+      logger.debug("Writing to Content GoogleSheet Content")
       await sheets.spreadsheets.values.update({
         spreadsheetId,
         range: tabName,
