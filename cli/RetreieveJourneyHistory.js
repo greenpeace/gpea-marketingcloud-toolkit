@@ -11,11 +11,12 @@ const { format, subDays, sub, parse, add } = require('date-fns');
  */
 async function main() {
   // EDIT HERE!
-  let targetJourneyName = 'hk-debit_fail-automd'
+  let targetJourneyName = 'New Journey - October 30 2023 at 9.26 AM'
   let market = "hk"
 
-  let start = new Date('2023-05-10 00:00:00')
-  let end = new Date('2023-05-30 23:59:59')
+  let start = new Date('2023-10-29 00:00:00')
+  // let end = new Date('2023-05-30 23:59:59')
+  let end = new Date()
   let csvFileName = `journey-history-${targetJourneyName}-${format(start, "yyyyMMdd")}-${format(end, "yyyyMMdd")}.csv`
 
   let deFilter
@@ -82,6 +83,10 @@ async function main() {
     row['result.messages'] = _.get(row, 'result.messages')
     row['result.outcome'] = _.get(row, 'result.outcome')
     row['result.outcome'] = row['result.outcome'] ? JSON.stringify(row['result.outcome']) : row['result.outcome']
+
+    if (row['result.messages'] instanceof Object) {
+      row['result.messages'] = JSON.stringify(row['result.messages'], null, 2)
+    }
     return row
   })
 

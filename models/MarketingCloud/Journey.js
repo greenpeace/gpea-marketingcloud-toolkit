@@ -510,7 +510,7 @@ class Journey {
 
 
     // Loop through each day between the start and end dates
-    let setpHours = 12
+    let setpHours = 24
     let histories = []
     let currentDate = start;
     let nextDate = Math.min(add(currentDate, { hours: setpHours }), end);
