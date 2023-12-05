@@ -3,19 +3,23 @@ const logger = require('../lib/logger');
 const _ = require("lodash")
 const Notifier = require('../lib/Notifier.js')
 const format = require('date-fns/format')
+const fs = require('fs')
 
 /**
  * Send all the email previews of a journey
  */
 async function main() {
   // EDIT HERE!
-  let targetJourneyName = 'tw-new_donor_upgrade-automd'
-  let emailPrefix = ``
+  // 'hk-debit_fail-automd-hard_fail',
+  // 'hk-debit_fail-automd-soft_fail',
+  // 'hk-debit_fail-automd-weekly_reminder'
+  let targetJourneyName = 'kr-debit_fail-automd-weekly_reminder'
+  let emailPrefix = `KR_RMNDR`
   // let recipients = ['uchen@greenpeace.org', 'gigi.wu@greenpeace.org']
   // let recipients = ['uchen@greenpeace.org', 'mirang.kim@greenpeace.org', ]
   // let recipients = ['uchen@greenpeace.org', 'gigi.wu@greenpeace.org']
   let recipients = ['uchen@greenpeace.org']
-  let market = "tw"
+  let market = "kr"
 
   let deFilter
   // let deFilter = {property:"Recurring Donation Status", simpleOperator:"notEquals", value:"Active"}
@@ -35,6 +39,7 @@ async function main() {
   logger.info(`Resolving [${targetJourneyName}] definitions …`)
   let eventDef = await mcJourney.getJourneyEventDefinitionsByJourneyName(targetJourneyName)
   let deName = _.get(eventDef, 'dataExtensionName', null)
+
 
   // resolve the original de
   let de = await mcDE.findDeBy({field: "Name", value:deName})
@@ -79,6 +84,7 @@ async function main() {
 
   // find the email activities of the journey
   r = await mcJourney.findByName(targetJourneyName, {mostRecentVersionOnly: true})
+  fs.writeFileSync(targetJourneyName, JSON.stringify(r, null, 2))
 
   let activities = _.get(r, 'items.0.activities')
   let emailActivities = activities.filter(a => a.type==="EMAILV2")
@@ -141,7 +147,7 @@ async function main() {
   }
 
   // prepare the LMS(KR SMS) content previews
-  let lmsActivities = activities.filter(a => a.type==="REST" && _.get(a, "arguments.execute.inArguments.0.sendtype")=="LMS")
+  let lmsActivities = activities.filter(a => a.type==="REST" && ['LMS', 'SUREMKAKAO'].indexOf(_.get(a, "arguments.execute.inArguments.0.sendtype"))>=0)
   logger.info(`Start to render LMS previews`)
   // console.log('lmsActivities', lmsActivities)
   for (let i = 0; i < lmsActivities.length; i++) {

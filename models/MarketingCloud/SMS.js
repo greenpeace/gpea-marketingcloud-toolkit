@@ -54,7 +54,7 @@ class SMS {
     // console.log('fieldsToRender', fieldsToRender)
 
     _.intersection(Object.keys(contactRow, fieldsToRender)).forEach(fieldName => {
-      content = content.replace(new RegExp(`@${fieldName}@`, 'g'), contactRow[fieldName])
+      content = content.replace(new RegExp(`@${fieldName}@`, 'gi'), contactRow[fieldName])
     })
 
     return {renderedContent:content}

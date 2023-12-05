@@ -62,7 +62,7 @@ class Journey {
    *     {
    *       id: '622caa5c-d493-4d42-9623-f1b317fddc04',
    *       key: 'c91c140d-318e-5ad3-f195-9a392b763a05',
-   *       name: 'tw-reactivation-automd-lapsed_donors',
+   *       name: 'hk-reactivation-automd-lapsed_donors',
    *       lastPublishedDate: '2021-09-07T03:58:29',
    *       description: '',
    *       version: 14,
@@ -451,7 +451,7 @@ class Journey {
    * @returns object
    */
   async getJourneyEventDefinitionsByJourneyName(jName) {
-    let r = await this.findByName(jName)
+    let r = await this.findByName(jName, {mostRecentVersionOnly: true})
     let j = _.get(r, 'items.0', null)
 
     if (!j) {

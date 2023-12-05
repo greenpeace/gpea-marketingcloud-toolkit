@@ -65,7 +65,7 @@ async function main() {
   });
 
   const markets = ['HK', 'TW', 'KR']
-  // const markets = ['TW']
+  // const markets = ['HK']
 
   for (let i = 0; i < markets.length; i++) {
     const market = markets[i]
@@ -103,6 +103,11 @@ async function main() {
           journeyNames.push(j.name)
           logger.info(`Read journey ${j.name} version:${j.version} status:${j.status}`)
         }
+      } else if ([
+        'kr-202109-journey-welcome-new-donor-oneoff', 
+        'kr-202109-journey-welcome-new-recurring-donor',
+        'kr_2022-new_donor_upgrade'].includes(j.name)) {
+
       } else if (j) {
         logger.debug(`Skip journey ${j.name} version:${j.version} status:${j.status}`)
       } else {
@@ -110,20 +115,14 @@ async function main() {
       }
     }
 
-    // journeyNames = [
-    //   // 'kr-oneoff_conversion-automd-sg2rg-revised-v2',
-    //   // 'kr-unfreeze_inactive-automd',
-    //   // 'kr-debit_fail-credit_card-automd',
-    //   // 'kr-debit_fail-CMS-automd',
-    //   // 'kr-new_donor_upgrade-automd',
-    //   // 'kr-202112-new-donor-upgrade-journey_2022'
-    //   // 'tw-welcome_new_donor-automd-20220311',
-    //   // 'tw-debit_fail-automd-soft_fail',
-    //   // 'tw-reactivation-automd-new_lapsed'
-    //   // 'hk-lead_conversion-automd-plastics-survey'
-    //   'tw-debit_fail-automd-soft_fail',
-    //   'tw-debit_fail-automd-hard_fail'
-    // ]
+    journeyNames = [
+      // 'kr-annual_upgrade-adhoc-20231205-honeybee-1click_url_generation',
+      // 'kr-annual_upgrade-adhoc-20231208-honeybee-1click_url_generation',
+      // 'kr-annual_upgrade-adhoc-20231211-honeybee-1click_url_generation',
+      // 'hk-debit_fail-automd-hard_fail',
+      // 'hk-debit_fail-automd-soft_fail',
+      // 'hk-debit_fail-automd-weekly_reminder'
+    ]
 
     // start to process
     const progressBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
@@ -165,7 +164,7 @@ async function main() {
   // download and upload email previews
   // sleep for 1 minutes to wait for all the email received
   logger.info('wait 60 seconds to receiving all the emails')
-  await sleep(10 * 1000)
+  await sleep(60 * 1000)
   await downloadUploadEmailPreviews()
 
   // upload build folder (including journey flows & email previews) to sftp
@@ -373,14 +372,18 @@ async function processCases({ srcJ, mcJB }) {
 async function processEmail({ srcJ, mcJB, mcJourney }) {
 
   // send emails
-  await mcJourney.sendEmailPreviews(
-    srcJ.name,
-    ['store_this_email@' + process.env.MAILGUN_DOMAIN],
-    {
-      subjectPrefixFunc: (emailAct) => {
-        return `[${srcJ.name}-${emailAct.key}]`
-      }
-    })
+  try {
+    await mcJourney.sendEmailPreviews(
+      srcJ.name,
+      ['store_this_email@' + process.env.MAILGUN_DOMAIN],
+      {
+        subjectPrefixFunc: (emailAct) => {
+          return `[${srcJ.name}-${emailAct.key}]`
+        }
+      })  
+  } catch (error) {
+    console.warn(`Send Email Failed.`)
+  }
 
   let returnObj = { emails: '-' }
 
