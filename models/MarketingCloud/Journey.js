@@ -634,6 +634,7 @@ class Journey {
 
       // resolve the prefix
       let prefix = subjectPrefixFunc ? subjectPrefixFunc(emailActivities[i]) : '[test]'
+      prefix += ' '
 
       // resolve the email name
       let mcEmail = this.parent.factory('Email')

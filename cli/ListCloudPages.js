@@ -18,7 +18,7 @@ async function main() {
 		{ id: 'modifiedDate', title: 'modifiedDate' },
 	];
 	const csvWriter = createCsvWriter({
-		path: 'output.csv', // Specify the file path where you want to save the CSV
+		path: 'CloudPages.csv', // Specify the file path where you want to save the CSV
 		header: csvHeaders,
 	});
 

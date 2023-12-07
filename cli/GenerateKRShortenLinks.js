@@ -26,27 +26,30 @@ const cliProgress = require('cli-progress');
 require('dotenv').config()
 
 // EDIT HERE!
-let deCsvPath = '/Users/upchen/Downloads/report1692245680021.csv'
-let outputDeCsvPath = '/Users/upchen/Downloads/report1692245680021-generated.csv'
+// let deCsvPath = '/Users/upchen/Downloads/kr_annual_upgrade_staging.csv'
+// let outputDeCsvPath = '/Users/upchen/Downloads/kr_annual_upgrade_generated.csv'
 
-let URLCallToAction = "ONEOFF"; // UPGRADE or ONEOFF or COLA
-let askAmount = 50000; // batch 2
+let deCsvPath = '/Users/upchen/Downloads/mdhv_upgrade_staging.csv'
+let outputDeCsvPath = '/Users/upchen/Downloads/mdhv_upgrade_generated.csv'
+
+let URLCallToAction = "UPGRADE"; // UPGRADE or ONEOFF or COLA
+let askAmount = 15000; // batch 2
   // Group A: RD amount <20,000 : Asking Amount 50,000 (min. 30,000)
   // Group B: RD amount >=20,000 : Asking Amount 70,000 (mn. 30,000)
 
-let campaignId = "7012u000000h2ZFAAY"; // Special Appeal - SMS - 2023 - KR
-let utm_campaign = "special_appeal";
+let campaignId = "7012u000000ITplAAG"; // Middle Donor - Middle Donor Upgrade - SMS - 2024 - KR
+let utm_campaign = "mdhv_upgrade";
 let utm_source = "donor_journey";
 let utm_medium = "sms";
-// let utm_content = "kr-special_appeal-adhoc-20230825-batch_2_rg_cc-1click_url_generation-sms";
-let utm_content = "230830_climate_RG_CC_1click_url_sms_Other";
+let utm_content = "231201-mdhv_upgrade-honeybee_1click-sms";
 let utm_term = "";
 
 const ContactIdFieldName = 'Id (18 digit)'
-const RGStatusFieldName = 'Recurring Donation Status'
+const RGStatusFieldName = 'Recurring Donation: Status'
 const RGPaymentMethodFieldName = 'Recurring Donation Payment Method'
+const ConstituentIdFieldName = 'Constituent ID'
 
-const longLinkFieldName = 'long_link'
+const longLinkFieldName = 'long_url'
 const shortenLinkFieldName = 'url2'
 
 async function shortenUrl(longUrl) {
@@ -81,8 +84,10 @@ async function processRow(params) {
   let isAbleToUse1ClickCola = true;
 
   let ContactId = row[ContactIdFieldName]
+  let ConstituentId = row[ConstituentIdFieldName]
   let RgStatus = row[RGStatusFieldName]
   let RgPaymentMethod = row[RGPaymentMethodFieldName]
+  
 
   if (RgStatus === "Active") {
     if (RgPaymentMethod === "Credit Card") {
@@ -94,15 +99,30 @@ async function processRow(params) {
   }
 
   // determine the askAmount
-  if (row['Group']==="A") {
-    askAmount = 50000
-    utm_content = "230830_climate_RG_CC_1click_url_sms_A";
-  } else if (row['Group']==="B") {
-    askAmount = 70000
-    utm_content = "230830_climate_RG_CC_1click_url_sms_B";
-  } else {
-    askAmount = 50000
-    utm_content = "230830_climate_RG_CC_1click_url_sms_Other";
+  if (row['Group']==="A1") {
+    askAmount = 5000
+    utm_content = "231205_annual_upgrade_honeybee_1click_sms_A1";
+  } else if (row['Group']==="A2") {
+    askAmount = 5000
+    utm_content = "231205_annual_upgrade_honeybee_1click_sms_A2";
+  } else if (row['Group']==="B1") {
+    askAmount = 10000
+    utm_content = "231205_annual_upgrade_honeybee_1click_sms_B1";
+  } else if (row['Group']==="B2") {
+    askAmount = 10000
+    utm_content = "231205_annual_upgrade_honeybee_1click_sms_B2";
+  } else if (row['Group']==="C1") {
+    askAmount = 15000
+    utm_content = "231201_mdhv_upgrade_honeybee_1click_sms_C1";
+  } else if (row['Group']==="C2") {
+    askAmount = 15000
+    utm_content = "231201_mdhv_upgrade_honeybee_1click_sms_C2";
+  } else if (row['Group']==="D1") {
+    askAmount = 20000
+    utm_content = "231201_mdhv_upgrade_honeybee_1click_sms_D1";
+  } else if (row['Group']==="D2") {
+    askAmount = 20000
+    utm_content = "231201_mdhv_upgrade_honeybee_1click_sms_D2";
   }
 
   // Start to generate the links
@@ -110,6 +130,7 @@ async function processRow(params) {
   let base64ContactId = Buffer.from(ContactId).toString('base64');
   let oneClickQs = querystring.stringify({
     id: base64ContactId,
+    Constituent_ID__c: ConstituentId,
     Campaign__c: campaignId,
     utm_campaign: utm_campaign,
     utm_source: utm_source,

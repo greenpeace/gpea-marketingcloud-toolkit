@@ -65,7 +65,7 @@ async function main() {
   });
 
   const markets = ['HK', 'TW', 'KR']
-  // const markets = ['HK']
+  // const markets = ['KR']
 
   for (let i = 0; i < markets.length; i++) {
     const market = markets[i]
@@ -115,14 +115,16 @@ async function main() {
       }
     }
 
-    journeyNames = [
-      // 'kr-annual_upgrade-adhoc-20231205-honeybee-1click_url_generation',
-      // 'kr-annual_upgrade-adhoc-20231208-honeybee-1click_url_generation',
-      // 'kr-annual_upgrade-adhoc-20231211-honeybee-1click_url_generation',
-      // 'hk-debit_fail-automd-hard_fail',
-      // 'hk-debit_fail-automd-soft_fail',
-      // 'hk-debit_fail-automd-weekly_reminder'
-    ]
+    // journeyNames = [
+    //   // 'kr-annual_upgrade-adhoc-20231205-honeybee-1click_url_generation',
+    //   // 'kr-annual_upgrade-adhoc-20231208-honeybee-1click_url_generation',
+    //   // 'kr-annual_upgrade-adhoc-20231211-honeybee-1click_url_generation',
+    //   // 'hk-debit_fail-automd-hard_fail',
+    //   // 'hk-debit_fail-automd-soft_fail',
+    //   // 'hk-debit_fail-automd-weekly_reminder'
+    //   'kr-annual_upgrade-adhoc-20231205-honeybee-1click_url_generation',
+    //   'kr-middle_donor_upgrade-adhoc-20231205-honeybee-1click_url_generation'
+    // ]
 
     // start to process
     const progressBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
