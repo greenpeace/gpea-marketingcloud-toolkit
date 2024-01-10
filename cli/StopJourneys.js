@@ -4,29 +4,26 @@ const _ = require("lodash")
 const Notifier = require('../lib/Notifier.js')
 
 async function main () {
-  let market = "TW"
+  let market = "KR"
 
   let mcbase = new MCBase({market})
   await mcbase.doAuth()
   let mcJourney = mcbase.factory('Journey')
 
   let journeyNamesToStop = [
-    'tw-sms-adhoc-20230502-donor_paydate_change-sms',
-    'tw-sms-adhoc-tw-20230202-activist-plastic_screening_donor_event-sms',
-    'tw-sms-adhoc-tw-20230412-Donor-Event-Annual-reception-sms',
-    'tw-sms-adhoc-tw-20230421-GF',
-    'tw-sms-adhoc-tw-20230518-protect_ocean_law-sms',
-    'tw-sms-adhoc-tw-20230621-Climate-Event-Invitation-sms',
-    'tw-sms-adhoc-tw-20230630-DFR_Fundraising-sms',
-    'tw-sms-adhoc-tw-20230704-ebull-activist-climate_donor_event-sms',
-    'tw-sms-adhoc-tw-20230726-plastic_DIY_invitation-sms',
-    'tw-sms-adhoc-tw-20230804-ebull-activist-plastic_donor_event_confirm_am',
-    'tw-sms-adhoc-tw-20230804-ebull-activist-plastic_donor_event_confirm_pm',
-    'tw-sms-adhoc-tw-20230824-ebull-activist-plastic_donor_event_confirm_am',
-    'tw-sms-adhoc-tw-20230824-ebull-activist-plastic_donor_event_confirm_pm',
-    'tw-sms-adhoc-tw-special_appeal-sms-20230827_gpt-one_off-sms',
-    'tw-sms-adhoc-tw-special_appeal-sms-20230908_climate-one_off',
-    'up-transactional-automd-new_oneoff_by_donor'
+
+    'Adhoc_Reactivation Journey_230306',
+    'Adhoc_Reactivation Journey_230306_TFR_test',
+    '20221024_reactivation_LMS_All-lapsed_all',
+    'Adhoc_Reactivation Journey_230306_SMS_test',
+    'Adhoc_Reactivation Journey_230306_test',
+    'KP=test-Reactivation Journey_221213',
+    'test-stacy-kr_2022-new-donor-reactivation-lapsed',
+    'test-stacy-Reactivation Journey_221213',
+    'test-stacy-Reactivation Journey_221213',
+
+
+
   ]
 
   for (let i = 0; i < journeyNamesToStop.length; i++) {

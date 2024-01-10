@@ -18,7 +18,7 @@ Steps:
 3. Open the script. `cli/UpdateJourneyDecisionSplits.js`, edit following lines
 
 ```
-const srcJourneyName = "tw-special_appeal-adhoc-20220802-general_rg_donors"
+const srcJourneyName = "hk-special_appeal-adhoc-20220802-general_rg_donors"
 const destJourneyName = "up-test-journey"
 const market = "TW"
 ```

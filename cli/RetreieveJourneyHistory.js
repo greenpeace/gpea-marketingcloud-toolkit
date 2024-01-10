@@ -11,10 +11,10 @@ const { format, subDays, sub, parse, add } = require('date-fns');
  */
 async function main() {
   // EDIT HERE!
-  let targetJourneyName = 'New Journey - October 30 2023 at 9.26 AM'
+  let targetJourneyName = 'hk-debit_fail-automd-hard_fail'
   let market = "hk"
 
-  let start = new Date('2023-10-29 00:00:00')
+  let start = new Date('2023-12-01 00:00:00')
   // let end = new Date('2023-05-30 23:59:59')
   let end = new Date()
   let csvFileName = `journey-history-${targetJourneyName}-${format(start, "yyyyMMdd")}-${format(end, "yyyyMMdd")}.csv`

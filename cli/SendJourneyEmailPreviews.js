@@ -13,12 +13,12 @@ async function main() {
   // 'hk-debit_fail-automd-hard_fail',
   // 'hk-debit_fail-automd-soft_fail',
   // 'hk-debit_fail-automd-weekly_reminder'
-  let targetJourneyName = 'kr-debit_fail-automd-weekly_reminder'
-  let emailPrefix = `KR_RMNDR`
+  let targetJourneyName = 'kr-annual_upgrade-adhoc-20231205-honeybee-1click_url_generation'
+  let emailPrefix = `[honeybee]`
   // let recipients = ['uchen@greenpeace.org', 'gigi.wu@greenpeace.org']
   // let recipients = ['uchen@greenpeace.org', 'mirang.kim@greenpeace.org', ]
   // let recipients = ['uchen@greenpeace.org', 'gigi.wu@greenpeace.org']
-  let recipients = ['uchen@greenpeace.org']
+  let recipients = ['store_this_email@mg.colalin.cc']
   let market = "kr"
 
   let deFilter
