@@ -9,8 +9,8 @@ const format = require('date-fns/format')
  */
 async function main() {
   // EDIT HERE!
-  let market = "kr"
-  let deName = 'kr-data_view-Job'
+  let market = "TW"
+  let deName = 'hk-debit_fail-automd-weekly_reminder'
 
   let fields =[
     // { Name: "Id", FieldType: "Text", IsPrimaryKey: true, IsRequired: true},
@@ -64,43 +64,63 @@ async function main() {
 
     // { Name: "Locale", FieldType: "Locale"},
 
-    { Name: "JobID", FieldType: "Number" },
-    { Name: "EmailID", FieldType: "Number" },
-    { Name: "AccountID", FieldType: "Number" },
-    { Name: "AccountUserID", FieldType: "Number" },
-    { Name: "FromName", FieldType: "Text" },
-    { Name: "FromEmail", FieldType: "Text" },
-    { Name: "SchedTime", FieldType: "Date" },
-    { Name: "PickupTime", FieldType: "Date" },
-    { Name: "DeliveredTime", FieldType: "Date" },
-    { Name: "EventID", FieldType: "Text" },
-    { Name: "IsMultipart", FieldType: "Boolean" },
-    { Name: "JobType", FieldType: "Text" },
-    { Name: "JobStatus", FieldType: "Text" },
-    { Name: "ModifiedBy", FieldType: "Number" },
-    { Name: "ModifiedDate", FieldType: "Date" },
-    { Name: "EmailName", FieldType: "Text" },
-    { Name: "EmailSubject", FieldType: "Text" },
-    { Name: "IsWrapped", FieldType: "Boolean" },
-    { Name: "TestEmailAddr", FieldType: "Text" },
-    { Name: "Category", FieldType: "Text" },
-    { Name: "BccEmail", FieldType: "Text" },
-    { Name: "OriginalSchedTime", FieldType: "Date" },
-    { Name: "CreatedDate", FieldType: "Date" },
-    { Name: "CharacterSet", FieldType: "Text" },
-    { Name: "IPAddress", FieldType: "Text" },
-    { Name: "SalesForceTotalSubscriberCount", FieldType: "Number" },
-    { Name: "SalesForceErrorSubscriberCount", FieldType: "Number" },
-    { Name: "SendType", FieldType: "Text" },
-    { Name: "DynamicEmailSubject", FieldType: "Text" },
-    { Name: "SuppressTracking", FieldType: "Boolean" },
-    { Name: "SendClassificationType", FieldType: "Text" },
-    { Name: "SendClassification", FieldType: "Text" },
-    { Name: "ResolveLinksWithCurrentData", FieldType: "Boolean" },
-    { Name: "EmailSendDefinition", FieldType: "Text" },
-    { Name: "DeduplicateByEmail", FieldType: "Boolean" },
-    { Name: "TriggererSendDefinitionObjectID", FieldType: "Text" },
-    { Name: "TriggeredSendCustomerKey", FieldType: "Text" },
+    { Name: "Id", FieldType: "Text" },
+    { Name: "Constituent_ID__c", FieldType: "Text" },
+    { Name: "Market__c", FieldType: "Text" },
+    { Name: "FirstName", FieldType: "Text" },
+    { Name: "LastName", FieldType: "Text" },
+    { Name: "name", FieldType: "Text" },
+    { Name: "Email", FieldType: "EmailAddress" },
+    { Name: "MobilePhone", FieldType: "Phone" },
+    { Name: "HomePhone", FieldType: "Phone" },
+    { Name: "Preferred_Language__c", FieldType: "Text" },
+
+    { Name: "Days_Since_soft_Fail", FieldType: "Number" },
+    { Name: "Days_Since_hard_Fail", FieldType: "Number" },
+    { Name: "WEEKNUMBER", FieldType: "Number" },
+    { Name: "SHOULD_SEND_SMS", FieldType: "Number" },
+
+    { Name: "First_Soft_Failure_Date__c", FieldType: "Date" },
+    { Name: "First_Hard_Failure_Date__c", FieldType: "Date" },
+    { Name: "RD_Last_Donation_Date__c", FieldType: "Date" },
+    { Name: "RD_Sign_Up_Date__c", FieldType: "Date" },
+
+    { Name: "Donor_Status__c", FieldType: "Text" },
+    { Name: "Recurring_Donation_Status__c", FieldType: "Text" },
+    { Name: "RD_Payment_Method__c", FieldType: "Text" },
+
+    { Name: "Do_Not_Contact__c", FieldType: "Boolean"},
+    { Name: "Do_Not_Mail__c", FieldType: "Boolean"},
+    { Name: "DoNotCall", FieldType: "Boolean"}, ,
+    { Name: "HasOptedOutOfEmail", FieldType: "Boolean"},
+    { Name: "et4ae5__HasOptedOutOfMobile__c", FieldType: "Boolean"},
+    { Name: "Fundraising_Appeals_Opt_Out__c", FieldType: "Boolean"}, ,
+    { Name: "Marketing_Opt_Out__c", FieldType: "Boolean"}, ,
+    { Name: "Do_Not_Call_Before_This_Date__c", FieldType: "Date"}, ,
+
+    { Name: "First_Donation_Amount__c", FieldType: "Number" },
+    { Name: "First_Donation_Date__c", FieldType: "Date" },
+    { Name: "Last_Successful_Downgrade__c", FieldType: "Date" },
+    { Name: "Last_Successful_Upgrade__c", FieldType: "Date" },
+    { Name: "Last_Donation_Amount__c", FieldType: "Number" },
+    { Name: "Last_Donation_Date__c", FieldType: "Date" },
+
+
+    { Name: "Recurring_Donation_ID__c", FieldType: "Text" },
+    { Name: "Recurring_Donation__c", FieldType: "Text" },
+    { Name: "Recurring_Donation_Amount__c", FieldType: "Number" },
+    { Name: "CurrencyIsoCode", FieldType: "Text" },
+    { Name: "Recurring_Donation_Next_Donation_Date__c", FieldType: "Date" },
+    { Name: "Recurring_Donation_Payment_Method__c", FieldType: "Text" },
+
+    { Name: "Total_Donations_All_Time__c", FieldType: "Number" },
+    { Name: "Total_Donations_Oneoff__c", FieldType: "Number" },
+    { Name: "Total_Donations_Recurring__c", FieldType: "Number" },
+    { Name: "Number_of_Donations_All_Time__c", FieldType: "Number" },
+    { Name: "Last_Oneoff_Donation_Amount__c", FieldType: "Number" },
+    { Name: "Last_Recurring_Donation_Amount__c", FieldType: "Number" },
+
+    { Name: "Locale", FieldType: "Locale"}
   ]
 
 
@@ -117,7 +137,7 @@ async function main() {
   let r = await mcDE.createDataExtension({
     deName,
     fields,
-    isSendable: false,
+    isSendable: true,
   })
 
   console.log(JSON.stringify(r, null, 4));

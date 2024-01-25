@@ -243,7 +243,7 @@ class Automation {
    *   "PartnerKey": "",
    *   "ObjectID": "df58e4e8-c849-4da3-85ca-3a672b5477a4",
    *   "CustomerKey": "2d5d59c6-9baa-4ec5-8718-6982b31fd066",
-   *   "Name": "tw-annual_reactivation-automd-new_lapsed",
+   *   "Name": "hk-annual_reactivation-automd-new_lapsed",
    *   "Description": "last donation in 12, 24 months.",
    *   "QueryText": "SELECT FROM WHERE",
    *   "TargetType": "DE",
@@ -251,7 +251,7 @@ class Automation {
    *     "PartnerKey": "",
    *     "ObjectID": "",
    *     "CustomerKey": "92D5B6F1-67F5-462D-A59C-60D8EDC59D8D",
-   *     "Name": "tw-reactivation-automd-lasped_donor-audiences",
+   *     "Name": "hk-reactivation-automd-lasped_donor-audiences",
    *     "Description": ""
    *   },
    *   "TargetUpdateType": "Overwrite",

@@ -17,7 +17,7 @@ cron.schedule(
 // 02:00 UTC = 10:00+800
 // 08:00 UTC = 14:00+800
 cron.schedule(
-  "0 10,16 * * *",
+  "0 9,16 * * *",
   async () => {
     console.log(`Run All Checks at ${new Date()}`);
     await AllChecks();
