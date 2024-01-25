@@ -42,24 +42,25 @@ async function main() {
 
     rs = await JourneyNumAudiencesChecks(mcbase, journeyRules);
     allErros = allErros.concat(rs.errors);
-    // console.log('journey errors', errors)
+    //console.log('journey errors', rs.errors);//
 
     rs = await SingleSendEmailChecks(mcbase);
     allErros = allErros.concat(rs.errors);
-    // console.log('send errors', rs.errors)
+    //console.log('send errors', rs.errors);//
 
     if (allErros.length) {
       allErros.unshift({ message: `\n　\n🙈🙈🙈 ${market}: *${allErros.length}* errors on *${format(new Date(), "yyyy-MM-dd'T'HH:mm:ssxxx")}*\n` });
       Notifier.sendToSlack(allErros.map((e) => e.message).join("\n"));
     } else {
       Notifier.sendToSlack(`👍👍👍 ${market}: No Errors today`);
+      //console.log(`👍👍👍 ${market}: No Errors today`);//
     }
 
     let allWarnings = [];
     rs = await JourneyStageErrorChecks(mcbase);
     allWarnings = allWarnings.concat(rs.errors);
-    // console.log('journey stage errors', rs.errors)
-    // console.log(JSON.stringify(rs.errors, null, 4));
+    //console.log('journey stage errors', rs.errors);//
+    //console.log(JSON.stringify(rs.errors, null, 4));//
 
     if (allWarnings.length) {
       allWarnings.unshift({ message: `\n　\n 🙋🙋🙋 ${market}: *${allWarnings.length}* warnings on *${format(new Date(), "yyyy-MM-dd'T'HH:mm:ssxxx")}*\n` });
@@ -68,8 +69,8 @@ async function main() {
   }
 }
 
-// (async () => {
-//   var text = await main();
-// })()
+(async () => {
+  var text = await main();
+})()
 
 module.exports = main;
