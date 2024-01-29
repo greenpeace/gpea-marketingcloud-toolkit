@@ -29,19 +29,19 @@ require('dotenv').config()
 // let deCsvPath = '/Users/upchen/Downloads/kr_annual_upgrade_staging.csv'
 // let outputDeCsvPath = '/Users/upchen/Downloads/kr_annual_upgrade_generated.csv'
 
-let deCsvPath = '/Users/upchen/Downloads/mdhv_upgrade_staging.csv'
-let outputDeCsvPath = '/Users/upchen/Downloads/mdhv_upgrade_generated.csv'
+let deCsvPath = '/Users/upchen/Downloads/2024_Jan_Annual_upgrade_target_HPC_B.csv'
+let outputDeCsvPath = '/Users/upchen/Downloads/2024_Jan_Annual_upgrade_target_HPC_B-generated.csv'
 
 let URLCallToAction = "UPGRADE"; // UPGRADE or ONEOFF or COLA
-let askAmount = 15000; // batch 2
-  // Group A: RD amount <20,000 : Asking Amount 50,000 (min. 30,000)
-  // Group B: RD amount >=20,000 : Asking Amount 70,000 (mn. 30,000)
+let askAmount = 7000; 
+let suggestedAmount = 5000; 
+let keyDefaultAmount = "5000,7000,10000"; 
 
-let campaignId = "7012u000000ITplAAG"; // Middle Donor - Middle Donor Upgrade - SMS - 2024 - KR
-let utm_campaign = "mdhv_upgrade";
+let campaignId = "7012u000000ITpRAAW"; // Upgrade - Annual Upgrade - SMS - 2024 - KR
+let utm_campaign = "annual_upgrade";
 let utm_source = "donor_journey";
 let utm_medium = "sms";
-let utm_content = "231201-mdhv_upgrade-honeybee_1click-sms";
+let utm_content = "20240126-annual_upgrade-hpc_b_sms";
 let utm_term = "";
 
 const ContactIdFieldName = 'Id (18 digit)'
@@ -98,33 +98,6 @@ async function processRow(params) {
     }
   }
 
-  // determine the askAmount
-  if (row['Group']==="A1") {
-    askAmount = 5000
-    utm_content = "231205_annual_upgrade_honeybee_1click_sms_A1";
-  } else if (row['Group']==="A2") {
-    askAmount = 5000
-    utm_content = "231205_annual_upgrade_honeybee_1click_sms_A2";
-  } else if (row['Group']==="B1") {
-    askAmount = 10000
-    utm_content = "231205_annual_upgrade_honeybee_1click_sms_B1";
-  } else if (row['Group']==="B2") {
-    askAmount = 10000
-    utm_content = "231205_annual_upgrade_honeybee_1click_sms_B2";
-  } else if (row['Group']==="C1") {
-    askAmount = 15000
-    utm_content = "231201_mdhv_upgrade_honeybee_1click_sms_C1";
-  } else if (row['Group']==="C2") {
-    askAmount = 15000
-    utm_content = "231201_mdhv_upgrade_honeybee_1click_sms_C2";
-  } else if (row['Group']==="D1") {
-    askAmount = 20000
-    utm_content = "231201_mdhv_upgrade_honeybee_1click_sms_D1";
-  } else if (row['Group']==="D2") {
-    askAmount = 20000
-    utm_content = "231201_mdhv_upgrade_honeybee_1click_sms_D2";
-  }
-
   // Start to generate the links
   let longUrl = null;
   let base64ContactId = Buffer.from(ContactId).toString('base64');
@@ -132,12 +105,16 @@ async function processRow(params) {
     id: base64ContactId,
     Constituent_ID__c: ConstituentId,
     Campaign__c: campaignId,
+
+    UpgradeAmount: askAmount,
+    suggestedAmount: suggestedAmount,
+    keyDefaultAmount: keyDefaultAmount,
+
     utm_campaign: utm_campaign,
     utm_source: utm_source,
     utm_medium: utm_medium,
     utm_content: utm_content,
-    utm_term: utm_term,
-    UpgradeAmount: askAmount
+    utm_term: utm_term
   })
 
   if (URLCallToAction === 'UPGRADE' && isAbleToUse1ClickUpgrade) {
@@ -190,6 +167,7 @@ async function main() {
 
   let promises = []
   for (let i = 0; i < baseDe.length; i++) {
+  // for (let i = 0; i < 10; i++) {
     progressBar.increment()
     promises.push(processRow({ baseDe, i}))
 
@@ -260,4 +238,4 @@ async function main() {
       logger.error(JSON.stringify(e.response.data, null, 2))
     }
   }
-});
+})

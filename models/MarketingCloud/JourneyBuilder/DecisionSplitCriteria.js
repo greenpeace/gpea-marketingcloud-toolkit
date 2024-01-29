@@ -142,6 +142,11 @@ const DECISION_SPLIT_RULES_BY_SYNC_DE = {
     criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.Age__c\" Operator=\"LessThanOrEqual\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[19]]></Value></Condition></ConditionSet></FilterDefinition>"
   },
 
+  TOO_YOUNG_KR: {
+    description: "Age__c less than or equal 19",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.Age__c\" Operator=\"LessThanOrEqual\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[19]]></Value></Condition></ConditionSet></FilterDefinition>"
+  },
+
   PREF_ENG: {
     description: "Preferred_Language__c equal English",
     criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.Preferred_Language__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[English]]></Value></Condition></ConditionSet></FilterDefinition>"
@@ -187,19 +192,69 @@ const DECISION_SPLIT_RULES_BY_SYNC_DE = {
     criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.Donor_Status__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[Lapsed Donor]]></Value></Condition></ConditionSet></FilterDefinition>",
   },
 
-  CREATED_CASE_IN_3MONTHS: {
-    description: "CreatedDate is on or after Today Minus 90 days AND Direction__c equal Outbound AND Category__c equal TFR",
-    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Case_Salesforce_1.CreatedDate\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[;-;90;days]]></Value></AttributePath></Condition><Condition Key=\"Case_Salesforce_1.Direction__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[Outbound]]></Value></AttributePath></Condition><Condition Key=\"Case_Salesforce_1.Category__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[TFR]]></Value></AttributePath></Condition></ConditionSet></FilterDefinition>",
+  HAS_TFR_CASE_IN_N_DAYS: {
+    description: "CreatedDate is on or after Today Minus _N_ days AND Direction__c equal Outbound AND Category__c equal TFR",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Case_Salesforce_1.CreatedDate\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[;-;_N_;days]]></Value></AttributePath></Condition><Condition Key=\"Case_Salesforce_1.Direction__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[Outbound]]></Value></AttributePath></Condition><Condition Key=\"Case_Salesforce_1.Category__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[TFR]]></Value></AttributePath></Condition></ConditionSet></FilterDefinition>",
   },
 
-  SAID_NO_IN_6MOTHS: {
+  TFR_SAID_NO_IN_N_DAYS: {
     description: "Last_Call_Date__c is on or after Today Minus 180 days AND ( TFR_Call_Outcome__c equal No OR TFR_Call_Outcome__c equal Invalid Data OR TFR_Call_Outcome__c equal Call Back OR TFR_Call_Outcome__c equal Other )",
     criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Case_Salesforce_1.Last_Call_Date__c\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[;-;180;days]]></Value></AttributePath></Condition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Case_Salesforce_1.TFR_Call_Outcome__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[No]]></Value></AttributePath></Condition><Condition Key=\"Case_Salesforce_1.TFR_Call_Outcome__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[Invalid Data]]></Value></AttributePath></Condition><Condition Key=\"Case_Salesforce_1.TFR_Call_Outcome__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[Call Back]]></Value></AttributePath></Condition><Condition Key=\"Case_Salesforce_1.TFR_Call_Outcome__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[Other]]></Value></AttributePath></Condition></ConditionSet></ConditionSet></FilterDefinition>",
   },
 
-  SAID_YES_OR_UP_DOWN_GRADED_IN_9MONTHS: {
+  TFR_INVALID_DATA_IN_N_DAYS: {
+    description: "TFR_Call_Outcome__c equal Invalid Data AND Last_Call_Date__c is on or after Today Minus _N_ days",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Case_Salesforce_1.TFR_Call_Outcome__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[Invalid Data]]></Value></AttributePath></Condition><Condition Key=\"Case_Salesforce_1.Last_Call_Date__c\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[;-;_N_;days]]></Value></AttributePath></Condition></ConditionSet></FilterDefinition>",
+  },
+
+  TFR_SAID_YES_IN_N_DAYS: {
     description: "( TFR_Call_Outcome__c equal Yes AND Last_Call_Date__c is on or after Today Minus 270 days ) OR Last_Successful_Downgrade__c is on or after Today Minus 270 days OR Last_Successful_Upgrade__c is on or after Today Minus 270 days",
     criteria: "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Case_Salesforce_1.TFR_Call_Outcome__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[Yes]]></Value></AttributePath></Condition><Condition Key=\"Case_Salesforce_1.Last_Call_Date__c\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[;-;270;days]]></Value></AttributePath></Condition></ConditionSet><Condition Key=\"Contact_Salesforce_1.Last_Successful_Downgrade__c\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[;-;270;days]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.Last_Successful_Upgrade__c\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[;-;270;days]]></Value></Condition></ConditionSet></FilterDefinition>",
+  },
+
+  TFR_SAID_NO_IN_N_DAYS_KR: {
+    description: "TFR_Call_Outcome__c equal No AND Last_Call_Date__c is on or after Today Minus _N_ days",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Case_Salesforce_1.TFR_Call_Outcome__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[No]]></Value></AttributePath></Condition><Condition Key=\"Case_Salesforce_1.Last_Call_Date__c\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[;-;_N_;days]]></Value></AttributePath></Condition></ConditionSet></FilterDefinition>",
+  },
+
+  CANCEL_REQUEST_IN_N_DAYS: {
+    description: "Sub_Category__c contains Cancel AND CreatedDate is on or after Today Minus _N_ days",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Case_Salesforce_1.Sub_Category__c\" Operator=\"Contains\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[Cancel]]></Value></AttributePath></Condition><Condition Key=\"Case_Salesforce_1.CreatedDate\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[;-;_N_;days]]></Value></AttributePath></Condition></ConditionSet></FilterDefinition>",
+  },
+
+  UPGRADED_IN_N_DAYS: {
+    description: "Last_Successful_Upgrade__c is on or after Today Minus _N_ Days",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.Last_Successful_Upgrade__c\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[;-;_N_;days]]></Value></Condition></ConditionSet></FilterDefinition>",
+  },
+
+  DOWNGRADED_IN_N_DAYS: {
+    description: "Last_Successful_Downgrade__c is on or after Today Minus _N_ Days",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.Last_Successful_Downgrade__c\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[;-;_N_;days]]></Value></Condition></ConditionSet></FilterDefinition>",
+  },
+
+  DONATED_SG_IN_N_DAYS: {
+    description: "Date__c is on or after Today Minus _N_ days and Status__c equal Processed and (Is_Recurring_Donation__c is False OR Is_Recurring_Donation__c is null)",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Donation__c_Salesforce_1.Date__c\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"><Value><![CDATA[;-;_N_;days]]></Value></AttributePath></Condition><Condition Key=\"Donation__c_Salesforce_1.Status__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"><Value><![CDATA[Processed]]></Value></AttributePath></Condition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"> <Condition Key=\"Donation__c_Salesforce_1.Is_Recurring_Donation__c\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"> <AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"> <Value> <![CDATA[false]]> </Value> </AttributePath> </Condition> <Condition Key=\"Donation__c_Salesforce_1.Is_Recurring_Donation__c\" Operator=\"IsNull\" UiMetaData=\"_UI_METADATA_\"> <AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"> <Value> <![CDATA[]]> </Value> </AttributePath> </Condition> </ConditionSet></ConditionSet></FilterDefinition>"
+  },
+
+  DONATED_RG_IN_N_DAYS: {
+    description: "Date__c is on or after Today Minus _N_ days AND Status__c equal Processed AND Is_Recurring_Donation__c is True",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Donation__c_Salesforce_1.Date__c\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"><Value><![CDATA[;-;_N_;days]]></Value></AttributePath></Condition><Condition Key=\"Donation__c_Salesforce_1.Status__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"><Value><![CDATA[Processed]]></Value></AttributePath></Condition><Condition Key=\"Donation__c_Salesforce_1.Is_Recurring_Donation__c\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"><Value><![CDATA[true]]></Value></AttributePath></Condition></ConditionSet></FilterDefinition>"
+  },
+
+  DONATED_RG_IN_N_DAYS: {
+    description: "Date__c is on or after Today Minus _N_ days AND Status__c equal Processed AND Is_Recurring_Donation__c is True",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Donation__c_Salesforce_1.Date__c\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"><Value><![CDATA[;-;_N_;days]]></Value></AttributePath></Condition><Condition Key=\"Donation__c_Salesforce_1.Status__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"><Value><![CDATA[Processed]]></Value></AttributePath></Condition><Condition Key=\"Donation__c_Salesforce_1.Is_Recurring_Donation__c\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Donation__c_Salesforce_1_\"><Value><![CDATA[true]]></Value></AttributePath></Condition></ConditionSet></FilterDefinition>"
+  },
+
+  DO_NOT_CONTACT: {
+    description: "Do_Not_Contact__c is True",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.Do_Not_Contact__c\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[true]]></Value></Condition></ConditionSet></FilterDefinition>"
+  },
+
+  DO_NOT_MARKETING_NOR_FUNDRAISING: {
+    description: "Do_Not_Contact__c is True OR Marketing_Opt_Out__c is True OR Fundraising_Appeals_Opt_Out__c is True",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.Do_Not_Contact__c\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[true]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.Marketing_Opt_Out__c\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[true]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.Fundraising_Appeals_Opt_Out__c\" Operator=\"Is\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[true]]></Value></Condition></ConditionSet></FilterDefinition>",
   },
 
   TFR_CALLED_IN_30DAYS: {
