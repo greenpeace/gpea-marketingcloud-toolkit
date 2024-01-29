@@ -198,8 +198,13 @@ const DECISION_SPLIT_RULES_BY_SYNC_DE = {
   },
 
   TFR_SAID_NO_IN_N_DAYS: {
-    description: "Last_Call_Date__c is on or after Today Minus 180 days AND ( TFR_Call_Outcome__c equal No OR TFR_Call_Outcome__c equal Invalid Data OR TFR_Call_Outcome__c equal Call Back OR TFR_Call_Outcome__c equal Other )",
+    description: "Last_Call_Date__c is on or after Today Minus _N_ days AND ( TFR_Call_Outcome__c equal No OR TFR_Call_Outcome__c equal Invalid Data OR TFR_Call_Outcome__c equal Call Back OR TFR_Call_Outcome__c equal Other )",
     criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Case_Salesforce_1.Last_Call_Date__c\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[;-;180;days]]></Value></AttributePath></Condition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Case_Salesforce_1.TFR_Call_Outcome__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[No]]></Value></AttributePath></Condition><Condition Key=\"Case_Salesforce_1.TFR_Call_Outcome__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[Invalid Data]]></Value></AttributePath></Condition><Condition Key=\"Case_Salesforce_1.TFR_Call_Outcome__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[Call Back]]></Value></AttributePath></Condition><Condition Key=\"Case_Salesforce_1.TFR_Call_Outcome__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[Other]]></Value></AttributePath></Condition></ConditionSet></ConditionSet></FilterDefinition>",
+  },
+
+  TFR_SAID_NO_IN_N_DAYS_KR: {
+    description: "TFR_Call_Outcome__c equal No AND Last_Call_Date__c is on or after Today Minus _N_ days",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Case_Salesforce_1.TFR_Call_Outcome__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[No]]></Value></AttributePath></Condition><Condition Key=\"Case_Salesforce_1.Last_Call_Date__c\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[;-;_N_;days]]></Value></AttributePath></Condition></ConditionSet></FilterDefinition>",
   },
 
   TFR_INVALID_DATA_IN_N_DAYS: {
@@ -210,11 +215,6 @@ const DECISION_SPLIT_RULES_BY_SYNC_DE = {
   TFR_SAID_YES_IN_N_DAYS: {
     description: "( TFR_Call_Outcome__c equal Yes AND Last_Call_Date__c is on or after Today Minus 270 days ) OR Last_Successful_Downgrade__c is on or after Today Minus 270 days OR Last_Successful_Upgrade__c is on or after Today Minus 270 days",
     criteria: "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Case_Salesforce_1.TFR_Call_Outcome__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[Yes]]></Value></AttributePath></Condition><Condition Key=\"Case_Salesforce_1.Last_Call_Date__c\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[;-;270;days]]></Value></AttributePath></Condition></ConditionSet><Condition Key=\"Contact_Salesforce_1.Last_Successful_Downgrade__c\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[;-;270;days]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.Last_Successful_Upgrade__c\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[;-;270;days]]></Value></Condition></ConditionSet></FilterDefinition>",
-  },
-
-  TFR_SAID_NO_IN_N_DAYS_KR: {
-    description: "TFR_Call_Outcome__c equal No AND Last_Call_Date__c is on or after Today Minus _N_ days",
-    criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Case_Salesforce_1.TFR_Call_Outcome__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[No]]></Value></AttributePath></Condition><Condition Key=\"Case_Salesforce_1.Last_Call_Date__c\" Operator=\"AtOrAfter\" UiMetaData=\"_UI_METADATA_\"><AttributePath RelationshipID=\"_Case_Salesforce_1_\"><Value><![CDATA[;-;_N_;days]]></Value></AttributePath></Condition></ConditionSet></FilterDefinition>",
   },
 
   CANCEL_REQUEST_IN_N_DAYS: {
