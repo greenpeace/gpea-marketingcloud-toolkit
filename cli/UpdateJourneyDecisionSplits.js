@@ -18,7 +18,7 @@ require('dotenv').config()
  */
 async function main() {
   // EDIT HERE
-  const srcJourneyName = "kr-debit_fail-automd-weekly_reminder"
+  const srcJourneyName = "kr-new_donor_upgrade-automd"
   const destJourneyName = srcJourneyName
   // const destJourneyName = "up-lead_conversion-automd-oceans-oceanssancturies-dest-20230801"
   const market = "kr"

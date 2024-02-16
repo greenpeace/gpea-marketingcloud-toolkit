@@ -167,6 +167,17 @@ class JourneyBuilder {
   }
 
   /**
+   * Resolve the N from decision split pathName eg DOWNGRADE_IN_99_DAYS
+   * @param {string} pathName eg DOWNGRADE_IN_99_DAYS
+   * @return {mixed} NULL or int>0
+   */
+  _resolveInNDays(pathName) {
+    const match = pathName.match(/_(\d+)_DAY/); // Use regular expression to match one or more digits
+    const resolved = match ? parseInt(match[1], 10) : null; // Convert the matched string to an integer
+    return resolved
+  }
+
+  /**
    * Get the pre-defined criteria
    *
    * @param {string} pathName The criteria name
@@ -187,7 +198,14 @@ class JourneyBuilder {
       targetRules = this.decisionSplitRulesByEntryDe
     }
 
-    return targetRules[pathName + "_" + this.market.toUpperCase()] || targetRules[pathName]
+    // resolve IN_N_MONTHS, IN_N_DAYS formats
+    let nDays = this._resolveInNDays(pathName)
+    if (nDays) {
+      pathName = pathName.replace(nDays, "N")
+    }
+
+    let foundRule = targetRules[pathName + "_" + this.market.toUpperCase()] || targetRules[pathName]
+    return _.clone(foundRule)
   }
 
 
@@ -313,6 +331,13 @@ class JourneyBuilder {
             predefinedCriteria = this.getCriteria(actOutcomeMetaDataLabel, {
               useEntryDataField: false
             })
+          }
+
+          // deal with n days format
+          let nDays = this._resolveInNDays(actOutcomeMetaDataLabel)
+          if (nDays && predefinedCriteria) {
+            predefinedCriteria.description = predefinedCriteria.description.replace('_N_', `${nDays}`)
+            predefinedCriteria.criteria = predefinedCriteria.criteria.replace('_N_', `${nDays}`)
           }
 
           // path the criteria
