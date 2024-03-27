@@ -36,6 +36,7 @@ async function main() {
 
   // init criteria
   mcJB.setMarket(market)
+  mcJB.setCurrency(market)
   mcJB.patchDecisionSplitCriteria()
   mcJB.generateActivityWaitMap()
 

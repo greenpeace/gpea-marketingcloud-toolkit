@@ -58,6 +58,32 @@ class JourneyBuilder {
     this.market = market
     return this.market
   }
+  /**
+   * Set the currency of contact journey corresponding to market
+   */
+  setCurrency(market) {
+    market = market.toLowerCase()
+
+    if (["tw", "hk", "kr"].indexOf(market) < 0) {
+      throw new Error("The market should be one of tw, hk or kr")
+    }
+
+    if (market === "hk") {
+      this.currency = "HKD"
+      this.currencyLabel = "Hong Kong Dollar"
+      logger.debug('hk currency: ' + this.currency + ' ( ' + this.currencyLabel + ' )')
+    } else if (market === "kr") {
+      this.currency = "KRW"
+      this.currencyLabel = "Korean Won"
+      logger.debug('kr currency: ' + this.currency + ' ( ' + this.currencyLabel + ' )')
+    } else {
+      this.currency = "TWD"
+      this.currencyLabel = "Taiwan Dollar"
+      logger.debug('tw currency : ' + this.currency + ' ( ' + this.currencyLabel + ' )')
+    }
+    
+    return this.currency
+  }
 
   /**
    * Prepare the pre-defined decision split criteria which will be used to replace the rules.
@@ -493,11 +519,22 @@ class JourneyBuilder {
               "FieldType": "boolean",
               "MappingType": "Constant",
               "Processor": "static"
+            },
+            {
+              "FieldName": "CurrencyIsoCode",
+              "FieldLabel": "Currency ISO Code",
+              "FieldValue": this.currency,
+              "FieldValueLabel": this.currencyLabel,
+              "Required": "false",
+              "FieldType": "picklist",
+              "MappingType": "Constant",
+              "Processor": "static"
             }
           ]
         }])
 
         logger.debug(` - Journey_Name__c: ${this.srcJ.name}`)
+        logger.debug(` CurrencyIsoCode: ${this.currency}`)
       }
     }
 
