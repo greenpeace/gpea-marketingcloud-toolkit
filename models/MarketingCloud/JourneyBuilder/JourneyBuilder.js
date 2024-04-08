@@ -172,6 +172,9 @@ class JourneyBuilder {
    * @return {mixed} NULL or int>0
    */
   _resolveInNDays(pathName) {
+    if (!pathName) {
+      return null
+    }
     const match = pathName.match(/_(\d+)_DAY/); // Use regular expression to match one or more digits
     const resolved = match ? parseInt(match[1], 10) : null; // Convert the matched string to an integer
     return resolved

@@ -5,6 +5,7 @@ const fs = require('fs')
 const { RRule } = require('rrule');
 const { google } = require('googleapis');
 
+
 /**
  * Function to convert iCalendar RRule string into human-readable format
  * @param {string} icalRecurString - The iCalendar RRule string to convert
@@ -110,10 +111,34 @@ async function shortenUrl(longUrl) {
     long_url: longUrl
   };
 
+
+  // Define cache file path
+  const cacheFilePath = path.join(__dirname, '../../shortenUrl-cache.json');
+
   try {
+    // Check if cache file exists
+    let cache = {};
+    try {
+      const cacheData = fs.readFileSync(cacheFilePath, 'utf8');
+      cache = JSON.parse(cacheData);
+    } catch (readError) {
+      if (readError.code !== 'ENOENT') {
+        console.error('Error reading cache file:', readError);
+      }
+    }
+
+    // Check if URL is already in cache
+    if (cache[longUrl]) {
+      return cache[longUrl];
+    }
+
     const response = await axios.post("https://api-ssl.bitly.com/v4/shorten", payload, { headers });
     const bitlyUrl = response.data.id;
     const shortenUrl = `https://${bitlyUrl}`;
+
+    // Save shortened URL to cache
+    cache[longUrl] = shortenUrl;
+    fs.writeFileSync(cacheFilePath, JSON.stringify(cache, null, 2));
 
     return shortenUrl;
   } catch (error) {

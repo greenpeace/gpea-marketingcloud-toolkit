@@ -107,3 +107,5 @@ dist
 build
 journeyDoc.csv
 nohup.out
+
+shortenUrl-cache.json
