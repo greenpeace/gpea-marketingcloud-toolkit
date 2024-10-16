@@ -1,0 +1,4150 @@
+{
+  "id": "fca6ca39-edce-4743-b218-31df64846458",
+  "key": "50e0aca7-bb46-a077-08da-c6da65d8f270",
+  "name": "tw-transactional-automd-new_rg_by_donor",
+  "lastPublishedDate": "0001-01-01T00:00:00",
+  "description": "",
+  "version": 22,
+  "workflowApiVersion": 1,
+  "createdDate": "2024-06-04T03:26:44.677",
+  "modifiedDate": "2024-06-04T03:26:44.677",
+  "activities": [
+    {
+      "id": "0e663c2b-1645-4ea0-92ce-f8864ab2ddc4",
+      "key": "SALESCLOUDACTIVITY-2",
+      "name": "🤖CREATE_CONTACTJOURNEY",
+      "description": "",
+      "type": "SALESCLOUDACTIVITY",
+      "outcomes": [
+        {
+          "key": "1ddc4750-f221-46c4-999f-c85ff4fd5a09",
+          "next": "MULTICRITERIADECISIONV2-5",
+          "arguments": {},
+          "metaData": {
+            "invalid": false
+          }
+        }
+      ],
+      "arguments": {
+        "objectMap": {
+          "objects": [
+            {
+              "type": "coe__Contact_Audience__c",
+              "subtype": null,
+              "order": "1",
+              "action": "Create",
+              "lookup": null,
+              "fields": [
+                {
+                  "FieldName": "coe__Contact__c",
+                  "FieldLabel": "Contact",
+                  "FieldValue": "Assign to the Person in the Journey",
+                  "FieldValueLabel": "Assign to the Person in the Journey",
+                  "Required": "true",
+                  "FieldType": "reference",
+                  "MappingType": "Constant",
+                  "Processor": "personInJourney",
+                  "ReferenceObjectNames": [
+                    "CONTACT"
+                  ]
+                },
+                {
+                  "FieldName": "Journey_Name__c",
+                  "FieldLabel": "Journey Name",
+                  "FieldValue": "tw-transactional-automd-new_rg_by_donor",
+                  "FieldValueLabel": "tw-transactional-automd-new_rg_by_donor",
+                  "Required": "false",
+                  "FieldType": "string",
+                  "MappingType": "Constant",
+                  "Processor": "static"
+                },
+                {
+                  "FieldName": "Journey_Start_Date__c",
+                  "FieldLabel": "Journey Start Date",
+                  "FieldValue": "Date Contact Enters Activity",
+                  "FieldValueLabel": "Date Contact Enters Activity",
+                  "Required": "false",
+                  "FieldType": "datetime",
+                  "MappingType": "Constant",
+                  "Processor": "dateContactEnters",
+                  "FieldAdjustment": {
+                    "SubProcessor": "dateAdjustment",
+                    "Units": "Days",
+                    "NumUnits": "0",
+                    "TimeDirection": "after"
+                  }
+                },
+                {
+                  "FieldName": "Ready_for_Journey__c",
+                  "FieldLabel": "Ready for Journey",
+                  "FieldValue": "true",
+                  "FieldValueLabel": "true",
+                  "Required": "false",
+                  "FieldType": "boolean",
+                  "MappingType": "Constant",
+                  "Processor": "static"
+                },
+                {
+                  "FieldName": "CurrencyIsoCode",
+                  "FieldLabel": "Currency ISO Code",
+                  "FieldValue": "TWD",
+                  "FieldValueLabel": "Taiwan Dollar",
+                  "Required": "false",
+                  "FieldType": "picklist",
+                  "MappingType": "Constant",
+                  "Processor": "static"
+                }
+              ]
+            }
+          ]
+        },
+        "version": "1.0",
+        "contactKey": "{{Context.ContactKey}}",
+        "contactId": "{{Context.ContactId}}",
+        "definitionId": "{{Context.DefinitionId}}",
+        "activityId": "{{Activity.Id}}",
+        "startActivityKey": "{{Context.StartActivityKey}}",
+        "definitionInstanceId": "{{Context.DefinitionInstanceId}}",
+        "requestObjectId": "{{Context.RequestObjectId}}"
+      },
+      "configurationArguments": {
+        "applicationExtensionKey": "Salesforce_Activity"
+      },
+      "metaData": {
+        "isConfigured": true,
+        "expressionBuilderPrefix": "Contact Journey"
+      },
+      "schema": {
+        "arguments": {
+          "salesforceObjectID": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Visible"
+          },
+          "asyncDiscardDate": {
+            "dataType": "Date",
+            "isNullable": false,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Visible"
+          },
+          "objectMap": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "version": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "contactKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "contactId": {
+            "dataType": "Number",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "definitionId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "activityId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "startActivityKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "definitionInstanceId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "requestObjectId": {
+            "dataType": "LongNumber",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          }
+        }
+      }
+    },
+    {
+      "id": "74501a55-0767-4bfc-b610-042b3146dec0",
+      "key": "SALESCLOUDACTIVITY-4",
+      "name": "🤖END_CONTACTJOURNEY(PHONE_NOT_VALID)",
+      "description": "",
+      "type": "SALESCLOUDACTIVITY",
+      "outcomes": [
+        {
+          "key": "f9206349-30dc-4e7f-92f5-92d5f2b7467d",
+          "next": "WAITBYDURATION-3",
+          "arguments": {},
+          "metaData": {
+            "invalid": false
+          }
+        }
+      ],
+      "arguments": {
+        "objectMap": {
+          "objects": [
+            {
+              "type": "coe__Contact_Audience__c",
+              "subtype": null,
+              "order": "1",
+              "action": "Update",
+              "lookup": {
+                "type": "salesforceLookup",
+                "lookupObject": "coe__Contact_Audience__c",
+                "steps": [
+                  {
+                    "criteria": [
+                      {
+                        "FieldName": "Id",
+                        "FieldValue": "{{Interaction.SALESCLOUDACTIVITY-2.salesforceObjectID}}",
+                        "FieldValueLabel": "🤖CREATE_CONTACTJOURNEY",
+                        "FieldType": "id"
+                      }
+                    ]
+                  }
+                ],
+                "MultiOutComeOption": "DoNotUpdate",
+                "ZeroOutComeOption": "DoNotUpdate"
+              },
+              "fields": [
+                {
+                  "UpdateType": "OverWriteNewValue",
+                  "Updateable": "true",
+                  "FieldName": "Journey_End_Date__c",
+                  "FieldLabel": "Journey End Date",
+                  "FieldValue": "Date Contact Enters Activity",
+                  "FieldValueLabel": "Date Contact Enters Activity",
+                  "Required": "false",
+                  "FieldType": "datetime",
+                  "MappingType": "Constant",
+                  "Processor": "dateContactEnters",
+                  "FieldAdjustment": {
+                    "SubProcessor": "dateAdjustment",
+                    "Units": "Days",
+                    "NumUnits": "0",
+                    "TimeDirection": "after"
+                  }
+                },
+                {
+                  "UpdateType": "OverWriteNewValue",
+                  "Updateable": "true",
+                  "FieldName": "Journey_Exit_Reason__c",
+                  "FieldLabel": "Journey Exit Reason",
+                  "FieldValue": "🤖PHONE_NOT_VALID",
+                  "FieldValueLabel": "🤖PHONE_NOT_VALID",
+                  "Required": "false",
+                  "FieldType": "string",
+                  "MappingType": "Constant",
+                  "Processor": "static"
+                }
+              ]
+            }
+          ]
+        },
+        "version": "1.0",
+        "contactKey": "{{Context.ContactKey}}",
+        "contactId": "{{Context.ContactId}}",
+        "definitionId": "{{Context.DefinitionId}}",
+        "activityId": "{{Activity.Id}}",
+        "startActivityKey": "{{Context.StartActivityKey}}",
+        "definitionInstanceId": "{{Context.DefinitionInstanceId}}",
+        "requestObjectId": "{{Context.RequestObjectId}}"
+      },
+      "configurationArguments": {
+        "applicationExtensionKey": "Salesforce_Activity"
+      },
+      "metaData": {
+        "isConfigured": true,
+        "expressionBuilderPrefix": "Contact Journey"
+      },
+      "schema": {
+        "arguments": {
+          "salesforceObjectID": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Visible"
+          },
+          "asyncDiscardDate": {
+            "dataType": "Date",
+            "isNullable": false,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Visible"
+          },
+          "objectMap": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "version": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "contactKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "contactId": {
+            "dataType": "Number",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "definitionId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "activityId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "startActivityKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "definitionInstanceId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "requestObjectId": {
+            "dataType": "LongNumber",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          }
+        }
+      }
+    },
+    {
+      "id": "4c851113-5556-4633-96d2-0975351e0727",
+      "key": "WAITBYDURATION-3",
+      "name": "1 day",
+      "description": "",
+      "type": "WAIT",
+      "outcomes": [
+        {
+          "key": "17298661-d67b-4d24-b106-d4a5157e080b",
+          "arguments": {},
+          "metaData": {
+            "invalid": false
+          }
+        }
+      ],
+      "arguments": {
+        "waitEndDateAttributeDataBound": "",
+        "waitDefinitionId": "a5cd0ae1-fdbb-4549-85f4-1b97456f6fd8",
+        "waitForEventId": "",
+        "executionMode": "{{Context.ExecutionMode}}",
+        "startActivityKey": "{{Context.StartActivityKey}}",
+        "waitQueueId": "{{Context.WaitQueueId}}"
+      },
+      "configurationArguments": {
+        "waitDuration": 1,
+        "waitUnit": "DAYS",
+        "specifiedTime": "",
+        "timeZone": "",
+        "description": "",
+        "waitEndDateAttributeExpression": "",
+        "specificDate": "",
+        "waitForEventKey": ""
+      },
+      "metaData": {
+        "isConfigured": true,
+        "uiType": "WAITBYDURATION"
+      },
+      "schema": {
+        "arguments": {
+          "endDate": {
+            "dataType": "Date",
+            "isNullable": false,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitEndDateAttributeDataBound": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitDefinitionId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitForEventId": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "executionMode": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "startActivityKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitQueueId": {
+            "dataType": "LongNumber",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          }
+        }
+      }
+    },
+    {
+      "id": "b09b7e9a-ce56-476f-8380-108afc648c8d",
+      "key": "MULTICRITERIADECISIONV2-3",
+      "name": "",
+      "description": "",
+      "type": "MULTICRITERIADECISION",
+      "outcomes": [
+        {
+          "key": "default_path_1",
+          "next": "WAITBYDURATION-8",
+          "arguments": {},
+          "metaData": {
+            "label": "👽PHONE_NOT_VALID",
+            "skipI18n": true,
+            "isLabelFromConversion": false,
+            "criteriaDescription": "Contact:MobilePhone does not contain +886 OR Contact:MobilePhone contains 0000000 OR Contact:MobilePhone contains 1234567 OR Contact:MobilePhone contains 28548338",
+            "invalid": false
+          }
+        },
+        {
+          "key": "remainder_path",
+          "next": "SMSSYNC-1",
+          "arguments": {},
+          "metaData": {
+            "label": "Remainder",
+            "invalid": false
+          }
+        }
+      ],
+      "arguments": {
+        "filterResult": "default_path_1={{Contact.FilterId.bfe4edf1-e73c-42c3-83f7-b5100e7b8a9f}},remainder_path=False"
+      },
+      "configurationArguments": {
+        "schemaVersionId": 252,
+        "criteria": {
+          "default_path_1": "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition IsEphemeralAttribute=\"true\" Key=\"Event.SalesforceObj09b188eb8a321dfa23425873d9b7bb41.Recurring_Donation__c:Contact__r:MobilePhone\" Operator=\"NotContains\" UiMetaData=\"{}\"><Value><![CDATA[+886]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"Event.SalesforceObj09b188eb8a321dfa23425873d9b7bb41.Recurring_Donation__c:Contact__r:MobilePhone\" Operator=\"Contains\" UiMetaData=\"{}\"><Value><![CDATA[0000000]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"Event.SalesforceObj09b188eb8a321dfa23425873d9b7bb41.Recurring_Donation__c:Contact__r:MobilePhone\" Operator=\"Contains\" UiMetaData=\"{}\"><Value><![CDATA[1234567]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"Event.SalesforceObj09b188eb8a321dfa23425873d9b7bb41.Recurring_Donation__c:Contact__r:MobilePhone\" Operator=\"Contains\" UiMetaData=\"{}\"><Value><![CDATA[28548338]]></Value></Condition></ConditionSet></FilterDefinition>"
+        }
+      },
+      "metaData": {
+        "isConfigured": true
+      },
+      "schema": {
+        "arguments": {
+          "actualChoice": {
+            "dataType": "Number",
+            "isNullable": false,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "filterResult": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": true,
+            "access": "Hidden"
+          }
+        }
+      }
+    },
+    {
+      "id": "d0867ab8-05fe-4f41-9c16-2290d082ce17",
+      "key": "WAITBYDURATION-2",
+      "name": "1 day",
+      "description": "",
+      "type": "WAIT",
+      "outcomes": [
+        {
+          "key": "19c4359e-4d31-4529-91e8-65cd98b73c47",
+          "arguments": {},
+          "metaData": {
+            "invalid": false
+          }
+        }
+      ],
+      "arguments": {
+        "waitEndDateAttributeDataBound": "",
+        "waitDefinitionId": "2b5cc31a-a4c5-4dcd-a46d-5319ecf5e3e4",
+        "waitForEventId": "",
+        "executionMode": "{{Context.ExecutionMode}}",
+        "startActivityKey": "{{Context.StartActivityKey}}",
+        "waitQueueId": "{{Context.WaitQueueId}}"
+      },
+      "configurationArguments": {
+        "waitDuration": 1,
+        "waitUnit": "DAYS",
+        "specifiedTime": "",
+        "timeZone": "",
+        "description": "",
+        "waitEndDateAttributeExpression": "",
+        "specificDate": "",
+        "waitForEventKey": ""
+      },
+      "metaData": {
+        "isConfigured": true,
+        "uiType": "WAITBYDURATION"
+      },
+      "schema": {
+        "arguments": {
+          "endDate": {
+            "dataType": "Date",
+            "isNullable": false,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitEndDateAttributeDataBound": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitDefinitionId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitForEventId": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "executionMode": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "startActivityKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitQueueId": {
+            "dataType": "LongNumber",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          }
+        }
+      }
+    },
+    {
+      "id": "e29150d7-5826-47d8-a9f3-2817a859a07e",
+      "key": "WAITBYDURATION-4",
+      "name": "1 day",
+      "description": "",
+      "type": "WAIT",
+      "outcomes": [
+        {
+          "key": "20cb79db-1d1f-4a2f-8759-9aa0a058ce9a",
+          "arguments": {},
+          "metaData": {
+            "invalid": false
+          }
+        }
+      ],
+      "arguments": {
+        "waitEndDateAttributeDataBound": "",
+        "waitDefinitionId": "d08fed06-f14a-4c90-aee4-5f55a5534e2c",
+        "waitForEventId": "",
+        "executionMode": "{{Context.ExecutionMode}}",
+        "startActivityKey": "{{Context.StartActivityKey}}",
+        "waitQueueId": "{{Context.WaitQueueId}}"
+      },
+      "configurationArguments": {
+        "waitDuration": 1,
+        "waitUnit": "DAYS",
+        "specifiedTime": "",
+        "timeZone": "",
+        "description": "",
+        "waitEndDateAttributeExpression": "",
+        "specificDate": "",
+        "waitForEventKey": ""
+      },
+      "metaData": {
+        "isConfigured": true,
+        "uiType": "WAITBYDURATION"
+      },
+      "schema": {
+        "arguments": {
+          "endDate": {
+            "dataType": "Date",
+            "isNullable": false,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitEndDateAttributeDataBound": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitDefinitionId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitForEventId": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "executionMode": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "startActivityKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitQueueId": {
+            "dataType": "LongNumber",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          }
+        }
+      }
+    },
+    {
+      "id": "688c7ab2-7055-4165-8010-2bf7b869a982",
+      "key": "MULTICRITERIADECISIONV2-5",
+      "name": "",
+      "description": "",
+      "type": "MULTICRITERIADECISION",
+      "outcomes": [
+        {
+          "key": "103e0199-dd26-22b5-5de3-ac69b4a68ddb",
+          "next": "SALESCLOUDACTIVITY-3",
+          "arguments": {},
+          "metaData": {
+            "label": "👽UPDATED_BY_ADMIN",
+            "skipI18n": true,
+            "isLabelFromConversion": false,
+            "criteriaDescription": "LastModifiedById equal 0052u000000he2JAAQ OR LastModifiedById equal 0052v00000ahdbhAAA",
+            "invalid": false
+          }
+        },
+        {
+          "key": "06c59654-ffd4-0976-51a2-b839285e7a4e",
+          "next": "EMAILV2-2",
+          "arguments": {},
+          "metaData": {
+            "label": "IS_GPSEA",
+            "skipI18n": true,
+            "isLabelFromConversion": false,
+            "criteriaDescription": "Recurring_Donation__c:Campaign__c equal 7012u000000Ia1OAAS OR Recurring_Donation__c:Campaign__c equal 7012u000000Ia1JAAS OR Recurring_Donation__c:Campaign__c equal 7012u000000Ia14AAC OR Recurring_Donation__c:Campaign__c equal 7012u000000Ia19AAC",
+            "invalid": false
+          }
+        },
+        {
+          "key": "remainder_path",
+          "next": "MULTICRITERIADECISIONV2-1",
+          "arguments": {},
+          "metaData": {
+            "label": "Remainder",
+            "isLabelFromConversion": false,
+            "invalid": false
+          }
+        }
+      ],
+      "arguments": {
+        "filterResult": "103e0199-dd26-22b5-5de3-ac69b4a68ddb={{Contact.FilterId.5349992a-1dee-47f8-a905-aa6fa5d573d9}},06c59654-ffd4-0976-51a2-b839285e7a4e={{Contact.FilterId.3bb7e899-25a7-4c46-a5da-48ab54bc78c4}},remainder_path=False"
+      },
+      "configurationArguments": {
+        "schemaVersionId": 252,
+        "criteria": {
+          "103e0199-dd26-22b5-5de3-ac69b4a68ddb": "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition IsEphemeralAttribute=\"true\" Key=\"Event.SalesforceObj09b188eb8a321dfa23425873d9b7bb41.Recurring_Donation__c:LastModifiedById\" Operator=\"Equal\" UiMetaData=\"{}\"><Value><![CDATA[0052u000000he2JAAQ]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"Event.SalesforceObj09b188eb8a321dfa23425873d9b7bb41.Recurring_Donation__c:LastModifiedById\" Operator=\"Equal\" UiMetaData=\"{}\"><Value><![CDATA[0052v00000ahdbhAAA]]></Value></Condition></ConditionSet></FilterDefinition>",
+          "06c59654-ffd4-0976-51a2-b839285e7a4e": "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition IsEphemeralAttribute=\"true\" Key=\"Event.SalesforceObj09b188eb8a321dfa23425873d9b7bb41.Recurring_Donation__c:Campaign__c\" Operator=\"Equal\" UiMetaData=\"{}\"><Value><![CDATA[7012u000000Ia1OAAS]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"Event.SalesforceObj09b188eb8a321dfa23425873d9b7bb41.Recurring_Donation__c:Campaign__c\" Operator=\"Equal\" UiMetaData=\"{}\"><Value><![CDATA[7012u000000Ia1JAAS]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"Event.SalesforceObj09b188eb8a321dfa23425873d9b7bb41.Recurring_Donation__c:Campaign__c\" Operator=\"Equal\" UiMetaData=\"{}\"><Value><![CDATA[7012u000000Ia14AAC]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"Event.SalesforceObj09b188eb8a321dfa23425873d9b7bb41.Recurring_Donation__c:Campaign__c\" Operator=\"Equal\" UiMetaData=\"{}\"><Value><![CDATA[7012u000000Ia19AAC]]></Value></Condition></ConditionSet></FilterDefinition>"
+        }
+      },
+      "metaData": {
+        "isConfigured": true
+      },
+      "schema": {
+        "arguments": {
+          "actualChoice": {
+            "dataType": "Number",
+            "isNullable": false,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "filterResult": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": true,
+            "access": "Hidden"
+          }
+        }
+      }
+    },
+    {
+      "id": "635f6754-f646-4b47-956d-3d2d30faf457",
+      "key": "SMSSYNC-1",
+      "name": "sms_1_gpsea",
+      "description": "",
+      "type": "SMSSYNC",
+      "outcomes": [
+        {
+          "key": "4d1e1405-7655-4b04-9287-d1f438d36aab",
+          "next": "SALESCLOUDACTIVITY-10",
+          "arguments": {},
+          "metaData": {
+            "invalid": false
+          }
+        }
+      ],
+      "arguments": {
+        "contactKey": "{{Contact.Key}}",
+        "defaultSMSAddress": "{{Contact.Default.SMS}}",
+        "mobileNumber": "{{InteractionDefaults.MobileNumber}}",
+        "contactId": "{{Contact.Id}}",
+        "definitionInstanceId": "{{Context.DefinitionInstanceId}}",
+        "definitionId": "{{Context.DefinitionId}}",
+        "eventData": "{{Event}}"
+      },
+      "configurationArguments": {
+        "messageId": "MTUyMTo2MjU6MA",
+        "keywordId": "R01ISzVDM0w5RTJMbFpRMEZ1WTJmQTo4Njow",
+        "isOptIn": true,
+        "honorBlackoutWindowEnum": 0,
+        "mobileBlackoutWindowStartTime": "",
+        "mobileBlackoutWindowEndTime": "",
+        "isUsingDEAttributesForPersonalization": true,
+        "assetId": 52287,
+        "codeId": "S0VBdlFJZFN5a084OFdEN3BXOEw2QTo4MTow",
+        "description": "",
+        "fromName": "447860078861",
+        "isFromNameCertificationAccepted": false,
+        "nextKeywordId": "",
+        "campaignId": 0,
+        "reportingId": "",
+        "isConcatenate": true,
+        "googleCampaignName": "",
+        "shortLinks": {
+          "ShortLinks": []
+        },
+        "applicationExtensionKey": "jb-mobile-connect-send-sms-sync"
+      },
+      "metaData": {
+        "icon": "https://jb-mobile-connect.s50.marketingcloudapps.com/images/sms_icon.svg",
+        "iconSmall": "https://jb-mobile-connect.s50.marketingcloudapps.com/images/icon_small.png",
+        "category": "message",
+        "version": "1.2.7",
+        "statsContactIcon": "",
+        "original_icon": "https://jb-mobile-connect.s50.marketingcloudapps.com/images/sms_icon.svg",
+        "original_iconSmall": "https://jb-mobile-connect.s50.marketingcloudapps.com/images/icon_small.png",
+        "sections": {},
+        "isConfigured": true,
+        "showGoogleAnalytics": true,
+        "trackingSettings": {
+          "isTrackingEnabled": true,
+          "isCustomCampaign": true
+        },
+        "globals": {
+          "description": "tw-transactional-automd-new_rg_by_donor-sms_1_gpsea"
+        },
+        "store": {
+          "messageDefinition": {
+            "views": {
+              "sms": {
+                "meta": {
+                  "options": {
+                    "customBlockData": {
+                      "display:message": "%%[\nVAR @Salutation,@FirstName,@LastName,@FullName, @DonationAmount\nSET @FullName = TRUE\nSET @FirstName = Recurring_Donation__c:Contact__r:FirstName\nSET @LastName = Recurring_Donation__c:Contact__r:LastName\nSET @DonationAmount = Recurring_Donation__c:Amount__c\n\nIF @FullName THEN \n    SET @Salutation = CONCAT(@LastName, @FirstName) ELSEIF NOT EMPTY(@FirstName) THEN\n    SET @Salutation = @FirstName \nELSEIF NOT EMPTY(@LastName) THEN\n    SET @Salutation = @LastName \nENDIF\n]%%綠色和平捐款會員%%=v(@Salutation)=%%：十分謝謝您以每月捐款 NT$%%=v(@DonationAmount)=%% 元支持東南亞環保倡議專案！您將收到定期專案成果與資助人專屬活動邀請，請持續關注綠色和平最新環保消息。如需諮詢，歡迎您來電至會員服務專線 (02)23612025",
+                      "shortLinks": []
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "messageConfiguration": {
+            "selectedCode": {
+              "countryCode": "GB",
+              "id": "S0VBdlFJZFN5a084OFdEN3BXOEw2QTo4MTow",
+              "code": "447860078861"
+            }
+          },
+          "selectedContentBuilderMessage": "%%[\nVAR @Salutation,@FirstName,@LastName,@FullName, @DonationAmount\nSET @FullName = TRUE\nSET @FirstName = Recurring_Donation__c:Contact__r:FirstName\nSET @LastName = Recurring_Donation__c:Contact__r:LastName\nSET @DonationAmount = Recurring_Donation__c:Amount__c\n\nIF @FullName THEN \n    SET @Salutation = CONCAT(@LastName, @FirstName) ELSEIF NOT EMPTY(@FirstName) THEN\n    SET @Salutation = @FirstName \nELSEIF NOT EMPTY(@LastName) THEN\n    SET @Salutation = @LastName \nENDIF\n]%%綠色和平捐款會員%%=v(@Salutation)=%%：十分謝謝您以每月捐款 NT$%%=v(@DonationAmount)=%% 元支持東南亞環保倡議專案！您將收到定期專案成果與資助人專屬活動邀請，請持續關注綠色和平最新環保消息。如需諮詢，歡迎您來電至會員服務專線 (02)23612025"
+        },
+        "shortLinks": "[]"
+      },
+      "schema": {
+        "arguments": {
+          "smsJobId": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "isAddressCreated": {
+            "dataType": "Boolean",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "isSubscriptionCreated": {
+            "dataType": "Boolean",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "isTriggeredSend": {
+            "dataType": "Boolean",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "isWithinBlackout": {
+            "dataType": "Boolean",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "isValidMobileNumber": {
+            "dataType": "Boolean",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "outMessageId": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "outKeywordId": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "outIsOptIn": {
+            "dataType": "Boolean",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "outHonorBlackoutWindowEnum": {
+            "dataType": "Number",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "outMobileBlackoutWindowStartTime": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "outMobileBlackoutWindowEndTime": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "outUtcOffset": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "outWindowStart": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "outWindowEnd": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "outTimeZoneId": {
+            "dataType": "Number",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "outIsTZValid": {
+            "dataType": "Boolean",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "outIsMobileBlackoutWindowEnabled": {
+            "dataType": "Boolean",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "outIsUsingDEAttributesForPersonalization": {
+            "dataType": "Boolean",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "outCountProcessedSingletonDuringBatchMethod": {
+            "dataType": "LongNumber",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "contactKey": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "defaultSMSAddress": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "mobileNumber": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "contactId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "definitionInstanceId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "definitionId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "eventData": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          }
+        }
+      }
+    },
+    {
+      "id": "ec981de0-ad5c-4657-bb39-48750be33082",
+      "key": "SALESCLOUDACTIVITY-7",
+      "name": "🤖END_CONTACTJOURNEY(Comfirmed Multiple RD)",
+      "description": "",
+      "type": "SALESCLOUDACTIVITY",
+      "outcomes": [
+        {
+          "key": "0a9051ad-cf31-41bd-b8af-8de89dd5735a",
+          "next": "WAITBYDURATION-2",
+          "arguments": {},
+          "metaData": {
+            "invalid": false
+          }
+        }
+      ],
+      "arguments": {
+        "objectMap": {
+          "objects": [
+            {
+              "type": "coe__Contact_Audience__c",
+              "subtype": null,
+              "order": "1",
+              "action": "Update",
+              "lookup": {
+                "type": "salesforceLookup",
+                "lookupObject": "coe__Contact_Audience__c",
+                "steps": [
+                  {
+                    "criteria": [
+                      {
+                        "FieldName": "Id",
+                        "FieldValue": "{{Interaction.SALESCLOUDACTIVITY-2.salesforceObjectID}}",
+                        "FieldValueLabel": "🤖CREATE_CONTACTJOURNEY",
+                        "FieldType": "id"
+                      }
+                    ]
+                  }
+                ],
+                "MultiOutComeOption": "DoNotUpdate",
+                "ZeroOutComeOption": "DoNotUpdate"
+              },
+              "fields": [
+                {
+                  "UpdateType": "OverWriteNewValue",
+                  "Updateable": "true",
+                  "FieldName": "Journey_End_Date__c",
+                  "FieldLabel": "Journey End Date",
+                  "FieldValue": "Date Contact Enters Activity",
+                  "FieldValueLabel": "Date Contact Enters Activity",
+                  "Required": "false",
+                  "FieldType": "datetime",
+                  "MappingType": "Constant",
+                  "Processor": "dateContactEnters",
+                  "FieldAdjustment": {
+                    "SubProcessor": "dateAdjustment",
+                    "Units": "Days",
+                    "NumUnits": "0",
+                    "TimeDirection": "after"
+                  }
+                },
+                {
+                  "UpdateType": "OverWriteNewValue",
+                  "Updateable": "true",
+                  "FieldName": "Journey_Exit_Reason__c",
+                  "FieldLabel": "Journey Exit Reason",
+                  "FieldValue": "Comfirmed Multiple RD",
+                  "FieldValueLabel": "Comfirmed Multiple RD",
+                  "Required": "false",
+                  "FieldType": "string",
+                  "MappingType": "Constant",
+                  "Processor": "static"
+                }
+              ]
+            }
+          ]
+        },
+        "version": "1.0",
+        "contactKey": "{{Context.ContactKey}}",
+        "contactId": "{{Context.ContactId}}",
+        "definitionId": "{{Context.DefinitionId}}",
+        "activityId": "{{Activity.Id}}",
+        "startActivityKey": "{{Context.StartActivityKey}}",
+        "definitionInstanceId": "{{Context.DefinitionInstanceId}}",
+        "requestObjectId": "{{Context.RequestObjectId}}"
+      },
+      "configurationArguments": {
+        "applicationExtensionKey": "Salesforce_Activity"
+      },
+      "metaData": {
+        "isConfigured": true,
+        "expressionBuilderPrefix": "Contact Journey"
+      },
+      "schema": {
+        "arguments": {
+          "salesforceObjectID": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Visible"
+          },
+          "asyncDiscardDate": {
+            "dataType": "Date",
+            "isNullable": false,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Visible"
+          },
+          "objectMap": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "version": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "contactKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "contactId": {
+            "dataType": "Number",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "definitionId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "activityId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "startActivityKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "definitionInstanceId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "requestObjectId": {
+            "dataType": "LongNumber",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          }
+        }
+      }
+    },
+    {
+      "id": "add03dac-c84f-416f-89ef-4c7bb3de0f20",
+      "key": "MULTICRITERIADECISIONV2-1",
+      "name": "",
+      "description": "",
+      "type": "MULTICRITERIADECISION",
+      "outcomes": [
+        {
+          "key": "default_path_1",
+          "next": "WAITBYDURATION-10",
+          "arguments": {},
+          "metaData": {
+            "label": "👽EMAIL_NOT_VALID",
+            "skipI18n": true,
+            "isLabelFromConversion": false,
+            "criteriaDescription": "Email is null OR Email does not contain @ OR Email contains noaddress",
+            "invalid": false
+          }
+        },
+        {
+          "key": "remainder_path",
+          "next": "EMAILV2-1",
+          "arguments": {},
+          "metaData": {
+            "label": "Remainder",
+            "isLabelFromConversion": false,
+            "invalid": false
+          }
+        }
+      ],
+      "arguments": {
+        "filterResult": "default_path_1={{Contact.FilterId.810c2695-c95c-4bb7-8777-2ad1bad9046f}},remainder_path=False"
+      },
+      "configurationArguments": {
+        "schemaVersionId": 252,
+        "criteria": {
+          "default_path_1": "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition IsEphemeralAttribute=\"true\" Key=\"Event.SalesforceObj09b188eb8a321dfa23425873d9b7bb41.Recurring_Donation__c:Contact__r:Email\" Operator=\"NotContains\" UiMetaData=\"{}\"><Value><![CDATA[@]]></Value></Condition><Condition IsEphemeralAttribute=\"true\" Key=\"Event.SalesforceObj09b188eb8a321dfa23425873d9b7bb41.Recurring_Donation__c:Contact__r:Email\" Operator=\"Contains\" UiMetaData=\"{}\"><Value><![CDATA[noaddress]]></Value></Condition></ConditionSet></FilterDefinition>"
+        }
+      },
+      "metaData": {
+        "isConfigured": true
+      },
+      "schema": {
+        "arguments": {
+          "actualChoice": {
+            "dataType": "Number",
+            "isNullable": false,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "filterResult": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": true,
+            "access": "Hidden"
+          }
+        }
+      }
+    },
+    {
+      "id": "7314bce2-8c57-4108-8098-529a587362be",
+      "key": "SALESCLOUDACTIVITY-9",
+      "name": "🤖END_CONTACTJOURNEY(PHONE_NOT_VALID)",
+      "description": "",
+      "type": "SALESCLOUDACTIVITY",
+      "outcomes": [
+        {
+          "key": "2a394745-3821-4667-8488-b6649214d602",
+          "next": "WAITBYDURATION-16",
+          "arguments": {},
+          "metaData": {
+            "invalid": false
+          }
+        }
+      ],
+      "arguments": {
+        "objectMap": {
+          "objects": [
+            {
+              "type": "coe__Contact_Audience__c",
+              "subtype": null,
+              "order": "1",
+              "action": "Update",
+              "lookup": {
+                "type": "salesforceLookup",
+                "lookupObject": "coe__Contact_Audience__c",
+                "steps": [
+                  {
+                    "criteria": [
+                      {
+                        "FieldName": "Id",
+                        "FieldValue": "{{Interaction.SALESCLOUDACTIVITY-2.salesforceObjectID}}",
+                        "FieldValueLabel": "🤖CREATE_CONTACTJOURNEY",
+                        "FieldType": "id"
+                      }
+                    ]
+                  }
+                ],
+                "MultiOutComeOption": "DoNotUpdate",
+                "ZeroOutComeOption": "DoNotUpdate"
+              },
+              "fields": [
+                {
+                  "UpdateType": "OverWriteNewValue",
+                  "Updateable": "true",
+                  "FieldName": "Journey_End_Date__c",
+                  "FieldLabel": "Journey End Date",
+                  "FieldValue": "Date Contact Enters Activity",
+                  "FieldValueLabel": "Date Contact Enters Activity",
+                  "Required": "false",
+                  "FieldType": "datetime",
+                  "MappingType": "Constant",
+                  "Processor": "dateContactEnters",
+                  "FieldAdjustment": {
+                    "SubProcessor": "dateAdjustment",
+                    "Units": "Days",
+                    "NumUnits": "0",
+                    "TimeDirection": "after"
+                  }
+                },
+                {
+                  "UpdateType": "OverWriteNewValue",
+                  "Updateable": "true",
+                  "FieldName": "Journey_Exit_Reason__c",
+                  "FieldLabel": "Journey Exit Reason",
+                  "FieldValue": "👽PHONE_NOT_VALID",
+                  "FieldValueLabel": "👽PHONE_NOT_VALID",
+                  "Required": "false",
+                  "FieldType": "string",
+                  "MappingType": "Constant",
+                  "Processor": "static"
+                }
+              ]
+            }
+          ]
+        },
+        "version": "1.0",
+        "contactKey": "{{Context.ContactKey}}",
+        "contactId": "{{Context.ContactId}}",
+        "definitionId": "{{Context.DefinitionId}}",
+        "activityId": "{{Activity.Id}}",
+        "startActivityKey": "{{Context.StartActivityKey}}",
+        "definitionInstanceId": "{{Context.DefinitionInstanceId}}",
+        "requestObjectId": "{{Context.RequestObjectId}}"
+      },
+      "configurationArguments": {
+        "applicationExtensionKey": "Salesforce_Activity"
+      },
+      "metaData": {
+        "isConfigured": true,
+        "expressionBuilderPrefix": "Contact Journey"
+      },
+      "schema": {
+        "arguments": {
+          "salesforceObjectID": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Visible"
+          },
+          "asyncDiscardDate": {
+            "dataType": "Date",
+            "isNullable": false,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Visible"
+          },
+          "objectMap": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "version": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "contactKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "contactId": {
+            "dataType": "Number",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "definitionId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "activityId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "startActivityKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "definitionInstanceId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "requestObjectId": {
+            "dataType": "LongNumber",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          }
+        }
+      }
+    },
+    {
+      "id": "341f3d85-1e15-4182-ad64-56763ffd1c6b",
+      "key": "SALESCLOUDACTIVITY-5",
+      "name": "🤖END_CONTACTJOURNEY(STILL HAVE OPEN mutiple RD CASE)",
+      "description": "",
+      "type": "SALESCLOUDACTIVITY",
+      "outcomes": [
+        {
+          "key": "a44cfaea-6352-4a32-a3f4-6347dbb7c94a",
+          "next": "WAITBYDURATION-5",
+          "arguments": {},
+          "metaData": {
+            "invalid": false
+          }
+        }
+      ],
+      "arguments": {
+        "objectMap": {
+          "objects": [
+            {
+              "type": "coe__Contact_Audience__c",
+              "subtype": null,
+              "order": "1",
+              "action": "Update",
+              "lookup": {
+                "type": "salesforceLookup",
+                "lookupObject": "coe__Contact_Audience__c",
+                "steps": [
+                  {
+                    "criteria": [
+                      {
+                        "FieldName": "Id",
+                        "FieldValue": "{{Interaction.SALESCLOUDACTIVITY-2.salesforceObjectID}}",
+                        "FieldValueLabel": "🤖CREATE_CONTACTJOURNEY",
+                        "FieldType": "id"
+                      }
+                    ]
+                  }
+                ],
+                "MultiOutComeOption": "DoNotUpdate",
+                "ZeroOutComeOption": "DoNotUpdate"
+              },
+              "fields": [
+                {
+                  "UpdateType": "OverWriteNewValue",
+                  "Updateable": "true",
+                  "FieldName": "Journey_End_Date__c",
+                  "FieldLabel": "Journey End Date",
+                  "FieldValue": "Date Contact Enters Activity",
+                  "FieldValueLabel": "Date Contact Enters Activity",
+                  "Required": "false",
+                  "FieldType": "datetime",
+                  "MappingType": "Constant",
+                  "Processor": "dateContactEnters",
+                  "FieldAdjustment": {
+                    "SubProcessor": "dateAdjustment",
+                    "Units": "Days",
+                    "NumUnits": "0",
+                    "TimeDirection": "after"
+                  }
+                },
+                {
+                  "UpdateType": "OverWriteNewValue",
+                  "Updateable": "true",
+                  "FieldName": "Journey_Exit_Reason__c",
+                  "FieldLabel": "Journey Exit Reason",
+                  "FieldValue": "STILL HAVE OPEN mutiple RD CASE",
+                  "FieldValueLabel": "STILL HAVE OPEN mutiple RD CASE",
+                  "Required": "false",
+                  "FieldType": "string",
+                  "MappingType": "Constant",
+                  "Processor": "static"
+                }
+              ]
+            }
+          ]
+        },
+        "version": "1.0",
+        "contactKey": "{{Context.ContactKey}}",
+        "contactId": "{{Context.ContactId}}",
+        "definitionId": "{{Context.DefinitionId}}",
+        "activityId": "{{Activity.Id}}",
+        "startActivityKey": "{{Context.StartActivityKey}}",
+        "definitionInstanceId": "{{Context.DefinitionInstanceId}}",
+        "requestObjectId": "{{Context.RequestObjectId}}"
+      },
+      "configurationArguments": {
+        "applicationExtensionKey": "Salesforce_Activity"
+      },
+      "metaData": {
+        "isConfigured": true,
+        "expressionBuilderPrefix": "Contact Journey"
+      },
+      "schema": {
+        "arguments": {
+          "salesforceObjectID": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Visible"
+          },
+          "asyncDiscardDate": {
+            "dataType": "Date",
+            "isNullable": false,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Visible"
+          },
+          "objectMap": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "version": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "contactKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "contactId": {
+            "dataType": "Number",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "definitionId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "activityId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "startActivityKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "definitionInstanceId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "requestObjectId": {
+            "dataType": "LongNumber",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          }
+        }
+      }
+    },
+    {
+      "id": "d0e9eab3-d10e-4d61-a757-57ada389a49b",
+      "key": "WAITBYDURATION-5",
+      "name": "1 day",
+      "description": "",
+      "type": "WAIT",
+      "outcomes": [
+        {
+          "key": "5df6340f-4824-406e-924f-e82f7e835aaf",
+          "arguments": {},
+          "metaData": {
+            "invalid": false
+          }
+        }
+      ],
+      "arguments": {
+        "waitEndDateAttributeDataBound": "",
+        "waitDefinitionId": "6d0de255-3477-4f96-8fb9-96643a00f8cc",
+        "waitForEventId": "",
+        "executionMode": "{{Context.ExecutionMode}}",
+        "startActivityKey": "{{Context.StartActivityKey}}",
+        "waitQueueId": "{{Context.WaitQueueId}}"
+      },
+      "configurationArguments": {
+        "waitDuration": 1,
+        "waitUnit": "DAYS",
+        "specifiedTime": "",
+        "timeZone": "",
+        "description": "",
+        "waitEndDateAttributeExpression": "",
+        "specificDate": "",
+        "waitForEventKey": ""
+      },
+      "metaData": {
+        "isConfigured": true,
+        "uiType": "WAITBYDURATION"
+      },
+      "schema": {
+        "arguments": {
+          "endDate": {
+            "dataType": "Date",
+            "isNullable": false,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitEndDateAttributeDataBound": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitDefinitionId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitForEventId": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "executionMode": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "startActivityKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitQueueId": {
+            "dataType": "LongNumber",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          }
+        }
+      }
+    },
+    {
+      "id": "57437962-85be-4abf-87eb-5800c30f5054",
+      "key": "SALESCLOUDACTIVITY-10",
+      "name": "🤖END_CONTACTJOURNEY(Remainder)",
+      "description": "",
+      "type": "SALESCLOUDACTIVITY",
+      "outcomes": [
+        {
+          "key": "84d6486d-6cd9-4d03-b948-e3d18eb91db5",
+          "next": "WAITBYDURATION-9",
+          "arguments": {},
+          "metaData": {
+            "invalid": false
+          }
+        }
+      ],
+      "arguments": {
+        "objectMap": {
+          "objects": [
+            {
+              "type": "coe__Contact_Audience__c",
+              "subtype": null,
+              "order": "1",
+              "action": "Update",
+              "lookup": {
+                "type": "salesforceLookup",
+                "lookupObject": "coe__Contact_Audience__c",
+                "steps": [
+                  {
+                    "criteria": [
+                      {
+                        "FieldName": "Id",
+                        "FieldValue": "{{Interaction.SALESCLOUDACTIVITY-2.salesforceObjectID}}",
+                        "FieldValueLabel": "🤖CREATE_CONTACTJOURNEY",
+                        "FieldType": "id"
+                      }
+                    ]
+                  }
+                ],
+                "MultiOutComeOption": "DoNotUpdate",
+                "ZeroOutComeOption": "DoNotUpdate"
+              },
+              "fields": [
+                {
+                  "UpdateType": "OverWriteNewValue",
+                  "Updateable": "true",
+                  "FieldName": "Journey_End_Date__c",
+                  "FieldLabel": "Journey End Date",
+                  "FieldValue": "Date Contact Enters Activity",
+                  "FieldValueLabel": "Date Contact Enters Activity",
+                  "Required": "false",
+                  "FieldType": "datetime",
+                  "MappingType": "Constant",
+                  "Processor": "dateContactEnters",
+                  "FieldAdjustment": {
+                    "SubProcessor": "dateAdjustment",
+                    "Units": "Days",
+                    "NumUnits": "0",
+                    "TimeDirection": "after"
+                  }
+                },
+                {
+                  "UpdateType": "OverWriteNewValue",
+                  "Updateable": "true",
+                  "FieldName": "Journey_Exit_Reason__c",
+                  "FieldLabel": "Journey Exit Reason",
+                  "FieldValue": "Remainder",
+                  "FieldValueLabel": "Remainder",
+                  "Required": "false",
+                  "FieldType": "string",
+                  "MappingType": "Constant",
+                  "Processor": "static"
+                }
+              ]
+            }
+          ]
+        },
+        "version": "1.0",
+        "contactKey": "{{Context.ContactKey}}",
+        "contactId": "{{Context.ContactId}}",
+        "definitionId": "{{Context.DefinitionId}}",
+        "activityId": "{{Activity.Id}}",
+        "startActivityKey": "{{Context.StartActivityKey}}",
+        "definitionInstanceId": "{{Context.DefinitionInstanceId}}",
+        "requestObjectId": "{{Context.RequestObjectId}}"
+      },
+      "configurationArguments": {
+        "applicationExtensionKey": "Salesforce_Activity"
+      },
+      "metaData": {
+        "isConfigured": true,
+        "expressionBuilderPrefix": "Contact Journey"
+      },
+      "schema": {
+        "arguments": {
+          "salesforceObjectID": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Visible"
+          },
+          "asyncDiscardDate": {
+            "dataType": "Date",
+            "isNullable": false,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Visible"
+          },
+          "objectMap": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "version": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "contactKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "contactId": {
+            "dataType": "Number",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "definitionId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "activityId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "startActivityKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "definitionInstanceId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "requestObjectId": {
+            "dataType": "LongNumber",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          }
+        }
+      }
+    },
+    {
+      "id": "6363167a-25e2-44de-8e21-682cfedb7697",
+      "key": "WAITBYDURATION-6",
+      "name": "1 day",
+      "description": "",
+      "type": "WAIT",
+      "outcomes": [
+        {
+          "key": "9815c287-4a3b-44dd-8f96-6340559f14d9",
+          "arguments": {},
+          "metaData": {
+            "invalid": false
+          }
+        }
+      ],
+      "arguments": {
+        "waitEndDateAttributeDataBound": "",
+        "waitDefinitionId": "e30d90a5-2387-47f4-9ccf-a9a4e2b43ccf",
+        "waitForEventId": "",
+        "executionMode": "{{Context.ExecutionMode}}",
+        "startActivityKey": "{{Context.StartActivityKey}}",
+        "waitQueueId": "{{Context.WaitQueueId}}"
+      },
+      "configurationArguments": {
+        "waitDuration": 1,
+        "waitUnit": "DAYS",
+        "specifiedTime": "",
+        "timeZone": "",
+        "description": "",
+        "waitEndDateAttributeExpression": "",
+        "specificDate": "",
+        "waitForEventKey": ""
+      },
+      "metaData": {
+        "isConfigured": true,
+        "uiType": "WAITBYDURATION"
+      },
+      "schema": {
+        "arguments": {
+          "endDate": {
+            "dataType": "Date",
+            "isNullable": false,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitEndDateAttributeDataBound": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitDefinitionId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitForEventId": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "executionMode": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "startActivityKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitQueueId": {
+            "dataType": "LongNumber",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          }
+        }
+      }
+    },
+    {
+      "id": "2ecd9467-0fb5-4d2b-b580-717c46b18104",
+      "key": "EMAILV2-2",
+      "name": "email_1_gpsea",
+      "description": "",
+      "type": "EMAILV2",
+      "outcomes": [
+        {
+          "key": "cb0f9382-d884-47d5-a76b-45bd35c24c25",
+          "next": "MULTICRITERIADECISIONV2-3",
+          "arguments": {},
+          "metaData": {
+            "invalid": false
+          }
+        }
+      ],
+      "arguments": {
+        "activityId": "{{Activity.Id}}",
+        "definitionId": "{{Context.DefinitionId}}",
+        "emailSubjectDataBound": "%%Recurring_Donation__c:Contact__r:FirstName%%，感謝有您加入綠色和平",
+        "contactId": "{{Contact.Id}}",
+        "contactKey": "{{Contact.Key}}",
+        "emailAddress": "{{InteractionDefaults.Email}}",
+        "sourceCustomObjectId": "{{Contact.AddressInfo.Email.SourceCustomObjectId}}",
+        "sourceCustomObjectKey": "{{Contact.AddressInfo.Email.SourceCustomObjectKey}}",
+        "fieldType": "{{Contact.AddressInfo.Email.FieldType}}",
+        "eventData": "{{Event}}",
+        "obfuscationProperties": "{{InteractionDefaults.Email.ObfuscationProperties}}",
+        "customObjectKey": "",
+        "definitionInstanceId": "{{Context.DefinitionInstanceId}}"
+      },
+      "configurationArguments": {
+        "triggeredSend": {
+          "autoAddSubscribers": true,
+          "autoUpdateSubscribers": true,
+          "bccEmail": "",
+          "ccEmail": "",
+          "created": {
+            "name": "",
+            "date": ""
+          },
+          "description": "tw-transactional-automd-new_rg_by_donor-email_1_gpsea",
+          "domainExclusions": [],
+          "dynamicEmailSubject": "%%Recurring_Donation__c:Contact__r:FirstName%%，感謝有您加入綠色和平",
+          "emailId": 18579,
+          "emailSubject": "%%Recurring_Donation__c:Contact__r:FirstName%%，感謝有您加入綠色和平",
+          "exclusionFilter": "",
+          "isSalesforceTracking": true,
+          "isMultipart": true,
+          "isSendLogging": false,
+          "isStoppedOnJobError": false,
+          "modified": {
+            "name": "",
+            "date": ""
+          },
+          "preHeader": "",
+          "priority": 4,
+          "sendClassificationId": "92096f5d-7657-ea11-b834-b883035bd8a1",
+          "deliveryProfileId": "90096f5d-7657-ea11-b834-b883035bd8a1",
+          "senderProfileId": "8f096f5d-7657-ea11-b834-b883035bd8a1",
+          "isTrackingClicks": true,
+          "publicationListId": 18,
+          "name": "email_1_gpsea - 268e349fb73144a58141fbf85c585201",
+          "suppressTracking": false,
+          "keyword": "",
+          "throttleLimit": 0,
+          "campaigns": [],
+          "suppressionLists": []
+        },
+        "triggeredSendId": "e46af90e-5422-ef11-a5ce-f40343df3e38",
+        "triggeredSendKey": "86372",
+        "isModified": false,
+        "isSimulation": false,
+        "googleAnalyticsCampaignName": "",
+        "useLLTS": false,
+        "fuelAgentRequested": true,
+        "applicationExtensionKey": "jb-email-activity"
+      },
+      "metaData": {
+        "category": "message",
+        "version": "1.0",
+        "icon": "https://jb-email-activity.s50.marketingcloudapps.com/img/email-icon.svg",
+        "iconSmall": "https://jb-email-activity.s50.marketingcloudapps.com/img/email-icon.svg",
+        "statsContactIcon": "",
+        "original_icon": "/img/email-icon.svg",
+        "original_iconSmall": "/img/email-icon.svg",
+        "sections": {},
+        "isConfigured": true
+      },
+      "schema": {
+        "arguments": {
+          "requestID": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "messageKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "activityId": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "definitionId": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": true,
+            "access": "Hidden"
+          },
+          "emailSubjectDataBound": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": true,
+            "access": "Hidden"
+          },
+          "contactId": {
+            "dataType": "Number",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "contactKey": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "emailAddress": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "sourceCustomObjectId": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "sourceCustomObjectKey": {
+            "dataType": "LongNumber",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "fieldType": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "eventData": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "obfuscationProperties": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "customObjectKey": {
+            "dataType": "LongNumber",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": true,
+            "access": "Hidden"
+          },
+          "definitionInstanceId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          }
+        }
+      }
+    },
+    {
+      "id": "6a6ef871-faa5-403a-a6e7-8702a5b45dbb",
+      "key": "WAITBYDURATION-20",
+      "name": "1 day",
+      "description": "",
+      "type": "WAIT",
+      "outcomes": [
+        {
+          "key": "2975173e-2e90-4180-b8e9-5af2eb9d2e10",
+          "arguments": {},
+          "metaData": {
+            "invalid": false
+          }
+        }
+      ],
+      "arguments": {
+        "waitEndDateAttributeDataBound": "",
+        "waitDefinitionId": "4fab5250-4787-43e6-bcbc-1fb1175273d2",
+        "waitForEventId": "",
+        "executionMode": "{{Context.ExecutionMode}}",
+        "startActivityKey": "{{Context.StartActivityKey}}",
+        "waitQueueId": "{{Context.WaitQueueId}}"
+      },
+      "configurationArguments": {
+        "waitDuration": 1,
+        "waitUnit": "DAYS",
+        "specifiedTime": "",
+        "timeZone": "",
+        "description": "",
+        "waitEndDateAttributeExpression": "",
+        "specificDate": "",
+        "waitForEventKey": ""
+      },
+      "metaData": {
+        "isConfigured": true,
+        "uiType": "WAITBYDURATION"
+      },
+      "schema": {
+        "arguments": {
+          "endDate": {
+            "dataType": "Date",
+            "isNullable": false,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitEndDateAttributeDataBound": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitDefinitionId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitForEventId": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "executionMode": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "startActivityKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitQueueId": {
+            "dataType": "LongNumber",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          }
+        }
+      }
+    },
+    {
+      "id": "9b06f278-a88b-43d3-b549-9be0a97b1e1c",
+      "key": "WAITBYDURATION-16",
+      "name": "1 day",
+      "description": "",
+      "type": "WAIT",
+      "outcomes": [
+        {
+          "key": "73520eca-ab30-4e50-9f8e-5f922159870d",
+          "arguments": {},
+          "metaData": {
+            "invalid": false
+          }
+        }
+      ],
+      "arguments": {
+        "waitEndDateAttributeDataBound": "",
+        "waitDefinitionId": "c8ad4010-eed7-48eb-a253-f3feb8086adc",
+        "waitForEventId": "",
+        "executionMode": "{{Context.ExecutionMode}}",
+        "startActivityKey": "{{Context.StartActivityKey}}",
+        "waitQueueId": "{{Context.WaitQueueId}}"
+      },
+      "configurationArguments": {
+        "waitDuration": 1,
+        "waitUnit": "DAYS",
+        "specifiedTime": "",
+        "timeZone": "",
+        "description": "",
+        "waitEndDateAttributeExpression": "",
+        "specificDate": "",
+        "waitForEventKey": ""
+      },
+      "metaData": {
+        "isConfigured": true,
+        "uiType": "WAITBYDURATION"
+      },
+      "schema": {
+        "arguments": {
+          "endDate": {
+            "dataType": "Date",
+            "isNullable": false,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitEndDateAttributeDataBound": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitDefinitionId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitForEventId": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "executionMode": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "startActivityKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitQueueId": {
+            "dataType": "LongNumber",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          }
+        }
+      }
+    },
+    {
+      "id": "a9dfbbc5-dd6a-4e81-a2fe-9d4dce8819c8",
+      "key": "WAITBYDURATION-1",
+      "name": "26 hours",
+      "description": "",
+      "type": "WAIT",
+      "outcomes": [
+        {
+          "key": "fabdc436-7484-4bb3-b98d-3b0f07084ecc",
+          "next": "MULTICRITERIADECISIONV2-2",
+          "arguments": {},
+          "metaData": {
+            "invalid": false
+          }
+        }
+      ],
+      "arguments": {
+        "waitEndDateAttributeDataBound": "",
+        "waitDefinitionId": "6104ffdf-e079-489c-a3a9-5827db02ed0a",
+        "waitForEventId": "",
+        "executionMode": "{{Context.ExecutionMode}}",
+        "startActivityKey": "{{Context.StartActivityKey}}",
+        "waitQueueId": "{{Context.WaitQueueId}}"
+      },
+      "configurationArguments": {
+        "waitDuration": 26,
+        "waitUnit": "HOURS",
+        "specifiedTime": "00:00",
+        "timeZone": "Taipei Standard Time",
+        "description": "",
+        "waitEndDateAttributeExpression": "",
+        "specificDate": "",
+        "waitForEventKey": ""
+      },
+      "metaData": {
+        "isConfigured": true,
+        "isExtended": false,
+        "waitType": "duration",
+        "guidanceCardKey": "",
+        "uiType": "WAITBYDURATION"
+      },
+      "schema": {
+        "arguments": {
+          "endDate": {
+            "dataType": "Date",
+            "isNullable": false,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitEndDateAttributeDataBound": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitDefinitionId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitForEventId": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "executionMode": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "startActivityKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitQueueId": {
+            "dataType": "LongNumber",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          }
+        }
+      }
+    },
+    {
+      "id": "bbae1cec-a588-472b-8917-9ec964bbe0cf",
+      "key": "EMAILV2-1",
+      "name": "tw-202007-Em-Trans-Standalone_Recurring_Donation_Acknowledgement",
+      "description": "",
+      "type": "EMAILV2",
+      "outcomes": [
+        {
+          "key": "9bb539b0-d499-4f48-a3c8-d81518759ab0",
+          "next": "WAITBYDURATION-1",
+          "arguments": {},
+          "metaData": {
+            "invalid": false,
+            "joinLabel": ""
+          }
+        }
+      ],
+      "arguments": {
+        "activityId": "{{Activity.Id}}",
+        "definitionId": "{{Context.DefinitionId}}",
+        "emailSubjectDataBound": "%%Recurring_Donation__c:Contact__r:FirstName%%，感謝有您加入綠色和平",
+        "contactId": "{{Contact.Id}}",
+        "contactKey": "{{Contact.Key}}",
+        "emailAddress": "{{InteractionDefaults.Email}}",
+        "sourceCustomObjectId": "{{Contact.AddressInfo.Email.SourceCustomObjectId}}",
+        "sourceCustomObjectKey": "{{Contact.AddressInfo.Email.SourceCustomObjectKey}}",
+        "fieldType": "{{Contact.AddressInfo.Email.FieldType}}",
+        "eventData": "{{Event}}",
+        "obfuscationProperties": "{{InteractionDefaults.Email.ObfuscationProperties}}",
+        "customObjectKey": "",
+        "definitionInstanceId": "{{Context.DefinitionInstanceId}}"
+      },
+      "configurationArguments": {
+        "triggeredSend": {
+          "autoAddSubscribers": true,
+          "autoUpdateSubscribers": true,
+          "bccEmail": "",
+          "categoryId": 6907,
+          "ccEmail": "",
+          "created": {
+            "name": "MC Integration User",
+            "date": "2020-08-04T20:57:00Z"
+          },
+          "description": "tw-2007-Em-Trans-Standalone_R - 7d6b749556054ef99b61fbbc17c70355",
+          "domainExclusions": [],
+          "dynamicEmailSubject": "%%Donation__c:Contact__r:FirstName%%，再次歡迎您！成為綠色和平不可或缺的力量！",
+          "emailId": 967,
+          "emailSubject": "%%Recurring_Donation__c:Contact__r:FirstName%%，感謝有您加入綠色和平",
+          "exclusionFilter": "",
+          "id": "1e3ce3af-1fd6-ea11-b840-b883035b8991",
+          "isSalesforceTracking": true,
+          "isMultipart": true,
+          "isSendLogging": false,
+          "isStoppedOnJobError": false,
+          "key": "1830",
+          "keyword": "",
+          "modified": {
+            "name": "MC Integration User",
+            "date": "2020-08-05T17:16:00Z"
+          },
+          "name": "tw-202007-Em-Trans-Standalone - 44d11b0cda704cb086e898a5bbf0569a",
+          "preHeader": "",
+          "priority": 4,
+          "replyToAddress": "",
+          "replyToDisplayName": "",
+          "sendClassificationId": "92096f5d-7657-ea11-b834-b883035bd8a1",
+          "suppressTracking": false,
+          "triggeredSendStatus": "Inactive",
+          "version": 3,
+          "senderProfileId": "7bfe1004-6679-ea11-b838-b883035b89e1",
+          "isTrackingClicks": true,
+          "publicationListId": 18,
+          "deliveryProfileId": "90096f5d-7657-ea11-b834-b883035bd8a1",
+          "throttleLimit": 0,
+          "campaigns": [],
+          "suppressionLists": []
+        },
+        "triggeredSendId": "e96af90e-5422-ef11-a5ce-f40343df3e38",
+        "triggeredSendKey": "86373",
+        "isModified": false,
+        "isSimulation": false,
+        "googleAnalyticsCampaignName": "",
+        "useLLTS": false,
+        "fuelAgentRequested": true,
+        "applicationExtensionKey": "jb-email-activity"
+      },
+      "metaData": {
+        "icon": "https://jb-email-activity.s50.marketingcloudapps.com/img/email-icon.svg",
+        "iconSmall": "https://jb-email-activity.s50.marketingcloudapps.com/img/email-icon.svg",
+        "category": "message",
+        "version": "1.0",
+        "statsContactIcon": "",
+        "original_icon": "/img/email-icon.svg",
+        "original_iconSmall": "/img/email-icon.svg",
+        "sections": {},
+        "isConfigured": true
+      },
+      "schema": {
+        "arguments": {
+          "requestID": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "messageKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "activityId": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "definitionId": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": true,
+            "access": "Hidden"
+          },
+          "emailSubjectDataBound": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": true,
+            "access": "Hidden"
+          },
+          "contactId": {
+            "dataType": "Number",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "contactKey": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "emailAddress": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "sourceCustomObjectId": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "sourceCustomObjectKey": {
+            "dataType": "LongNumber",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "fieldType": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "eventData": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "obfuscationProperties": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "customObjectKey": {
+            "dataType": "LongNumber",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": true,
+            "access": "Hidden"
+          },
+          "definitionInstanceId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          }
+        }
+      }
+    },
+    {
+      "id": "bf347d4f-1021-47d0-ab57-a3bfc84b03e4",
+      "key": "SALESCLOUDACTIVITY-1",
+      "name": "TFR Case",
+      "description": "",
+      "type": "SALESCLOUDACTIVITY",
+      "outcomes": [
+        {
+          "key": "1ae66aef-4510-45f9-810a-b8f7c0b24f69",
+          "next": "SALESCLOUDACTIVITY-8",
+          "arguments": {},
+          "metaData": {
+            "invalid": false
+          }
+        }
+      ],
+      "arguments": {
+        "objectMap": {
+          "objects": [
+            {
+              "type": "Case",
+              "subtype": null,
+              "order": "1",
+              "action": "Create",
+              "lookup": null,
+              "fields": [
+                {
+                  "FieldName": "BusinessHoursId",
+                  "FieldLabel": "Business Hours ID",
+                  "FieldValue": "01m2v0000015YkNAAU",
+                  "FieldValueLabel": "Default",
+                  "Required": "true",
+                  "FieldType": "reference",
+                  "MappingType": "Constant",
+                  "Processor": "static",
+                  "ReferenceObjectNames": [
+                    "BUSINESSHOURS"
+                  ],
+                  "AdditionalInfo": {
+                    "ReferenceObject": "BusinessHours"
+                  }
+                },
+                {
+                  "FieldName": "OwnerId",
+                  "FieldLabel": "Owner ID",
+                  "FieldValue": "00G2u000000tm5CEAQ",
+                  "FieldValueLabel": "Supporter Services - TW",
+                  "Required": "false",
+                  "FieldType": "reference",
+                  "MappingType": "Constant",
+                  "Processor": "static",
+                  "ReferenceObjectNames": [
+                    "GROUP"
+                  ],
+                  "AdditionalInfo": {
+                    "ReferenceObject": "Group"
+                  }
+                },
+                {
+                  "FieldName": "Direction__c",
+                  "FieldLabel": "Direction",
+                  "FieldValue": "Outbound",
+                  "FieldValueLabel": "Outbound",
+                  "Required": "false",
+                  "FieldType": "picklist",
+                  "MappingType": "Constant",
+                  "Processor": "static"
+                },
+                {
+                  "FieldName": "Category__c",
+                  "FieldLabel": "Category",
+                  "FieldValue": "Supporter Services",
+                  "FieldValueLabel": "Supporter Services",
+                  "Required": "false",
+                  "FieldType": "picklist",
+                  "MappingType": "Constant",
+                  "Processor": "static"
+                },
+                {
+                  "FieldName": "Sub_Category__c",
+                  "FieldLabel": "Sub Category",
+                  "FieldValue": "Verify Multiple RD",
+                  "FieldValueLabel": "Verify Multiple RD",
+                  "Required": "false",
+                  "FieldType": "picklist",
+                  "MappingType": "Constant",
+                  "Processor": "static"
+                },
+                {
+                  "FieldName": "Origin",
+                  "FieldLabel": "Case Origin",
+                  "FieldValue": "Phone",
+                  "FieldValueLabel": "Phone",
+                  "Required": "false",
+                  "FieldType": "picklist",
+                  "MappingType": "Constant",
+                  "Processor": "static"
+                },
+                {
+                  "FieldName": "Campaign__c",
+                  "FieldLabel": "Campaign",
+                  "FieldValue": "7012u000000OxD4AAK",
+                  "FieldValueLabel": "Supporter Care - TW",
+                  "Required": "false",
+                  "FieldType": "reference",
+                  "MappingType": "Constant",
+                  "Processor": "static",
+                  "ReferenceObjectNames": [
+                    "CAMPAIGN"
+                  ],
+                  "AdditionalInfo": {
+                    "ReferenceObject": "Campaign"
+                  }
+                },
+                {
+                  "FieldName": "SuppliedPhone",
+                  "FieldLabel": "Phone",
+                  "FieldValue": "{{Event.\"SalesforceObj09b188eb8a321dfa23425873d9b7bb41\".\"Recurring_Donation__c:Contact__r:MobilePhone\"}}",
+                  "FieldValueLabel": "Recurring_Donation__c:Contact__r:MobilePhone",
+                  "Required": "false",
+                  "FieldType": "string",
+                  "MappingType": "Constant",
+                  "Processor": "static"
+                },
+                {
+                  "FieldName": "SuppliedName",
+                  "FieldLabel": "Name",
+                  "FieldValue": "{{Event.\"SalesforceObj09b188eb8a321dfa23425873d9b7bb41\".\"Recurring_Donation__c:Contact__r:Name\"}}",
+                  "FieldValueLabel": "Recurring_Donation__c:Contact__r:Name",
+                  "Required": "false",
+                  "FieldType": "string",
+                  "MappingType": "Constant",
+                  "Processor": "static"
+                },
+                {
+                  "FieldName": "SuppliedEmail",
+                  "FieldLabel": "Email Address",
+                  "FieldValue": "{{Event.\"SalesforceObj09b188eb8a321dfa23425873d9b7bb41\".\"Recurring_Donation__c:Contact__r:Email\"}}",
+                  "FieldValueLabel": "Recurring_Donation__c:Contact__r:Email",
+                  "Required": "false",
+                  "FieldType": "email",
+                  "MappingType": "Constant",
+                  "Processor": "static"
+                },
+                {
+                  "FieldName": "Market__c",
+                  "FieldLabel": "Market",
+                  "FieldValue": "a0J2u000001NjoNEAS",
+                  "FieldValueLabel": "Taiwan",
+                  "Required": "false",
+                  "FieldType": "reference",
+                  "MappingType": "Constant",
+                  "Processor": "static",
+                  "ReferenceObjectNames": [
+                    "MARKET__C"
+                  ],
+                  "AdditionalInfo": {
+                    "ReferenceObject": "Market__c"
+                  }
+                },
+                {
+                  "FieldName": "ContactId",
+                  "FieldLabel": "Contact ID",
+                  "FieldValue": "Assign to the Person in the Journey",
+                  "FieldValueLabel": "Assign to the Person in the Journey",
+                  "Required": "false",
+                  "FieldType": "reference",
+                  "MappingType": "Constant",
+                  "Processor": "personInJourney",
+                  "ReferenceObjectNames": [
+                    "CONTACT"
+                  ]
+                },
+                {
+                  "FieldName": "Recurring_Donation__c",
+                  "FieldLabel": "Recurring Donation",
+                  "FieldValue": "{{Contact.Attribute.\"Contacts\".\"Contact_Salesforce_1\".\"Recurring_Donation__c\"}}",
+                  "FieldValueLabel": "Recurring_Donation__c",
+                  "Required": "false",
+                  "FieldType": "reference",
+                  "MappingType": "Constant",
+                  "Processor": "static",
+                  "ReferenceObjectNames": [
+                    "RECURRING_DONATION__C"
+                  ]
+                },
+                {
+                  "FieldName": "Subject",
+                  "FieldLabel": "Subject",
+                  "FieldValue": "Multiple Recurring Donation Verification Call",
+                  "FieldValueLabel": "Multiple Recurring Donation Verification Call",
+                  "Required": "false",
+                  "FieldType": "string",
+                  "MappingType": "Constant",
+                  "Processor": "static"
+                }
+              ]
+            }
+          ]
+        },
+        "version": "1.0",
+        "contactKey": "{{Context.ContactKey}}",
+        "contactId": "{{Context.ContactId}}",
+        "definitionId": "{{Context.DefinitionId}}",
+        "activityId": "{{Activity.Id}}",
+        "startActivityKey": "{{Context.StartActivityKey}}",
+        "definitionInstanceId": "{{Context.DefinitionInstanceId}}",
+        "requestObjectId": "{{Context.RequestObjectId}}"
+      },
+      "configurationArguments": {
+        "applicationExtensionKey": "Salesforce_Activity_Case"
+      },
+      "metaData": {
+        "isConfigured": true,
+        "expressionBuilderPrefix": "Case"
+      },
+      "schema": {
+        "arguments": {
+          "salesforceObjectID": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Visible"
+          },
+          "asyncDiscardDate": {
+            "dataType": "Date",
+            "isNullable": false,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Visible"
+          },
+          "objectMap": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "version": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "contactKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "contactId": {
+            "dataType": "Number",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "definitionId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "activityId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "startActivityKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "definitionInstanceId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "requestObjectId": {
+            "dataType": "LongNumber",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          }
+        }
+      }
+    },
+    {
+      "id": "b865c7de-838b-4e68-b534-b19603081723",
+      "key": "SALESCLOUDACTIVITY-8",
+      "name": "🤖END_CONTACTJOURNEY(Remainder)",
+      "description": "",
+      "type": "SALESCLOUDACTIVITY",
+      "outcomes": [
+        {
+          "key": "f6f9bf28-8db3-4969-b4a6-19531dd11cb1",
+          "next": "WAITBYDURATION-4",
+          "arguments": {},
+          "metaData": {
+            "invalid": false
+          }
+        }
+      ],
+      "arguments": {
+        "objectMap": {
+          "objects": [
+            {
+              "type": "coe__Contact_Audience__c",
+              "subtype": null,
+              "order": "1",
+              "action": "Update",
+              "lookup": {
+                "type": "salesforceLookup",
+                "lookupObject": "coe__Contact_Audience__c",
+                "steps": [
+                  {
+                    "criteria": [
+                      {
+                        "FieldName": "Id",
+                        "FieldValue": "{{Interaction.SALESCLOUDACTIVITY-2.salesforceObjectID}}",
+                        "FieldValueLabel": "🤖CREATE_CONTACTJOURNEY",
+                        "FieldType": "id"
+                      }
+                    ]
+                  }
+                ],
+                "MultiOutComeOption": "DoNotUpdate",
+                "ZeroOutComeOption": "DoNotUpdate"
+              },
+              "fields": [
+                {
+                  "UpdateType": "OverWriteNewValue",
+                  "Updateable": "true",
+                  "FieldName": "Journey_End_Date__c",
+                  "FieldLabel": "Journey End Date",
+                  "FieldValue": "Date Contact Enters Activity",
+                  "FieldValueLabel": "Date Contact Enters Activity",
+                  "Required": "false",
+                  "FieldType": "datetime",
+                  "MappingType": "Constant",
+                  "Processor": "dateContactEnters",
+                  "FieldAdjustment": {
+                    "SubProcessor": "dateAdjustment",
+                    "Units": "Days",
+                    "NumUnits": "0",
+                    "TimeDirection": "after"
+                  }
+                },
+                {
+                  "UpdateType": "OverWriteNewValue",
+                  "Updateable": "true",
+                  "FieldName": "Journey_Outcome_Case__c",
+                  "FieldLabel": "Journey Outcome Case",
+                  "FieldValue": "{{Interaction.SALESCLOUDACTIVITY-1.salesforceObjectID}}",
+                  "FieldValueLabel": "salesforceObjectID",
+                  "Required": "false",
+                  "FieldType": "reference",
+                  "MappingType": "Constant",
+                  "Processor": "static",
+                  "ReferenceObjectNames": [
+                    "CASE"
+                  ]
+                },
+                {
+                  "UpdateType": "OverWriteNewValue",
+                  "Updateable": "true",
+                  "FieldName": "Journey_Exit_Reason__c",
+                  "FieldLabel": "Journey Exit Reason",
+                  "FieldValue": "Remainder",
+                  "FieldValueLabel": "Remainder",
+                  "Required": "false",
+                  "FieldType": "string",
+                  "MappingType": "Constant",
+                  "Processor": "static"
+                }
+              ]
+            }
+          ]
+        },
+        "version": "1.0",
+        "contactKey": "{{Context.ContactKey}}",
+        "contactId": "{{Context.ContactId}}",
+        "definitionId": "{{Context.DefinitionId}}",
+        "activityId": "{{Activity.Id}}",
+        "startActivityKey": "{{Context.StartActivityKey}}",
+        "definitionInstanceId": "{{Context.DefinitionInstanceId}}",
+        "requestObjectId": "{{Context.RequestObjectId}}"
+      },
+      "configurationArguments": {
+        "applicationExtensionKey": "Salesforce_Activity"
+      },
+      "metaData": {
+        "isConfigured": true,
+        "expressionBuilderPrefix": "Contact Journey"
+      },
+      "schema": {
+        "arguments": {
+          "salesforceObjectID": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Visible"
+          },
+          "asyncDiscardDate": {
+            "dataType": "Date",
+            "isNullable": false,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Visible"
+          },
+          "objectMap": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "version": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "contactKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "contactId": {
+            "dataType": "Number",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "definitionId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "activityId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "startActivityKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "definitionInstanceId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "requestObjectId": {
+            "dataType": "LongNumber",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          }
+        }
+      }
+    },
+    {
+      "id": "2a69cf90-36b9-4d0f-9be7-ba3faad5bc52",
+      "key": "MULTICRITERIADECISIONV2-2",
+      "name": "",
+      "description": "",
+      "type": "MULTICRITERIADECISION",
+      "outcomes": [
+        {
+          "key": "default_path_1",
+          "next": "SALESCLOUDACTIVITY-4",
+          "arguments": {},
+          "metaData": {
+            "label": "🤖PHONE_NOT_VALID",
+            "skipI18n": true,
+            "isLabelFromConversion": false,
+            "criteriaDescription": "MobilePhone is null OR MobilePhone does not contain +886 OR MobilePhone contains 0000000 OR MobilePhone contains 1234567 OR MobilePhone contains 28548338",
+            "invalid": false
+          }
+        },
+        {
+          "key": "cc408331-35bf-0a92-54c0-6116b8d3dfad",
+          "next": "SALESCLOUDACTIVITY-5",
+          "arguments": {},
+          "metaData": {
+            "label": "STILL HAVE OPEN mutiple RD CASE",
+            "skipI18n": true,
+            "isLabelFromConversion": false,
+            "criteriaDescription": "Sub_Category__c equal Verify Multiple RD AND IsClosed is False AND CreatedDate equal Today Minus 90 days",
+            "invalid": false
+          }
+        },
+        {
+          "key": "5a2c05fc-6e84-3074-7e22-d4f9a5873530",
+          "next": "SALESCLOUDACTIVITY-6",
+          "arguments": {},
+          "metaData": {
+            "label": "Siingle RD",
+            "skipI18n": true,
+            "isLabelFromConversion": false,
+            "criteriaDescription": "Active_Recurring_Donation_Count__c less than or equal 1 AND Operating_RD_Count__c less than or equal 1",
+            "invalid": false
+          }
+        },
+        {
+          "key": "957ba0c1-a1fc-ba90-6e7b-a354402d23fe",
+          "next": "SALESCLOUDACTIVITY-7",
+          "arguments": {},
+          "metaData": {
+            "label": "Comfirmed Multiple RD",
+            "skipI18n": true,
+            "isLabelFromConversion": false,
+            "criteriaDescription": "Confirmed_Multiple_RD__c is True",
+            "invalid": false
+          }
+        },
+        {
+          "key": "remainder_path",
+          "next": "SALESCLOUDACTIVITY-1",
+          "arguments": {},
+          "metaData": {
+            "label": "Remainder",
+            "isLabelFromConversion": false,
+            "invalid": false
+          }
+        }
+      ],
+      "arguments": {
+        "filterResult": "default_path_1={{Contact.FilterId.85bfcf89-6c6f-4b3e-9fa2-98731aeea40e}},cc408331-35bf-0a92-54c0-6116b8d3dfad={{Contact.FilterId.093b95d8-2d24-4572-a83c-253927940188}},5a2c05fc-6e84-3074-7e22-d4f9a5873530={{Contact.FilterId.78b5f637-87c4-4582-981a-8d755b951e00}},957ba0c1-a1fc-ba90-6e7b-a354402d23fe={{Contact.FilterId.61ad77ef-4452-4354-a110-e924e23caf71}},remainder_path=False"
+      },
+      "configurationArguments": {
+        "schemaVersionId": 252,
+        "criteria": {
+          "default_path_1": "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.MobilePhone\" Operator=\"IsNull\" UiMetaData=\"{&quot;groupToSetRelationshipId&quot;:&quot;fe966f2d-4cca-ea11-b83a-b883035bd8a1&quot;}\"><Value><![CDATA[]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.MobilePhone\" Operator=\"NotContains\" UiMetaData=\"{&quot;groupToSetRelationshipId&quot;:&quot;fe966f2d-4cca-ea11-b83a-b883035bd8a1&quot;}\"><Value><![CDATA[+886]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.MobilePhone\" Operator=\"Contains\" UiMetaData=\"{&quot;groupToSetRelationshipId&quot;:&quot;fe966f2d-4cca-ea11-b83a-b883035bd8a1&quot;}\"><Value><![CDATA[0000000]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.MobilePhone\" Operator=\"Contains\" UiMetaData=\"{&quot;groupToSetRelationshipId&quot;:&quot;fe966f2d-4cca-ea11-b83a-b883035bd8a1&quot;}\"><Value><![CDATA[1234567]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.MobilePhone\" Operator=\"Contains\" UiMetaData=\"{&quot;groupToSetRelationshipId&quot;:&quot;fe966f2d-4cca-ea11-b83a-b883035bd8a1&quot;}\"><Value><![CDATA[28548338]]></Value></Condition></ConditionSet></FilterDefinition>",
+          "cc408331-35bf-0a92-54c0-6116b8d3dfad": "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Case_Salesforce_1.Sub_Category__c\" Operator=\"Equal\" UiMetaData=\"{&quot;groupToSetRelationshipId&quot;:&quot;fe966f2d-4cca-ea11-b83a-b883035bd8a1&quot;}\"><AttributePath RelationshipID=\"e2986f2d-4cca-ea11-b83a-b883035bd8a1\"><Value><![CDATA[Verify Multiple RD]]></Value></AttributePath></Condition><Condition Key=\"Case_Salesforce_1.IsClosed\" Operator=\"Is\" UiMetaData=\"{&quot;groupToSetRelationshipId&quot;:&quot;fe966f2d-4cca-ea11-b83a-b883035bd8a1&quot;}\"><AttributePath RelationshipID=\"e2986f2d-4cca-ea11-b83a-b883035bd8a1\"><Value><![CDATA[false]]></Value></AttributePath></Condition><Condition Key=\"Case_Salesforce_1.CreatedDate\" Operator=\"Equal\" UiMetaData=\"{&quot;groupToSetRelationshipId&quot;:&quot;fe966f2d-4cca-ea11-b83a-b883035bd8a1&quot;}\"><AttributePath RelationshipID=\"e2986f2d-4cca-ea11-b83a-b883035bd8a1\"><Value><![CDATA[;-;90;days]]></Value></AttributePath></Condition></ConditionSet></FilterDefinition>",
+          "5a2c05fc-6e84-3074-7e22-d4f9a5873530": "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.Active_Recurring_Donation_Count__c\" Operator=\"LessThanOrEqual\" UiMetaData=\"{&quot;groupToSetRelationshipId&quot;:&quot;fe966f2d-4cca-ea11-b83a-b883035bd8a1&quot;}\"><Value><![CDATA[1]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.Operating_RD_Count__c\" Operator=\"LessThanOrEqual\" UiMetaData=\"{&quot;groupToSetRelationshipId&quot;:&quot;fe966f2d-4cca-ea11-b83a-b883035bd8a1&quot;}\"><Value><![CDATA[1]]></Value></Condition></ConditionSet></FilterDefinition>",
+          "957ba0c1-a1fc-ba90-6e7b-a354402d23fe": "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.Confirmed_Multiple_RD__c\" Operator=\"Is\" UiMetaData=\"{&quot;groupToSetRelationshipId&quot;:&quot;fe966f2d-4cca-ea11-b83a-b883035bd8a1&quot;}\"><Value><![CDATA[true]]></Value></Condition></ConditionSet></FilterDefinition>"
+        }
+      },
+      "metaData": {
+        "isConfigured": true
+      },
+      "schema": {
+        "arguments": {
+          "actualChoice": {
+            "dataType": "Number",
+            "isNullable": false,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "filterResult": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": true,
+            "access": "Hidden"
+          }
+        }
+      }
+    },
+    {
+      "id": "4bf35f7f-9649-4ef9-a234-cef7f031fa6d",
+      "key": "WAITBYDURATION-8",
+      "name": "1 minute",
+      "description": "",
+      "type": "WAIT",
+      "outcomes": [
+        {
+          "key": "65365c49-c253-4830-ae25-57330360123b",
+          "next": "SALESCLOUDACTIVITY-9",
+          "arguments": {},
+          "metaData": {
+            "invalid": false
+          }
+        }
+      ],
+      "arguments": {
+        "waitEndDateAttributeDataBound": "",
+        "waitDefinitionId": "cd685bd1-6fd9-43b1-b1cd-974c7d5f8779",
+        "waitForEventId": "",
+        "executionMode": "{{Context.ExecutionMode}}",
+        "startActivityKey": "{{Context.StartActivityKey}}",
+        "waitQueueId": "{{Context.WaitQueueId}}"
+      },
+      "configurationArguments": {
+        "waitDuration": 1,
+        "waitUnit": "MINUTES",
+        "specifiedTime": "00:00",
+        "timeZone": "Taipei Standard Time",
+        "description": "",
+        "waitEndDateAttributeExpression": "",
+        "specificDate": "",
+        "waitForEventKey": ""
+      },
+      "metaData": {
+        "isConfigured": true,
+        "isExtended": false,
+        "waitType": "duration",
+        "guidanceCardKey": "",
+        "uiType": "WAITBYDURATION"
+      },
+      "schema": {
+        "arguments": {
+          "endDate": {
+            "dataType": "Date",
+            "isNullable": false,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitEndDateAttributeDataBound": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitDefinitionId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitForEventId": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "executionMode": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "startActivityKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitQueueId": {
+            "dataType": "LongNumber",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          }
+        }
+      }
+    },
+    {
+      "id": "2cf257ac-2f70-44cc-88df-d34e52471459",
+      "key": "SALESCLOUDACTIVITY-3",
+      "name": "🤖END_CONTACTJOURNEY(UPDATED_BY_ADMIN)",
+      "description": "",
+      "type": "SALESCLOUDACTIVITY",
+      "outcomes": [
+        {
+          "key": "66126e35-8409-400d-810d-fcf618eff32a",
+          "next": "WAITBYDURATION-20",
+          "arguments": {},
+          "metaData": {
+            "invalid": false
+          }
+        }
+      ],
+      "arguments": {
+        "objectMap": {
+          "objects": [
+            {
+              "type": "coe__Contact_Audience__c",
+              "subtype": null,
+              "order": "1",
+              "action": "Update",
+              "lookup": {
+                "type": "salesforceLookup",
+                "lookupObject": "coe__Contact_Audience__c",
+                "steps": [
+                  {
+                    "criteria": [
+                      {
+                        "FieldName": "Id",
+                        "FieldValue": "{{Interaction.SALESCLOUDACTIVITY-2.salesforceObjectID}}",
+                        "FieldValueLabel": "🤖CREATE_CONTACTJOURNEY",
+                        "FieldType": "id"
+                      }
+                    ]
+                  }
+                ],
+                "MultiOutComeOption": "DoNotUpdate",
+                "ZeroOutComeOption": "DoNotUpdate"
+              },
+              "fields": [
+                {
+                  "UpdateType": "OverWriteNewValue",
+                  "Updateable": "true",
+                  "FieldName": "Journey_End_Date__c",
+                  "FieldLabel": "Journey End Date",
+                  "FieldValue": "Date Contact Enters Activity",
+                  "FieldValueLabel": "Date Contact Enters Activity",
+                  "Required": "false",
+                  "FieldType": "datetime",
+                  "MappingType": "Constant",
+                  "Processor": "dateContactEnters",
+                  "FieldAdjustment": {
+                    "SubProcessor": "dateAdjustment",
+                    "Units": "Days",
+                    "NumUnits": "0",
+                    "TimeDirection": "after"
+                  }
+                },
+                {
+                  "UpdateType": "OverWriteNewValue",
+                  "Updateable": "true",
+                  "FieldName": "Journey_Exit_Reason__c",
+                  "FieldLabel": "Journey Exit Reason",
+                  "FieldValue": "👽UPDATED_BY_ADMIN",
+                  "FieldValueLabel": "👽UPDATED_BY_ADMIN",
+                  "Required": "false",
+                  "FieldType": "string",
+                  "MappingType": "Constant",
+                  "Processor": "static"
+                }
+              ]
+            }
+          ]
+        },
+        "version": "1.0",
+        "contactKey": "{{Context.ContactKey}}",
+        "contactId": "{{Context.ContactId}}",
+        "definitionId": "{{Context.DefinitionId}}",
+        "activityId": "{{Activity.Id}}",
+        "startActivityKey": "{{Context.StartActivityKey}}",
+        "definitionInstanceId": "{{Context.DefinitionInstanceId}}",
+        "requestObjectId": "{{Context.RequestObjectId}}"
+      },
+      "configurationArguments": {
+        "applicationExtensionKey": "Salesforce_Activity"
+      },
+      "metaData": {
+        "isConfigured": true,
+        "expressionBuilderPrefix": "Contact Journey"
+      },
+      "schema": {
+        "arguments": {
+          "salesforceObjectID": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Visible"
+          },
+          "asyncDiscardDate": {
+            "dataType": "Date",
+            "isNullable": false,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Visible"
+          },
+          "objectMap": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "version": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "contactKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "contactId": {
+            "dataType": "Number",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "definitionId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "activityId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "startActivityKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "definitionInstanceId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "requestObjectId": {
+            "dataType": "LongNumber",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          }
+        }
+      }
+    },
+    {
+      "id": "66085c90-d20e-4b10-9cb8-d7140e3b0436",
+      "key": "SALESCLOUDACTIVITY-6",
+      "name": "🤖END_CONTACTJOURNEY(Siingle RD)",
+      "description": "",
+      "type": "SALESCLOUDACTIVITY",
+      "outcomes": [
+        {
+          "key": "d0599664-f9f1-4706-a207-7076210515b4",
+          "next": "WAITBYDURATION-6",
+          "arguments": {},
+          "metaData": {
+            "invalid": false
+          }
+        }
+      ],
+      "arguments": {
+        "objectMap": {
+          "objects": [
+            {
+              "type": "coe__Contact_Audience__c",
+              "subtype": null,
+              "order": "1",
+              "action": "Update",
+              "lookup": {
+                "type": "salesforceLookup",
+                "lookupObject": "coe__Contact_Audience__c",
+                "steps": [
+                  {
+                    "criteria": [
+                      {
+                        "FieldName": "Id",
+                        "FieldValue": "{{Interaction.SALESCLOUDACTIVITY-2.salesforceObjectID}}",
+                        "FieldValueLabel": "🤖CREATE_CONTACTJOURNEY",
+                        "FieldType": "id"
+                      }
+                    ]
+                  }
+                ],
+                "MultiOutComeOption": "DoNotUpdate",
+                "ZeroOutComeOption": "DoNotUpdate"
+              },
+              "fields": [
+                {
+                  "UpdateType": "OverWriteNewValue",
+                  "Updateable": "true",
+                  "FieldName": "Journey_End_Date__c",
+                  "FieldLabel": "Journey End Date",
+                  "FieldValue": "Date Contact Enters Activity",
+                  "FieldValueLabel": "Date Contact Enters Activity",
+                  "Required": "false",
+                  "FieldType": "datetime",
+                  "MappingType": "Constant",
+                  "Processor": "dateContactEnters",
+                  "FieldAdjustment": {
+                    "SubProcessor": "dateAdjustment",
+                    "Units": "Days",
+                    "NumUnits": "0",
+                    "TimeDirection": "after"
+                  }
+                },
+                {
+                  "UpdateType": "OverWriteNewValue",
+                  "Updateable": "true",
+                  "FieldName": "Journey_Exit_Reason__c",
+                  "FieldLabel": "Journey Exit Reason",
+                  "FieldValue": "Siingle RD",
+                  "FieldValueLabel": "Siingle RD",
+                  "Required": "false",
+                  "FieldType": "string",
+                  "MappingType": "Constant",
+                  "Processor": "static"
+                }
+              ]
+            }
+          ]
+        },
+        "version": "1.0",
+        "contactKey": "{{Context.ContactKey}}",
+        "contactId": "{{Context.ContactId}}",
+        "definitionId": "{{Context.DefinitionId}}",
+        "activityId": "{{Activity.Id}}",
+        "startActivityKey": "{{Context.StartActivityKey}}",
+        "definitionInstanceId": "{{Context.DefinitionInstanceId}}",
+        "requestObjectId": "{{Context.RequestObjectId}}"
+      },
+      "configurationArguments": {
+        "applicationExtensionKey": "Salesforce_Activity"
+      },
+      "metaData": {
+        "isConfigured": true,
+        "expressionBuilderPrefix": "Contact Journey"
+      },
+      "schema": {
+        "arguments": {
+          "salesforceObjectID": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Visible"
+          },
+          "asyncDiscardDate": {
+            "dataType": "Date",
+            "isNullable": false,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Visible"
+          },
+          "objectMap": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "version": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "contactKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "contactId": {
+            "dataType": "Number",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "definitionId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "activityId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "startActivityKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "definitionInstanceId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "requestObjectId": {
+            "dataType": "LongNumber",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          }
+        }
+      }
+    },
+    {
+      "id": "513de2e2-4aea-43c9-9bcc-e2e54eaa1bdf",
+      "key": "WAITBYDURATION-9",
+      "name": "1 day",
+      "description": "",
+      "type": "WAIT",
+      "outcomes": [
+        {
+          "key": "c7258a93-5135-45c8-ba6a-59c3153d640c",
+          "arguments": {},
+          "metaData": {
+            "invalid": false
+          }
+        }
+      ],
+      "arguments": {
+        "waitEndDateAttributeDataBound": "",
+        "waitDefinitionId": "ff7bc76d-ef9b-47dd-8ef3-1bf96cc4560b",
+        "waitForEventId": "",
+        "executionMode": "{{Context.ExecutionMode}}",
+        "startActivityKey": "{{Context.StartActivityKey}}",
+        "waitQueueId": "{{Context.WaitQueueId}}"
+      },
+      "configurationArguments": {
+        "waitDuration": 1,
+        "waitUnit": "DAYS",
+        "specifiedTime": "",
+        "timeZone": "",
+        "description": "",
+        "waitEndDateAttributeExpression": "",
+        "specificDate": "",
+        "waitForEventKey": ""
+      },
+      "metaData": {
+        "isConfigured": true,
+        "uiType": "WAITBYDURATION"
+      },
+      "schema": {
+        "arguments": {
+          "endDate": {
+            "dataType": "Date",
+            "isNullable": false,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitEndDateAttributeDataBound": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitDefinitionId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitForEventId": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "executionMode": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "startActivityKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitQueueId": {
+            "dataType": "LongNumber",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          }
+        }
+      }
+    },
+    {
+      "id": "1628a7d0-3188-47e0-868c-f7a75ab7cef3",
+      "key": "WAITBYDURATION-10",
+      "name": "1 minute",
+      "description": "",
+      "type": "WAIT",
+      "outcomes": [
+        {
+          "key": "1f0474e8-b8f7-4268-b61a-760c8411b9b1",
+          "next": "WAITBYDURATION-1",
+          "arguments": {},
+          "metaData": {
+            "invalid": false
+          }
+        }
+      ],
+      "arguments": {
+        "waitEndDateAttributeDataBound": "",
+        "waitDefinitionId": "1903d785-f261-4ec7-b16b-7ef894160bfd",
+        "waitForEventId": "",
+        "executionMode": "{{Context.ExecutionMode}}",
+        "startActivityKey": "{{Context.StartActivityKey}}",
+        "waitQueueId": "{{Context.WaitQueueId}}"
+      },
+      "configurationArguments": {
+        "waitDuration": 1,
+        "waitUnit": "MINUTES",
+        "specifiedTime": "00:00",
+        "timeZone": "Taipei Standard Time",
+        "description": "",
+        "waitEndDateAttributeExpression": "",
+        "specificDate": "",
+        "waitForEventKey": ""
+      },
+      "metaData": {
+        "isConfigured": true,
+        "isExtended": false,
+        "waitType": "duration",
+        "guidanceCardKey": "",
+        "uiType": "WAITBYDURATION"
+      },
+      "schema": {
+        "arguments": {
+          "endDate": {
+            "dataType": "Date",
+            "isNullable": false,
+            "direction": "Out",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitEndDateAttributeDataBound": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitDefinitionId": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitForEventId": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "executionMode": {
+            "dataType": "Text",
+            "isNullable": false,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "startActivityKey": {
+            "dataType": "Text",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          },
+          "waitQueueId": {
+            "dataType": "LongNumber",
+            "isNullable": true,
+            "direction": "In",
+            "readOnly": false,
+            "access": "Hidden"
+          }
+        }
+      }
+    }
+  ],
+  "triggers": [
+    {
+      "id": "a7fa226d-0479-48cb-84e3-f2020df0c355",
+      "key": "TRIGGER",
+      "name": "tw-2007-em-trans-multi-giver-once-off_donation_acknowledgement",
+      "description": "",
+      "type": "SalesforceObjectTriggerV2",
+      "outcomes": [],
+      "arguments": {
+        "startActivityKey": "{{Context.StartActivityKey}}",
+        "dequeueReason": "{{Context.DequeueReason}}",
+        "lastExecutedActivityKey": "{{Context.LastExecutedActivityKey}}",
+        "filterResult": ""
+      },
+      "configurationArguments": {
+        "applicationExtensionKey": "SalesforceObjectTriggerV2",
+        "version": "3.0",
+        "objectApiName": "Recurring_Donation__c",
+        "salesforceTriggerCriteria": "Created",
+        "eventDataConfig": {
+          "objects": [
+            {
+              "dePrefix": "Recurring_Donation__c:Contact__r:",
+              "isPolymorphic": false,
+              "referenceObject": "Contact",
+              "relationshipName": "Contact__r",
+              "fields": [
+                "Id",
+                "HasOptedOutOfEmail",
+                "et4ae5__HasOptedOutOfMobile__c",
+                "Email",
+                "FirstName",
+                "Name",
+                "LastName",
+                "MobilePhone"
+              ]
+            },
+            {
+              "dePrefix": "Recurring_Donation__c:",
+              "isPolymorphic": false,
+              "relationshipName": "",
+              "referenceObject": "",
+              "relationshipIdName": "",
+              "fields": [
+                "Amount__c",
+                "CreatedById",
+                "CreatedDate",
+                "First_Donation_Date__c",
+                "LastModifiedById",
+                "LastModifiedDate",
+                "Payment_Method__c",
+                "Id",
+                "Campaign__c"
+              ]
+            }
+          ]
+        },
+        "primaryObjectFilterCriteria": {
+          "operand": "AND",
+          "conditions": [
+            {
+              "_length": 255,
+              "dataType": "picklist",
+              "fieldName": "Status__c",
+              "folderId": "Recurring_Donation__c-Recurring_Donation__c",
+              "id": "Recurring_Donation__c-Recurring_Donation__c-Status__c",
+              "isPolymorphic": false,
+              "name": "Status",
+              "operator": "NOTEQUALTO",
+              "precision": 0,
+              "referenceObjectName": "Recurring_Donation__c",
+              "relationshipIdName": "",
+              "relationshipName": "",
+              "scale": 0,
+              "text": "Status",
+              "value": "Cancelled"
+            },
+            {
+              "_length": 18,
+              "dataType": "reference",
+              "fieldName": "CreatedById",
+              "folderId": "Recurring_Donation__c-Recurring_Donation__c",
+              "id": "Recurring_Donation__c-Recurring_Donation__c-CreatedById",
+              "isPolymorphic": false,
+              "name": "Created By ID",
+              "operator": "NOTEQUALTO",
+              "precision": 0,
+              "referenceObjectName": "Recurring_Donation__c",
+              "relationshipIdName": "",
+              "relationshipName": "",
+              "scale": 0,
+              "text": "Created By ID",
+              "value": "0052v00000ahdbhAAA"
+            },
+            {
+              "_length": 18,
+              "dataType": "reference",
+              "fieldName": "CreatedById",
+              "folderId": "Recurring_Donation__c-Recurring_Donation__c",
+              "id": "Recurring_Donation__c-Recurring_Donation__c-CreatedById",
+              "isPolymorphic": false,
+              "name": "Created By ID",
+              "operator": "NOTEQUALTO",
+              "precision": 0,
+              "referenceObjectName": "Recurring_Donation__c",
+              "relationshipIdName": "",
+              "relationshipName": "",
+              "scale": 0,
+              "text": "Created By ID",
+              "value": "0052u000000he2JAAQ"
+            }
+          ]
+        },
+        "relatedObjectFilterCriteria": {
+          "operand": "AND",
+          "conditions": [
+            {
+              "_length": 0,
+              "dataType": "double",
+              "fieldName": "Number_of_Donations_All_Time__c",
+              "folderId": "Contact__r-Contact",
+              "id": "Contact__r-Contact-Number_of_Donations_All_Time__c",
+              "isPolymorphic": false,
+              "name": "Number of Donations (All Time)",
+              "operator": "GREATERTHANOREQUALTO",
+              "precision": 18,
+              "referenceObjectName": "Contact",
+              "relationshipIdName": "Contact__c",
+              "relationshipName": "Contact__r",
+              "scale": 0,
+              "text": "Number of Donations (All Time)",
+              "value": 1
+            },
+            {
+              "_length": 18,
+              "dataType": "reference",
+              "fieldName": "Market__c",
+              "folderId": "Contact__r-Contact",
+              "id": "Contact__r-Contact-Market__c",
+              "isPolymorphic": false,
+              "name": "Market",
+              "operator": "EQUALS",
+              "precision": 0,
+              "referenceObjectName": "Contact",
+              "relationshipIdName": "Contact__c",
+              "relationshipName": "Contact__r",
+              "scale": 0,
+              "text": "Market",
+              "value": "a0J2u000001NjoNEAS"
+            }
+          ]
+        },
+        "additionalObjectFilterCriteria": "",
+        "contactKey": {
+          "relationshipIdName": "Contact__c",
+          "relationshipName": "Contact__r",
+          "isPolymorphic": false,
+          "referenceObjectName": "Contact",
+          "fieldName": "Id"
+        },
+        "passThroughArgument": {
+          "fields": {
+            "ContactKey": "Recurring_Donation__c:Contact__r:Id",
+            "Email": "Recurring_Donation__c:Contact__r:Email",
+            "HasOptedOutOfEmail": "Recurring_Donation__c:Contact__r:HasOptedOutOfEmail"
+          }
+        },
+        "primaryObjectFilterSummary": "Recurring_Donation__c:Status__c NOTEQUALTO Cancelled AND  Recurring_Donation__c:CreatedById NOTEQUALTO Vertic Administrator (0052v00000ahdbhAAA) AND  Recurring_Donation__c:CreatedById NOTEQUALTO GPEA Administrator (0052u000000he2JAAQ)",
+        "relatedObjectFilterSummary": "Contact__r:Contact:Number_of_Donations_All_Time__c GREATERTHANOREQUALTO 1 AND  Contact__r:Contact:Market__c EQUALS Taiwan (a0J2u000001NjoNEAS)",
+        "eventDataSummary": "Recurring_Donation__c:Contact__r:Id; Recurring_Donation__c:Contact__r:HasOptedOutOfEmail; Recurring_Donation__c:Contact__r:et4ae5__HasOptedOutOfMobile__c; Recurring_Donation__c:Contact__r:Email; Recurring_Donation__c:Contact__r:FirstName; Recurring_Donation__c:Contact__r:Name; Recurring_Donation__c:Contact__r:LastName; Recurring_Donation__c:Contact__r:MobilePhone; Recurring_Donation__c:Amount__c; Recurring_Donation__c:CreatedById; Recurring_Donation__c:CreatedDate; Recurring_Donation__c:First_Donation_Date__c; Recurring_Donation__c:LastModifiedById; Recurring_Donation__c:LastModifiedDate; Recurring_Donation__c:Payment_Method__c; Recurring_Donation__c:Id; Recurring_Donation__c:Campaign__c; ",
+        "evaluationCriteriaSummary": "Created;",
+        "contactPersonType": "Contact",
+        "whoToInject": "Contact__r ID (Contact)",
+        "filterDefinitionId": "00000000-0000-0000-0000-000000000000",
+        "criteria": "",
+        "schemaVersionId": 0
+      },
+      "metaData": {
+        "sourceInteractionId": "00000000-0000-0000-0000-000000000000",
+        "eventDefinitionId": "4b4194a5-cdc3-4dbb-910a-ba5531d0809c",
+        "eventDefinitionKey": "SalesforceObj09b188eb8a321dfa23425873d9b7bb41",
+        "chainType": "None",
+        "configurationRequired": false,
+        "iconUrl": "https://sales-cloud-jbint-events.s50.marketingcloudapps.com/events/SalesforceData/images/SF-Event-Icon.svg",
+        "title": "",
+        "category": "Event",
+        "entrySourceGroupConfigUrl": "https://sales-cloud-jbint-events.s50.marketingcloudapps.com/entrysourcegroupconfig.json"
+      }
+    }
+  ],
+  "goals": [],
+  "exits": [],
+  "notifiers": [],
+  "stats": {
+    "currentPopulation": 0,
+    "cumulativePopulation": 0,
+    "metGoal": 0,
+    "metExitCriteria": 0,
+    "goalPerformance": 0
+  },
+  "healthStats": {
+    "currentlyInCount": 0,
+    "delayedContactCount": 0,
+    "delayedMinuteInterval": 60
+  },
+  "tags": [
+    {
+      "name": "Transactional"
+    }
+  ],
+  "entryMode": "MultipleEntries",
+  "definitionType": "Multistep",
+  "channel": "",
+  "defaults": {
+    "email": [
+      "{{Event.SalesforceObj09b188eb8a321dfa23425873d9b7bb41.\"Recurring_Donation__c:Contact__r:Email\"}}"
+    ],
+    "mobileNumber": [
+      "{{Event.SalesforceObj09b188eb8a321dfa23425873d9b7bb41.\"Recurring_Donation__c:Contact__r:MobilePhone\"}}"
+    ],
+    "properties": {
+      "analyticsTracking": {
+        "enabled": true,
+        "analyticsType": "google",
+        "urlDomainsToTrack": []
+      }
+    }
+  },
+  "metaData": {
+    "dataSource": "ContactsModel",
+    "hasCopiedActivity": true
+  },
+  "executionMode": "Production",
+  "categoryId": 12774,
+  "status": "Draft",
+  "definitionId": "f1ed4814-b170-4a95-8be5-0dda81bd75ab",
+  "scheduledStatus": "Draft"
+}
