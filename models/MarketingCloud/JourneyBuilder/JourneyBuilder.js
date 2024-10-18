@@ -34,14 +34,11 @@ class JourneyBuilder {
    * @returns
    */
   async loadSrcJourneyName(jName) {
-    logger.debug(jName)
     // find the source journey
     // let r = await mcJourney.findByName('up-test-de_entry-20220706-src')
     let mcJourney = this.parent.factory('Journey')
     let r = await mcJourney.findByName(jName, { mostRecentVersionOnly: true })
     let srcJ = this.srcJ = _.get(r, 'items.0', null)
-    logger.debug(`srcJ : ${this.srcJ}`)
-
 
     if (!srcJ) {
       throw new Error(`Cannot find the source ${jName} journey`)
@@ -287,8 +284,6 @@ class JourneyBuilder {
     for (let i = 0; i < outcomes.length; i++) {
       const anOutcome = outcomes[i];
 
-      
-
       // find the outcome node
       let outcomeNode = this.srcJ.activities.find(act => {
         return act.key === anOutcome.next
@@ -367,8 +362,8 @@ class JourneyBuilder {
           // deal with n days format
           let nDays = this._resolveInNDays(actOutcomeMetaDataLabel)
           if (nDays && predefinedCriteria) {
-            predefinedCriteria.description = predefinedCriteria.description.replaceAll('_N_', `${nDays}`)
-            predefinedCriteria.criteria = predefinedCriteria.criteria.replaceAll('_N_', `${nDays}`)
+            predefinedCriteria.description = predefinedCriteria.description.replace('_N_', `${nDays}`)
+            predefinedCriteria.criteria = predefinedCriteria.criteria.replace('_N_', `${nDays}`)
           }
 
           // path the criteria
@@ -569,8 +564,6 @@ class JourneyBuilder {
     for (let i = 0; i < nextJ.activities.length; i++) {
       const act = nextJ.activities[i];
 
-      logger.debug(`Node - ${i} : ${act.name} (${act.key})`)
-
       if (act.name.indexOf(`END_CONTACTJOURNEY`) >= 0) {
         if (!firstContactJourneyObject) {
           throw new Error("Cannot find the first ContactJourney Create Or Update Object activities")
@@ -724,16 +717,12 @@ class JourneyBuilder {
         return anOutcome.next === actKey
       })
     })
-    //logger.debug(` precedingAct key: ${actKey}`)
 
     if (precedingAct === undefined) {
-      //logger.debug(` Preceding undefined: ${precedingAct}`)
       return null
     } else if (precedingAct.metaData.expressionBuilderPrefix === "Case") {
-      //logger.debug(` Preceding Case: ${precedingAct.metaData.expressionBuilderPrefix}`)
       return precedingAct
     } else { // find futhur Preceding
-      //logger.debug(` Preceding further: ${precedingAct.metaData.expressionBuilderPrefix}`)
       return this._findFirstPrecedingCaseActivity(precedingAct.key)
     }
   }

@@ -12,8 +12,8 @@ require('dotenv').config()
  */
 async function main() {
   // EDIT HERE
-  const srcJourneyName = "hk-new_donor_upgrade-automd-20240405_regen_20240617_v2"
-  const market = "hk"
+  const srcJourneyName = "kr-debit_fail-automd-weekly_reminder"
+  const market = "kr"
   // END EDIT
 
   // fetch src

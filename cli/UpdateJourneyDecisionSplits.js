@@ -18,10 +18,10 @@ require('dotenv').config()
  */
 async function main() {
   // EDIT HERE
-  const srcJourneyName = "tw-special_appeal-adhoc-20240823-q3_q4-tfr_with369_joyce Copy"
+  const srcJourneyName = "kr-new_donor_upgrade-automd"
   const destJourneyName = srcJourneyName
   // const destJourneyName = "up-lead_conversion-automd-oceans-oceanssancturies-dest-20230801"
-  const market = "tw"
+  const market = "kr"
   const replaceWaitToMinutes = false
 
   let mcbase = new MCBase({ market })
@@ -30,7 +30,6 @@ async function main() {
   let mcJourney = mcbase.factory('Journey')
   let mcJB = mcbase.factory('JourneyBuilder')
 
-  logger.info(srcJourneyName)
   let srcJ = await mcJB.loadSrcJourneyName(srcJourneyName)
   logger.info(`Read journey ${srcJ.name} version:${srcJ.version} status:${srcJ.status}`)
   // fs.writeFileSync(srcJourneyName, JSON.stringify(srcJ,null,2))
