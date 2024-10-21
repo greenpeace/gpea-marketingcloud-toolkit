@@ -362,8 +362,8 @@ class JourneyBuilder {
           // deal with n days format
           let nDays = this._resolveInNDays(actOutcomeMetaDataLabel)
           if (nDays && predefinedCriteria) {
-            predefinedCriteria.description = predefinedCriteria.description.replace('_N_', `${nDays}`)
-            predefinedCriteria.criteria = predefinedCriteria.criteria.replace('_N_', `${nDays}`)
+            predefinedCriteria.description = predefinedCriteria.description.replaceAll('_N_', `${nDays}`)
+            predefinedCriteria.criteria = predefinedCriteria.criteria.replaceAll('_N_', `${nDays}`)
           }
 
           // path the criteria
