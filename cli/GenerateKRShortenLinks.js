@@ -22,6 +22,7 @@ const querystring = require("querystring");
 const request = require("request");
 const axios = require("axios");
 const cliProgress = require('cli-progress');
+const { shortenUrl } = require('..//models/Utils/tools.js')
 
 require('dotenv').config()
 
@@ -29,53 +30,36 @@ require('dotenv').config()
 // let deCsvPath = '/Users/upchen/Downloads/kr_annual_upgrade_staging.csv'
 // let outputDeCsvPath = '/Users/upchen/Downloads/kr_annual_upgrade_generated.csv'
 
-let deCsvPath = '/Users/upchen/Downloads/2024_Jan_Annual_upgrade_target_HPC_B.csv'
-let outputDeCsvPath = '/Users/upchen/Downloads/2024_Jan_Annual_upgrade_target_HPC_B-generated.csv'
+let deCsvPath = '/Users/upchen/Downloads/2024 KR P&DD Special Appeal TA RG.csv'
+let outputDeCsvPath = '/Users/upchen/Downloads/2024 KR P&DD Special Appeal TA RG-generated.csv'
 
-let URLCallToAction = "UPGRADE"; // UPGRADE or ONEOFF or COLA
-let askAmount = 7000; 
-let suggestedAmount = 5000; 
-let keyDefaultAmount = "5000,7000,10000"; 
+let URLCallToAction = "ONEOFF"; // UPGRADE or ONEOFF or COLA
+let askAmount = 7000;
+let suggestedAmount = 5000;
+let keyDefaultAmount = "5000,7000,10000";
 
-let campaignId = "7012u000000ITpRAAW"; // Upgrade - Annual Upgrade - SMS - 2024 - KR
-let utm_campaign = "annual_upgrade";
+let campaignId = "7012u000000ITpvAAG"; // Special Appeal - SMS - 2024 - KR
+let utm_campaign = "special_appeal";
 let utm_source = "donor_journey";
 let utm_medium = "sms";
-let utm_content = "20240126-annual_upgrade-hpc_b_sms";
+let utm_content = "20240327_special_appeal-oceandocu-rg_sms";
+
 let utm_term = "";
 
+let fallbackUrl = 'https://supporter.ea.greenpeace.org/kr/s/donate/mid?campaign=oceandocu&donate_amt=s'
+
 const ContactIdFieldName = 'Id (18 digit)'
-const RGStatusFieldName = 'Recurring Donation: Status'
+const RGStatusFieldName = 'Recurring Donation Status'
+const RGAmountFieldName = 'Recurring Donation Amount'
 const RGPaymentMethodFieldName = 'Recurring Donation Payment Method'
 const ConstituentIdFieldName = 'Constituent ID'
+const LargestDonationAmountFieldName = 'Largest Donation Amount'
 
 const longLinkFieldName = 'long_url'
 const shortenLinkFieldName = 'url2'
 
-async function shortenUrl(longUrl) {
-  const accessToken = process.env.BITLY_TOKEN;
-  const headers = {
-    "Content-Type": "application/json",
-    Authorization: accessToken
-  };
-  const payload = {
-    long_url: longUrl
-  };
-
-  try {
-    const response = await axios.post("https://api-ssl.bitly.com/v4/shorten", payload, { headers });
-    const bitlyUrl = response.data.id;
-    const shortenUrl = `https://${bitlyUrl}`;
-
-    return shortenUrl;
-  } catch (error) {
-    console.error(error);
-    throw error
-  }
-}
-
 async function processRow(params) {
-  const { baseDe, i} = params
+  const { baseDe, i } = params
   const row = baseDe[i];
 
   // determine is able to use 1click URLS
@@ -87,7 +71,9 @@ async function processRow(params) {
   let ConstituentId = row[ConstituentIdFieldName]
   let RgStatus = row[RGStatusFieldName]
   let RgPaymentMethod = row[RGPaymentMethodFieldName]
-  
+  let RgAmount = row[RGAmountFieldName]
+  let LargestDonationAmount = row[LargestDonationAmountFieldName]
+
 
   if (RgStatus === "Active") {
     if (RgPaymentMethod === "Credit Card") {
@@ -98,6 +84,29 @@ async function processRow(params) {
     }
   }
 
+  // Resolve the asking amounts
+  if (isAbleToUse1ClickOneoff) {
+    if (RgAmount >= 30000) {
+      suggestedAmount = 70000;
+      askAmount = 100000;
+      keyDefaultAmount = "70000,100000,150000";
+    } else {
+      suggestedAmount = 50000;
+      askAmount = 70000;
+      keyDefaultAmount = "50000,70000,100000";
+    }
+  } else {
+    if (LargestDonationAmount >= 50000) {
+      suggestedAmount = 70000;
+      askAmount = 100000;
+      keyDefaultAmount = "70000,100000,150000";
+    } else {
+      suggestedAmount = 50000;
+      askAmount = 70000;
+      keyDefaultAmount = "50000,70000,100000";
+    }
+  }
+
   // Start to generate the links
   let longUrl = null;
   let base64ContactId = Buffer.from(ContactId).toString('base64');
@@ -105,6 +114,7 @@ async function processRow(params) {
     id: base64ContactId,
     Constituent_ID__c: ConstituentId,
     Campaign__c: campaignId,
+    CampaignId: campaignId,
 
     UpgradeAmount: askAmount,
     suggestedAmount: suggestedAmount,
@@ -119,10 +129,12 @@ async function processRow(params) {
 
   if (URLCallToAction === 'UPGRADE' && isAbleToUse1ClickUpgrade) {
     longUrl = `https://cloud.greensk.greenpeace.org/oneclick-upgrade?${oneClickQs}`
-  } else if (URLCallToAction === 'ONEOFF' && isAbleToUse1ClickUpgrade) {
+  } else if (URLCallToAction === 'ONEOFF' && isAbleToUse1ClickOneoff) {
     longUrl = `https://cloud.greensk.greenpeace.org/oneclick-oneoff?${oneClickQs}`
   } else if (URLCallToAction === 'COLA' && isAbleToUse1ClickCola) {
     longUrl = `https://cloud.greensk.greenpeace.org/oneclick-cola?${oneClickQs}`
+  } else {
+    longUrl = `${fallbackUrl}%3A${askAmount}&${oneClickQs}`
   }
 
   // shorten the links
@@ -147,8 +159,6 @@ async function main() {
   let baseDe = parse(fs.readFileSync(deCsvPath), { columns: true });
   logger.info(`Data Extension loaded with ${baseDe.length} rows.`)
 
-  // baseDe = baseDe.slice(0,100) // for debug
-
   // Check the necessary fields is present
   if (baseDe.length < 1) {
     throw new Error('Loaded the empty CSV. Please check the CSV file')
@@ -162,19 +172,24 @@ async function main() {
     throw new Error(`The required field ${RGPaymentMethodFieldName} is not present in the CSV file.`)
   }
 
+
+  let promises = []
+
+  // sample baseDe for debug usage
+  // baseDe = _.sampleSize(baseDe, 10);
+
   const progressBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
   progressBar.start(baseDe.length);
 
-  let promises = []
   for (let i = 0; i < baseDe.length; i++) {
-  // for (let i = 0; i < 10; i++) {
+    // for (let i = 0; i < 1000; i++) {
     progressBar.increment()
-    promises.push(processRow({ baseDe, i}))
+    promises.push(processRow({ baseDe, i }))
 
     await new Promise(resolve => setTimeout(resolve, 25)); // throttle. the minute rate limit is 5000 per minutes
 
-    if (i>0 && i%3000==0) {
-      await new Promise(resolve => setTimeout(resolve, 5*1000)); // ensure consume all the requests immediately
+    if (i > 0 && i % 50 == 0) { // wait all the sent request finish
+      await new Promise(resolve => setTimeout(resolve, 1000));
     }
   }
   progressBar.stop();
