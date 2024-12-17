@@ -18,10 +18,10 @@ require('dotenv').config()
  */
 async function main() {
   // EDIT HERE
-  const srcJourneyName = "kr-new_donor_upgrade-automd"
+  const srcJourneyName = "joyce-toolkit-major-donor-tw-abandon_conversion-automd-abandon_cart-20230808"
   const destJourneyName = srcJourneyName
   // const destJourneyName = "up-lead_conversion-automd-oceans-oceanssancturies-dest-20230801"
-  const market = "kr"
+  const market = "tw"
   const replaceWaitToMinutes = false
 
   let mcbase = new MCBase({ market })
