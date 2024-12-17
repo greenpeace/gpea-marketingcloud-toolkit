@@ -191,6 +191,11 @@ const DECISION_SPLIT_RULES_BY_SYNC_DE = {
     description: "Donor_Status__c equal Lapsed Donor",
     criteria: "<FilterDefinition><ConditionSet Operator=\"AND\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.Donor_Status__c\" Operator=\"Equal\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[Lapsed Donor]]></Value></Condition></ConditionSet></FilterDefinition>",
   },
+  
+  IS_MAJOR_DONOR_N_PROSPECTS: {
+    description: "Philanthropy__c contains Major Donor OR Philanthropy__c contains Prospect Major Donor",
+    criteria: "<FilterDefinition><ConditionSet Operator=\"OR\" ConditionSetName=\"Individual Filter Grouping\"><Condition Key=\"Contact_Salesforce_1.Philanthropy__c\" Operator=\"Contains\" UiMetaData=\"_UI_METADATA_\"><Value><![CDATA[Major Donor]]></Value></Condition><Condition Key=\"Contact_Salesforce_1.Philanthropy__c\" Operator=\"Contains\" UiMetaData=\"{&quot;groupToSetRelationshipId&quot;:&quot;fe966f2d-4cca-ea11-b83a-b883035bd8a1&quot;}\"><Value><![CDATA[Prospect Major Donor]]></Value></Condition></ConditionSet></FilterDefinition>",
+  },
 
   HAS_TFR_CASE_IN_N_DAYS: {
     description: "CreatedDate is on or after Today Minus _N_ days AND Direction__c equal Outbound AND Category__c equal TFR AND Sub_Category__c is not equal Welcome Call AND Sub_Category__c is not equal Debit Fail AND Sub_Category__c is not equal Direct Debit Fail AND Sub_Category__c is not equal SDDA Fail AND Sub_Category__c is not equal Expired Card AND Sub_Category__c is not equal Abandon Payment Failure Conversion AND Sub_Category__c is not equal Abandon Conversion",
