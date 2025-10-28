@@ -41,8 +41,8 @@ class MCBase {
   setMarket (market) {
     market = market.toLowerCase()
 
-    if (["tw","hk","kr"].indexOf(market)<0) {
-      throw new Error("The market should be one of tw, hk or kr")
+    if (["gpea","tw","hk","kr"].indexOf(market)<0) {
+      throw new Error("The market should be one of gpea, tw, hk or kr")
     }
 
     this.market = market
@@ -54,7 +54,12 @@ class MCBase {
       throw new Error("Load Market variable without market defined.")
     }
 
-    if (this.market==="tw") {
+    if (this.market==="gpea") {
+      this.clientId = process.env.MC_GPEA_CLIENTID
+      this.clientSecret = process.env.MC_GPEA_CLIENTSECRET
+      this.subDomain = process.env.MC_GPEA_SUBDOMAIN
+      this.accountId = process.env.MC_GPEA_ACCOUNTID
+    } else if (this.market==="tw") {
       this.clientId = process.env.MC_TW_CLIENTID
       this.clientSecret = process.env.MC_TW_CLIENTSECRET
       this.subDomain = process.env.MC_TW_SUBDOMAIN
