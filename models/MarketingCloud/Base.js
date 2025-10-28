@@ -41,8 +41,8 @@ class MCBase {
   setMarket (market) {
     market = market.toLowerCase()
 
-    if (["tw","hk","kr"].indexOf(market)<0) {
-      throw new Error("The market should be one of tw, hk or kr")
+    if (["gpea","tw","hk","kr"].indexOf(market)<0) {
+      throw new Error("The market should be one of gpea, tw, hk or kr")
     }
 
     this.market = market
@@ -54,7 +54,12 @@ class MCBase {
       throw new Error("Load Market variable without market defined.")
     }
 
-    if (this.market==="tw") {
+    if (this.market==="gpea") {
+      this.clientId = process.env.MC_GPEA_CLIENTID
+      this.clientSecret = process.env.MC_GPEA_CLIENTSECRET
+      this.subDomain = process.env.MC_GPEA_SUBDOMAIN
+      this.accountId = process.env.MC_GPEA_ACCOUNTID
+    } else if (this.market==="tw") {
       this.clientId = process.env.MC_TW_CLIENTID
       this.clientSecret = process.env.MC_TW_CLIENTSECRET
       this.subDomain = process.env.MC_TW_SUBDOMAIN
@@ -134,6 +139,7 @@ class MCBase {
     let retrieveResponseMsg = _.get(jsonResponse, "soap:Envelope.soap:Body.RetrieveResponseMsg")
     let createResponse = _.get(jsonResponse, "soap:Envelope.soap:Body.CreateResponse")
     let performResponseMsg = _.get(jsonResponse, "soap:Envelope.soap:Body.PerformResponseMsg")
+    let scheduleResponseMsg = _.get(jsonResponse, "soap:Envelope.soap:Body.ScheduleResponseMsg")
     let updateResponse = _.get(jsonResponse, "soap:Envelope.soap:Body.UpdateResponse")
     let deleteResponse = _.get(jsonResponse, "soap:Envelope.soap:Body.DeleteResponse")
 
@@ -172,6 +178,32 @@ class MCBase {
       }
 
       return _.get(deleteResponse, "Results.Object", [])
+    }
+
+    if (performResponseMsg) {
+      if (['OK', 'MoreDataAvailable'].indexOf(performResponseMsg.OverallStatus)<0) {
+        let errMsg = _.get(performResponseMsg, 'Results.StatusMessage')
+        if (errMsg) {
+          logger.error(performResponseMsg.OverallStatus+": "+errMsg)
+        }
+
+        throw new Error(performResponseMsg.OverallStatus)
+      }
+
+      return performResponseMsg.Results
+    }
+
+    if (scheduleResponseMsg) {
+      if (['OK', 'MoreDataAvailable'].indexOf(scheduleResponseMsg.OverallStatus)<0) {
+        let errMsg = _.get(scheduleResponseMsg, 'Results.Result.StatusMessage') || _.get(scheduleResponseMsg, 'Results.StatusMessage')
+        if (errMsg) {
+          logger.error(scheduleResponseMsg.OverallStatus+": "+errMsg)
+        }
+
+        throw new Error(scheduleResponseMsg.OverallStatus)
+      }
+
+      return scheduleResponseMsg.Results
     }
 
     throw new Error("Unhandle sopa response")

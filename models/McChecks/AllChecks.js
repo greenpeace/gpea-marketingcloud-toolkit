@@ -10,7 +10,7 @@ const axios = require("axios");
 require("dotenv").config();
 
 async function main() {
-  let markets = ["TW", "HK", "KR"];
+  let markets = ["GPEA", "TW", "HK", "KR"];
 
   for (let i = 0; i < markets.length; i++) {
     const market = markets[i];

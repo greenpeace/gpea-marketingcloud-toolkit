@@ -32,6 +32,9 @@ function rruleToHumanReadable(icalRecurString) {
 
   // Frequency
   switch (options.freq) {
+    case RRule.YEARLY:
+      text += `Every ${options.interval} year`;
+      break;
     case RRule.MONTHLY:
       text += `Every ${options.interval} month`;
       break;
@@ -40,6 +43,12 @@ function rruleToHumanReadable(icalRecurString) {
       break;
     case RRule.DAILY:
       text += `Every ${options.interval} day`;
+      break;
+    case RRule.HOURLY:
+      text += `Every ${options.interval} hour`;
+      break;
+    case RRule.MINUTELY:
+      text += `Every ${options.interval} minute`;
       break;
     default:
       text += `Unsupported frequency: ${options.freq}`;

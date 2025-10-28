@@ -199,6 +199,43 @@ class Automation {
   }
 
   /**
+   * Pause an automation using SOAP API
+   * @param {string} automationObjectId - The ObjectID of the automation to pause
+   * @returns {Object} Response from SOAP API
+   */
+  async pause(automationObjectId) {
+    let rbody = `<?xml version="1.0" encoding="UTF-8"?>
+    <s:Envelope
+      xmlns:s = "http://www.w3.org/2003/05/soap-envelope"
+      xmlns:a = "http://schemas.xmlsoap.org/ws/2004/08/addressing"
+      xmlns:u = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" >
+      <s:Header>
+        <a:Action s:mustUnderstand="1">Schedule</a:Action>
+        <a:To s:mustUnderstand="1">https://${this.parent.subDomain}.soap.marketingcloudapis.com/Service.asmx</a:To>
+        <fueloauth xmlns="http://exacttarget.com">${this.parent.accessToken}</fueloauth>
+      </s:Header>
+      <s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <ScheduleRequestMsg xmlns="http://exacttarget.com/wsdl/partnerAPI">
+          <Action>pause</Action>
+          <Schedule></Schedule>
+          <Interactions>
+            <Interaction xsi:type="Automation">
+              <ObjectID>${automationObjectId}</ObjectID>
+            </Interaction>
+          </Interactions>
+        </ScheduleRequestMsg>
+      </s:Body>
+    </s:Envelope>
+    `
+
+    let response = await axios.post(this.parent.soapEndpoint, rbody, {
+      headers: { 'Content-Type': 'application/soap+xml' }
+    })
+
+    return await this.parent.handleSoapResponse(response)
+  }
+
+  /**
    * To delete an automation
    *
    * @param {string} customerKey The customer Key of the automation
