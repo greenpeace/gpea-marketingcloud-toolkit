@@ -139,6 +139,7 @@ class MCBase {
     let retrieveResponseMsg = _.get(jsonResponse, "soap:Envelope.soap:Body.RetrieveResponseMsg")
     let createResponse = _.get(jsonResponse, "soap:Envelope.soap:Body.CreateResponse")
     let performResponseMsg = _.get(jsonResponse, "soap:Envelope.soap:Body.PerformResponseMsg")
+    let scheduleResponseMsg = _.get(jsonResponse, "soap:Envelope.soap:Body.ScheduleResponseMsg")
     let updateResponse = _.get(jsonResponse, "soap:Envelope.soap:Body.UpdateResponse")
     let deleteResponse = _.get(jsonResponse, "soap:Envelope.soap:Body.DeleteResponse")
 
@@ -177,6 +178,32 @@ class MCBase {
       }
 
       return _.get(deleteResponse, "Results.Object", [])
+    }
+
+    if (performResponseMsg) {
+      if (['OK', 'MoreDataAvailable'].indexOf(performResponseMsg.OverallStatus)<0) {
+        let errMsg = _.get(performResponseMsg, 'Results.StatusMessage')
+        if (errMsg) {
+          logger.error(performResponseMsg.OverallStatus+": "+errMsg)
+        }
+
+        throw new Error(performResponseMsg.OverallStatus)
+      }
+
+      return performResponseMsg.Results
+    }
+
+    if (scheduleResponseMsg) {
+      if (['OK', 'MoreDataAvailable'].indexOf(scheduleResponseMsg.OverallStatus)<0) {
+        let errMsg = _.get(scheduleResponseMsg, 'Results.Result.StatusMessage') || _.get(scheduleResponseMsg, 'Results.StatusMessage')
+        if (errMsg) {
+          logger.error(scheduleResponseMsg.OverallStatus+": "+errMsg)
+        }
+
+        throw new Error(scheduleResponseMsg.OverallStatus)
+      }
+
+      return scheduleResponseMsg.Results
     }
 
     throw new Error("Unhandle sopa response")
